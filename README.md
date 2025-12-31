@@ -22,10 +22,10 @@ npx clix-agent-skills install <skill-name> --client <your-client>
 | Claude | `--client claude` | `.claude/skills/` |
 | Codex | `--client codex` | `.codex/skills/` |
 | Cursor | `--client cursor` | `.cursor/skills/` |
-| GitHub | `--client github` | `.github/skills/` |
+| GitHub Copilot | `--client github` | `.github/skills/` |
 | Goose | `--client goose` | `.goose/skills/` |
-| Letta | `--client letta` | `.letta/skills/` |
-| OpenCode | `--client opencode` | `.opencode/skills/` |
+| Letta | `--client letta` | `.skills/` |
+| OpenCode | `--client opencode` | `.opencode/skill/` |
 
 ### Claude Code
 

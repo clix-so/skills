@@ -55,10 +55,24 @@ describe('installSkill', () => {
         expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
     });
 
-    it('should install to .opencode/skills when client is opencode', async () => {
+    it('should install to .opencode/skill when client is opencode', async () => {
         await installSkill('integration', { client: 'opencode' });
 
-        const expectedDest = path.resolve(process.cwd(), '.opencode/skills/integration');
+        const expectedDest = path.resolve(process.cwd(), '.opencode/skill/integration');
+        expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+    });
+
+    it('should install to .skills when client is letta', async () => {
+        await installSkill('integration', { client: 'letta' });
+
+        const expectedDest = path.resolve(process.cwd(), '.skills/integration');
+        expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+    });
+
+    it('should install to .github/skills when client is copilot', async () => {
+        await installSkill('integration', { client: 'copilot' });
+
+        const expectedDest = path.resolve(process.cwd(), '.github/skills/integration');
         expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
     });
 
