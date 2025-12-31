@@ -1,12 +1,12 @@
 name: Release to NPM
 
-run-name: "Release ${{ inputs.version }} to NPM"
+run-name: 'Release ${{ inputs.version }} to NPM'
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to be released"
+        description: 'Version to be released'
         required: true
 
 jobs:

@@ -58,6 +58,30 @@ get_config_path() {
     vscode)
       echo "${home}/.vscode/mcp.json"
       ;;
+    amp)
+      # Amp uses VS Code settings.json format
+      # Check workspace settings first, then user settings
+      if [ -f ".vscode/settings.json" ]; then
+        echo ".vscode/settings.json"
+      elif [ -f "${home}/.vscode/settings.json" ]; then
+        echo "${home}/.vscode/settings.json"
+      else
+        # Default to workspace settings
+        echo ".vscode/settings.json"
+      fi
+      ;;
+    opencode)
+      # OpenCode uses opencode.json or opencode.jsonc in project root
+      # Check for .jsonc first (preferred), then .json
+      if [ -f "opencode.jsonc" ]; then
+        echo "opencode.jsonc"
+      elif [ -f "opencode.json" ]; then
+        echo "opencode.json"
+      else
+        # Default to .jsonc
+        echo "opencode.jsonc"
+      fi
+      ;;
     *)
       echo ""
       ;;
@@ -116,6 +140,112 @@ EOF
   log "${GREEN}✔ Configured Clix MCP Server in Codex config${RESET}"
 }
 
+# Configure MCP for Amp (uses amp.mcpServers in VS Code settings.json)
+configure_amp() {
+  local config_path="$1"
+  local config_dir=$(dirname "$config_path")
+
+  mkdir -p "$config_dir"
+
+  if [ ! -f "$config_path" ]; then
+    echo '{}' > "$config_path"
+    log "${GREEN}✔ Created Amp settings file${RESET}"
+  fi
+
+  # Check if already configured
+  if grep -q "clix-mcp-server" "$config_path" 2>/dev/null; then
+    log "${GREEN}✔ Clix MCP Server already configured in Amp${RESET}"
+    return 0
+  fi
+
+  # Use node to safely update JSON
+  if command -v node &> /dev/null; then
+    node <<EOF
+const fs = require('fs');
+const path = '$config_path';
+let config = {};
+try {
+  const content = fs.readFileSync(path, 'utf8');
+  config = JSON.parse(content);
+} catch (e) {
+  config = {};
+}
+if (!config['amp.mcpServers']) config['amp.mcpServers'] = {};
+config['amp.mcpServers']['clix-mcp-server'] = {
+  command: 'npx',
+  args: ['-y', '@clix-so/clix-mcp-server@latest']
+};
+fs.writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
+EOF
+    log "${GREEN}✔ Configured Clix MCP Server in Amp${RESET}"
+  else
+    log "${YELLOW}⚠️  Node.js not found. Please manually add to $config_path:${RESET}"
+    log "${BLUE}{${RESET}"
+    log "${BLUE}  \"amp.mcpServers\": {${RESET}"
+    log "${BLUE}    \"clix-mcp-server\": {${RESET}"
+    log "${BLUE}      \"command\": \"npx\",${RESET}"
+    log "${BLUE}      \"args\": [\"-y\", \"@clix-so/clix-mcp-server@latest\"]${RESET}"
+    log "${BLUE}    }${RESET}"
+    log "${BLUE}  }${RESET}"
+    log "${BLUE}}${RESET}"
+  fi
+}
+
+# Configure MCP for OpenCode (uses opencode.json/jsonc with mcp section)
+configure_opencode() {
+  local config_path="$1"
+
+  if [ ! -f "$config_path" ]; then
+    # Create new opencode.jsonc file
+    cat > "$config_path" <<'EOF'
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {}
+}
+EOF
+    log "${GREEN}✔ Created OpenCode config file${RESET}"
+  fi
+
+  # Check if already configured
+  if grep -q "clix-mcp-server" "$config_path" 2>/dev/null; then
+    log "${GREEN}✔ Clix MCP Server already configured in OpenCode${RESET}"
+    return 0
+  fi
+
+  # Use node to safely update JSON/JSONC
+  if command -v node &> /dev/null; then
+    node <<EOF
+const fs = require('fs');
+const path = '$config_path';
+let content = fs.readFileSync(path, 'utf8');
+// Remove comments for JSONC parsing (simple approach)
+let jsonContent = content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
+let config = JSON.parse(jsonContent);
+if (!config.mcp) config.mcp = {};
+config.mcp['clix-mcp-server'] = {
+  type: 'local',
+  command: ['npx', '-y', '@clix-so/clix-mcp-server@latest'],
+  enabled: true
+};
+// Write back as JSONC if original was .jsonc, otherwise JSON
+const isJsonc = path.endsWith('.jsonc');
+fs.writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
+EOF
+    log "${GREEN}✔ Configured Clix MCP Server in OpenCode${RESET}"
+  else
+    log "${YELLOW}⚠️  Node.js not found. Please manually add to $config_path:${RESET}"
+    log "${BLUE}{${RESET}"
+    log "${BLUE}  \"mcp\": {${RESET}"
+    log "${BLUE}    \"clix-mcp-server\": {${RESET}"
+    log "${BLUE}      \"type\": \"local\",${RESET}"
+    log "${BLUE}      \"command\": [\"npx\", \"-y\", \"@clix-so/clix-mcp-server@latest\"],${RESET}"
+    log "${BLUE}      \"enabled\": true${RESET}"
+    log "${BLUE}    }${RESET}"
+    log "${BLUE}  }${RESET}"
+    log "${BLUE}}${RESET}"
+  fi
+}
+
 # Configure MCP for JSON-based clients
 configure_json_client() {
   local config_path="$1"
@@ -163,6 +293,20 @@ EOF
 
 # Auto-detect client
 detect_client() {
+  # Check for OpenCode (check for opencode.json/jsonc or opencode command)
+  if [ -f "opencode.json" ] || [ -f "opencode.jsonc" ] || command -v opencode &> /dev/null; then
+    echo "opencode"
+    return
+  fi
+
+  # Check for Amp (check for amp.mcpServers in settings.json or amp command)
+  if command -v amp &> /dev/null || \
+     grep -q "amp.mcpServers" ".vscode/settings.json" 2>/dev/null || \
+     grep -q "amp.mcpServers" "${HOME}/.vscode/settings.json" 2>/dev/null; then
+    echo "amp"
+    return
+  fi
+
   # Check for Codex
   if [ -f "${HOME}/.codex/config.toml" ] || command -v codex &> /dev/null; then
     echo "codex"
@@ -222,6 +366,10 @@ if [ "$detected_client" != "unknown" ]; then
 
     if [ "$detected_client" = "codex" ]; then
       configure_codex "$config_path"
+    elif [ "$detected_client" = "amp" ]; then
+      configure_amp "$config_path"
+    elif [ "$detected_client" = "opencode" ]; then
+      configure_opencode "$config_path"
     else
       configure_json_client "$config_path"
     fi
@@ -235,6 +383,8 @@ if [ "$detected_client" != "unknown" ]; then
 else
   log "${YELLOW}⚠️  Could not auto-detect MCP client.${RESET}"
   log "${BLUE}The package is ready to use. Configure manually:${RESET}"
+  log "${BLUE}  - OpenCode: Add to opencode.json or opencode.jsonc${RESET}"
+  log "${BLUE}  - Amp: Add to .vscode/settings.json or ~/.vscode/settings.json${RESET}"
   log "${BLUE}  - Codex: Add to ~/.codex/config.toml${RESET}"
   log "${BLUE}  - Cursor: Add to .cursor/mcp.json or ~/.cursor/mcp.json${RESET}"
   log "${BLUE}  - Claude Desktop: Add to config file${RESET}"

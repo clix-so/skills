@@ -106,4 +106,106 @@ describe("installSkill", () => {
     await installSkill("integration", { client: "cursor" });
     expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
   });
+
+  it("should handle copy errors gracefully", async () => {
+    const copyError = new Error("Copy failed");
+    (mockedFs.copy as jest.Mock).mockRejectedValueOnce(copyError);
+
+    await expect(installSkill("integration", {})).rejects.toThrow("Copy failed");
+    expect(mockSpinner.fail).toHaveBeenCalledWith(expect.stringContaining("Copy failed"));
+  });
+
+  it("should handle MCP configuration errors gracefully", async () => {
+    const mcpError = new Error("MCP config failed");
+    mockedConfigureMCP.mockRejectedValueOnce(mcpError);
+
+    // Should not throw, just warn
+    await installSkill("integration", {});
+    expect(mockedConfigureMCP).toHaveBeenCalled();
+    // The function should complete successfully despite MCP error
+    expect(mockSpinner.succeed).toHaveBeenCalled();
+  });
+
+  it("should install to .vscode/skills when client is vscode", async () => {
+    await installSkill("integration", { client: "vscode" });
+
+    const expectedDest = path.resolve(process.cwd(), ".vscode/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to .codex/skills when client is codex", async () => {
+    await installSkill("integration", { client: "codex" });
+
+    const expectedDest = path.resolve(process.cwd(), ".codex/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to .amp/skills when client is amp", async () => {
+    await installSkill("integration", { client: "amp" });
+
+    const expectedDest = path.resolve(process.cwd(), ".amp/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to custom path when client starts with dot", async () => {
+    await installSkill("integration", { client: ".custom" });
+
+    const expectedDest = path.resolve(process.cwd(), ".custom/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should fallback to .clix/skills for unknown client", async () => {
+    await installSkill("integration", { client: "unknown-client" });
+
+    const expectedDest = path.resolve(process.cwd(), ".clix/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should show available skills when skill not found but skills dir exists", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      if (pathStr.includes("missing_skill")) return false;
+      if (pathStr.includes("skills") && !pathStr.includes("missing_skill")) return true;
+      return true;
+    });
+    mockedFs.readdirSync.mockReturnValue(["integration", "other_skill"] as any);
+
+    await installSkill("missing_skill", {});
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Available skills:.*integration.*other_skill/)
+    );
+    expect(mockedFs.copy).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+    consoleWarnSpy.mockRestore();
+  });
+
+  it("should show skills directory not found message", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedFs.existsSync.mockReturnValue(false);
+
+    await installSkill("missing_skill", {});
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/Skills directory not found/));
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle package root detection when package.json not found", async () => {
+    // Mock __dirname to simulate being in a directory without package.json
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      if (pathStr.includes("package.json")) return false;
+      if (pathStr.includes("integration")) return true;
+      return true;
+    });
+
+    await installSkill("integration", {});
+
+    // Should still work by falling back to process.cwd()
+    expect(mockedFs.copy).toHaveBeenCalled();
+  });
 });

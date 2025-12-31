@@ -113,4 +113,143 @@ describe("configureMCP", () => {
     );
     expect(mockedFs.writeJSON).not.toHaveBeenCalled();
   });
+
+  it("should skip configuration when config path cannot be determined", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    // Use a client that returns null from getConfigPath (e.g., unknown client)
+    await configureMCP("unknown-client");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Could not determine config path/)
+    );
+    expect(mockedFs.readJSON).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should skip configuration when user declines to create file", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedFs.existsSync.mockReturnValue(false);
+    mockedInquirer.prompt.mockResolvedValueOnce({ create: false });
+
+    await configureMCP("vscode");
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/Skipping MCP configuration/));
+    expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle error when creating config file fails", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedFs.existsSync.mockReturnValue(false);
+    mockedInquirer.prompt.mockResolvedValueOnce({ create: true });
+    (mockedFs.ensureDir as jest.Mock).mockRejectedValueOnce(new Error("Permission denied"));
+
+    await configureMCP("vscode");
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/Failed to create config file/));
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle error when parsing config JSON fails", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedFs.readJSON.mockRejectedValueOnce(new Error("Invalid JSON"));
+
+    await configureMCP("cursor");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Failed to parse existing config JSON/)
+    );
+    expect(mockedInquirer.prompt).not.toHaveBeenCalledWith(
+      expect.arrayContaining([expect.objectContaining({ name: "inject" })])
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should use Windows path for Claude Desktop on win32", async () => {
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, "platform", {
+      value: "win32",
+      writable: true,
+    });
+
+    const mockAppData = "C:\\Users\\Test\\AppData\\Roaming";
+    process.env.APPDATA = mockAppData;
+
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+    await configureMCP("claude");
+
+    expect(mockedFs.readJSON).toHaveBeenCalledWith(
+      expect.stringMatching(/Claude[\\\/]claude_desktop_config\.json/)
+    );
+
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform,
+      writable: true,
+    });
+  });
+
+  it("should return null for Claude Desktop on unsupported platform", async () => {
+    const originalPlatform = process.platform;
+    Object.defineProperty(process, "platform", {
+      value: "linux",
+      writable: true,
+    });
+
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await configureMCP("claude");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Could not determine config path/)
+    );
+
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform,
+      writable: true,
+    });
+    consoleSpy.mockRestore();
+  });
+
+  it("should return null for unknown client", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await configureMCP("unknown-client");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Could not determine config path/)
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should not inject if user declines", async () => {
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+    await configureMCP("cursor");
+
+    expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+  });
+
+  it("should handle config without mcpServers property", async () => {
+    mockedFs.readJSON.mockResolvedValue({});
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
+
+    await configureMCP("cursor");
+
+    expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        mcpServers: expect.objectContaining({
+          "clix-mcp-server": expect.anything(),
+        }),
+      }),
+      expect.anything()
+    );
+  });
 });

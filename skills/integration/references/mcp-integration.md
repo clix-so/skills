@@ -282,3 +282,65 @@ claude mcp add --transport stdio clix-mcp-server -- npx -y @clix-so/clix-mcp-ser
   }
 }
 ```
+
+#### Amp
+
+**Setup**
+
+Amp uses `amp.mcpServers` in VS Code settings files. Configure in either:
+
+- **Workspace settings**: `.vscode/settings.json` (recommended for
+  project-specific setup)
+- **User settings**: `~/.vscode/settings.json` (for global setup)
+
+1. Open `.vscode/settings.json` (create if it doesn't exist).
+2. Add the configuration:
+
+```json
+{
+  "amp.mcpServers": {
+    "clix-mcp-server": {
+      "command": "npx",
+      "args": ["-y", "@clix-so/clix-mcp-server@latest"]
+    }
+  }
+}
+```
+
+3. Restart Amp or reload the VS Code window.
+
+**Note**: The server name `clix-mcp-server` ensures tools appear as
+`clix-mcp-server:*` (e.g., `clix-mcp-server:search_sdk`,
+`clix-mcp-server:search_docs`). See
+[Amp MCP documentation](https://ampcode.com/manual#mcp) for more details.
+
+#### OpenCode
+
+**Setup**
+
+OpenCode uses `opencode.json` or `opencode.jsonc` files in your project root.
+See [OpenCode MCP documentation](https://opencode.ai/docs/mcp-servers/) for
+details.
+
+1. Open `opencode.json` or `opencode.jsonc` (create if it doesn't exist).
+2. Add the configuration:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "clix-mcp-server": {
+      "type": "local",
+      "command": ["npx", "-y", "@clix-so/clix-mcp-server@latest"],
+      "enabled": true
+    }
+  }
+}
+```
+
+3. Restart OpenCode or reload the configuration.
+
+**Note**: The server name `clix-mcp-server` ensures tools appear as
+`clix-mcp-server:*` (e.g., `clix-mcp-server:search_sdk`,
+`clix-mcp-server:search_docs`). You can reference the server in prompts with
+`use clix-mcp-server` or add it to your `AGENTS.md` file.

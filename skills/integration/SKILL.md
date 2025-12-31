@@ -42,7 +42,8 @@ latest verified SDK source code.
      - Run: `bash scripts/install-mcp.sh`
      - The script will:
        - Verify the package is available
-       - Auto-detect the MCP client (Codex, Cursor, Claude Desktop, VS Code, etc.)
+       - Auto-detect the MCP client (OpenCode, Amp, Codex, Cursor, Claude
+         Desktop, VS Code, etc.)
        - Automatically configure the MCP server in the appropriate config file
        - Provide clear instructions for restart
      - Instruct user to restart their agent/IDE to load the new server.
@@ -55,8 +56,8 @@ latest verified SDK source code.
 
 ## Interaction Guidelines for Agents
 
-When using this skill (for example inside Claude Code, Codex, Cursor, or other
-AI IDEs), follow these behaviors:
+When using this skill (for example inside OpenCode, Amp, Claude Code, Codex,
+Cursor, or other AI IDEs), follow these behaviors:
 
 - **Start with reconnaissance**
   - Inspect the project structure first (list key files like `package.json`,
