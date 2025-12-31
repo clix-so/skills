@@ -1,5 +1,5 @@
 ---
-name: Clix Integration
+name: clix-integration
 description:
   Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native
   projects. Provides step-by-step guidance for installation, initialization, and
@@ -41,6 +41,11 @@ latest verified SDK source code.
      latest official SDK code. Would you like me to install it now?"
   2. **If User says YES**:
      - Run: `bash scripts/install-mcp.sh`
+     - The script will:
+       - Verify the package is available
+       - Auto-detect the MCP client (Codex, Cursor, Claude Desktop, VS Code, etc.)
+       - Automatically configure the MCP server in the appropriate config file
+       - Provide clear instructions for restart
      - Instruct user to restart their agent/IDE to load the new server.
      - Stop here (let user restart).
   3. **If User says NO**:

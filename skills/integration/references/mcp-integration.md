@@ -8,13 +8,18 @@ to search Clix documentation and SDK code.
 
 ### Install
 
-**npm:**
+You generally do **not** need a global install. The recommended setup runs the
+server via `npx` from your MCP client config.
+
+Optional global install (only if your client requires a direct binary on PATH):
+
+- **npm**:
 
 ```bash
 npm i -g @clix-so/clix-mcp-server@latest
 ```
 
-**yarn:**
+- **yarn**:
 
 ```bash
 yarn global add @clix-so/clix-mcp-server@latest
@@ -37,6 +42,18 @@ Recommended configuration using `npx`:
   }
 }
 ```
+
+### Important: Server name affects tool namespace
+
+Most MCP clients expose tools with a prefix that matches the **server name**.
+For example, naming the server `clix-mcp-server` yields tools like:
+
+- `clix-mcp-server:search_docs`
+- `clix-mcp-server:search_sdk`
+
+If you name the server something else (e.g. `clix`), your tools will appear as
+`clix:*` and skills that expect `clix-mcp-server:*` will think the server is
+missing.
 
 ### Use Clix MCP Server with Popular MCP Clients and IDEs
 
@@ -221,7 +238,9 @@ claude mcp add --transport stdio clix-mcp-server -- npx -y @clix-so/clix-mcp-ser
 
 ```toml
 [mcp_servers]
-  [mcp_servers.clix]
+  # IMPORTANT: keep this name as "clix-mcp-server" so tools show up as
+  # `clix-mcp-server:*` (and not `clix:*`).
+  [mcp_servers."clix-mcp-server"]
   command = "npx"
   args = ["-y", "@clix-so/clix-mcp-server@latest"]
 ```
