@@ -1,21 +1,25 @@
 # Framework-Specific Integration Patterns (Mobile)
 
-This document provides detailed patterns for integrating the Clix SDK into **mobile** frameworks and platforms:
+This document provides detailed patterns for integrating the Clix SDK into
+**mobile** frameworks and platforms:
 
 - iOS (Swift)
 - Android (Kotlin)
 - Flutter
 - React Native
 
-Examples below are derived strictly from the official SDK source code (via Clix MCP `search_sdk`), with credentials shown as placeholders (`YOUR_PROJECT_ID`, `YOUR_PUBLIC_API_KEY`).
+Examples below are derived strictly from the official SDK source code (via Clix
+MCP `search_sdk`), with credentials shown as placeholders (`YOUR_PROJECT_ID`,
+`YOUR_PUBLIC_API_KEY`).
 
 ---
 
 ---
 
-> **Note: Fallback Source**
-> This document serves as a **fallback** when the Clix MCP Server is unavailable.
-> Agents should **prioritize** using `search_sdk` to fetch the latest live patterns from the official SDK repositories before relying on these static examples.
+> **Note: Fallback Source** This document serves as a **fallback** when the Clix
+> MCP Server is unavailable. Agents should **prioritize** using `search_sdk` to
+> fetch the latest live patterns from the official SDK repositories before
+> relying on these static examples.
 
 ---
 
@@ -41,10 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             apiKey: ProcessInfo.processInfo.environment["CLIX_PUBLIC_API_KEY"] ?? "",
             logLevel: .info // Optional: .debug, .info, .error
         )
-        
+
         // Pass config to initialize
         try? Clix.initialize(config: config)
-        
+
         return true
     }
 }
@@ -65,7 +69,7 @@ struct MyApp: App {
         )
         try? Clix.initialize(config: config)
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -89,17 +93,17 @@ import so.clix.utils.logging.ClixLogLevel
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        
+
         val projectId = BuildConfig.CLIX_PROJECT_ID ?: ""
         val apiKey = BuildConfig.CLIX_PUBLIC_API_KEY ?: ""
-        
+
 
         val config = ClixConfig(
             projectId = projectId,
             apiKey = apiKey,
             logLevel = ClixLogLevel.INFO
         )
-        
+
         Clix.initialize(this, config)
     }
 }
@@ -166,14 +170,15 @@ Future<void> main() async {
 
 ### Error Handling
 
-Always wrap initialization in try-catch (Swift) or catch errors (Promise-based platforms):
+Always wrap initialization in try-catch (Swift) or catch errors (Promise-based
+platforms):
 
 ```typescript
 // React Native / Flutter
 try {
   await Clix.initialize(config);
 } catch (error) {
-  console.error('Clix initialization failed:', error);
+  console.error("Clix initialization failed:", error);
 }
 ```
 
@@ -186,8 +191,11 @@ if (!__DEV__) {
   Clix.initialize(config);
 }
 ```
+
 ### Credentials
 
 - Use placeholders like `YOUR_PROJECT_ID` and `YOUR_PUBLIC_API_KEY` in examples
-- In real apps, load credentials from safe configuration (config files, build config, secret managers)
-- Avoid hardcoding real credentials directly in source code or examples checked into version control
+- In real apps, load credentials from safe configuration (config files, build
+  config, secret managers)
+- Avoid hardcoding real credentials directly in source code or examples checked
+  into version control

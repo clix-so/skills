@@ -32,9 +32,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   if (!fs.existsSync(skillSourcePath)) {
     // Fallback for development if skills is not in dist but in root
     // (Not needed if finding package.json correctly, but good for sanity)
-    console.warn(
-      chalk.yellow(`Skill not found at ${skillSourcePath}, trying CWD...`)
-    );
+    console.warn(chalk.yellow(`Skill not found at ${skillSourcePath}, trying CWD...`));
     skillSourcePath = path.resolve(process.cwd(), "skills", skillName);
   }
 
@@ -44,11 +42,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
 
     const skillsDir = path.join(packageRoot, "skills");
     if (fs.existsSync(skillsDir)) {
-      console.log(
-        chalk.yellow(
-          `Available skills: ${fs.readdirSync(skillsDir).join(", ")}`
-        )
-      );
+      console.log(chalk.yellow(`Available skills: ${fs.readdirSync(skillsDir).join(", ")}`));
     } else {
       console.log(chalk.yellow(`Skills directory not found at: ${skillsDir}`));
     }
@@ -91,9 +85,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         relativeDest = ".amp/skills";
         break;
       default:
-        relativeDest = options.client.startsWith(".")
-          ? `${options.client}/skills`
-          : `.clix/skills`;
+        relativeDest = options.client.startsWith(".") ? `${options.client}/skills` : `.clix/skills`;
     }
   }
 
@@ -103,9 +95,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   try {
     await fs.ensureDir(destPath);
     await fs.copy(skillSourcePath, destPath);
-    spinner.succeed(
-      `Skill files installed to ${chalk.green(relativeDest + "/" + skillName)}`
-    );
+    spinner.succeed(`Skill files installed to ${chalk.green(relativeDest + "/" + skillName)}`);
   } catch (err: any) {
     spinner.fail(`Failed to copy skill files: ${err.message}`);
     throw err;
@@ -118,9 +108,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     console.warn(chalk.yellow(`MCP Configuration warning: ${err.message}`));
   }
 
-  console.log(
-    `\n${chalk.green("✔")} Skill ${chalk.bold(skillName)} is ready to use!`
-  );
+  console.log(`\n${chalk.green("✔")} Skill ${chalk.bold(skillName)} is ready to use!`);
   console.log(`  - Docs: ${path.join(destPath, "SKILL.md")}`);
   console.log(`  - Instruct your agent to read these docs to start working.`);
 }
