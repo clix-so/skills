@@ -1,0 +1,22 @@
+{
+    "name": "clix-agent-skills",
+    "owner": {
+        "name": "Clix",
+        "email": "contact@clix.so"
+    },
+    "metadata": {
+        "description": "Collection of Agent Skills for Clix.",
+        "version": "1.0.0"
+    },
+    "plugins": [
+        {
+            "name": "clix-integration",
+            "description": "Integrates Clix SDK into mobile projects",
+            "source": "./",
+            "strict": false,
+            "skills": [
+                "./skills/integration"
+            ]
+        }
+    ]
+}
