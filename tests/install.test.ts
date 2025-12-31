@@ -82,9 +82,8 @@ describe('installSkill', () => {
 
         await installSkill('missing_skill', {});
 
-        // Match strictly or just check it was called.
-        // stringContaining verifies text presence. Chalk adds colors.
-        // We just verify it failed.
+        // We verify the fail method was called with an error message containing the skill name.
+        // Note: Chalk may add color codes to the actual message.
         expect(mockSpinner.fail).toHaveBeenCalledWith(expect.stringMatching(/missing_skill/));
         expect(mockedFs.copy).not.toHaveBeenCalled();
     });
