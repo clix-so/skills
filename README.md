@@ -18,7 +18,7 @@ For **Cursor**, **VS Code**, **Claude Desktop**, **OpenCode**, **Goose**,
 and configure the Clix MCP Server automatically:
 
 ```bash
-npx clix-agent-skills install <skill-name> --client <your-client>
+npx @clix-so/clix-agent-skills install <skill-name> --client <your-client>
 ```
 
 **Supported Clients:**
