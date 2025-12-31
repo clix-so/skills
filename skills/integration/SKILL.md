@@ -5,7 +5,7 @@ description:
   projects. Provides step-by-step guidance for installation, initialization, and
   verification. Use when the user asks to install, setup, or configure Clix
   analytics.
-version: 0.1.0
+version: 0.1.3
 ---
 
 # Clix SDK Integration Skill
@@ -124,6 +124,9 @@ Examine the codebase structure to determine platform:
 - **Other**: If it’s not one of the above, stop and ask the user—this skill is
   mobile-only.
 
+**Priority rule (important):** If React Native or Flutter is detected, treat it
+as the primary platform even if native `ios/` and `android/` folders exist.
+
 **Step 2.2: Verify Detection**
 
 Confirm platform detection with user if ambiguous:
@@ -238,6 +241,42 @@ Run validation checks:
 - Check that SDK initializes without errors
 - Verify environment variables are accessible
 - Verify SDK is properly imported and initialized
+
+### Platform Verification Checklists (UI Steps → Repo Verification)
+
+Use these checklists to verify manual UI steps were actually completed.
+
+#### iOS Verification
+
+- **Dependencies present**: `Podfile`/`Podfile.lock` or SwiftPM/Xcode references
+- **Entitlements present**: an `*.entitlements` file exists and is wired to the
+  correct target(s)
+- **Capabilities configured**: `project.pbxproj` reflects required capabilities
+  (as applicable to Push Notifications / Background Modes)
+
+#### Android Verification
+
+- **Dependencies present**: module-level `build.gradle` / `build.gradle.kts`
+  includes required SDK dependencies
+- **Manifest updated**: `AndroidManifest.xml` contains required permissions,
+  services/receivers (as required by the SDK)
+- **Firebase config placed** (if used): `google-services.json` exists in the
+  expected module directory (commonly `app/`)
+
+#### React Native Verification
+
+- **JS dependency**: `package.json` includes the Clix package
+- **iOS native**: `ios/Podfile.lock` updated after `pod install` (when required)
+- **Android native**: Gradle + Manifest updates present if required by the SDK
+- **Initialization**: root entrypoint initializes the SDK exactly once
+
+#### Flutter Verification
+
+- **Pub dependency**: `pubspec.yaml` includes the required packages and
+  `pubspec.lock` is updated after `flutter pub get`
+- **iOS native**: `ios/Podfile.lock` updated after `pod install` (when required)
+- **Android native**: Gradle + Manifest updates present if required
+- **Initialization**: SDK initialized before `runApp`
 
 **Step 5.3: Documentation**
 
@@ -388,6 +427,20 @@ Future<void> main() async {
    integrated
 6. **Document changes** - Update README and configuration files
 7. **Version control** - Add `.env` to `.gitignore`, commit `.env.example`
+
+## Docs Usage Note (MCP vs Static vs Web Docs)
+
+- If MCP tools are available: treat `search_sdk` results as the source of truth
+  for initialization/API usage.
+- If MCP tools are unavailable: you may reference the official quickstarts below
+  for **manual steps**, and use `examples/` + `references/` for code patterns.
+
+**Official quickstarts:**
+
+- iOS: `https://docs.clix.so/sdk-quickstart-ios`
+- Android: `https://docs.clix.so/sdk-quickstart-android`
+- React Native: `https://docs.clix.so/sdk-quickstart-react-native`
+- Flutter: `https://docs.clix.so/sdk-quickstart-flutter`
 
 ## Progressive Disclosure
 
