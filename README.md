@@ -7,9 +7,9 @@ is a self-contained package that can be loaded and executed by AI clients.
 
 Agents skills on this repository are built on the
 [open agent skills standard](https://agentskills.io/home). Please refer to the
-[official documentation](https://agentskills.io/docs) for up-to-date information
-of support AI clients. Depending on the AI client you are using, you can install
-skills in different ways.
+[official documentation](https://agentskills.io/home#adoption) for up-to-date
+information of support AI clients. Depending on the AI client you are using, you
+can install skills in different ways.
 
 ### Universal CLI (Recommended)
 
@@ -18,7 +18,9 @@ For **Cursor**, **VS Code**, **Claude Desktop**, **OpenCode**, **Goose**,
 and configure the Clix MCP Server automatically:
 
 ```bash
-npx @clix-so/clix-agent-skills install <skill-name> --client <your-client>
+npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
+# For example, to install integration skill on Cursor:
+# npx @clix-so/clix-agent-skills@latest install integration --client cursor
 ```
 
 **Supported Clients:**
@@ -55,7 +57,7 @@ Alternatively, you can install a single skill directly by running:
 ```bash
 /plugin install <plugin-name>@<marketplace-name>
 # For example
-/plugin install clix-integration@clix-agent-skills
+# /plugin install clix-integration@clix-agent-skills
 ```
 
 Remember to restart Claude Code after installation to load the new skills.
@@ -81,10 +83,10 @@ incorrectly** due to the non-deterministic nature of AI.
 
 It is critical that you **carefully review and verify all actions** performed by
 these skills. While they are designed to be helpful, you remain responsible for
-checking their output before use. Use them with caution and supervision.
+checking their output before use. Please use them with caution and supervision.
 
 ## License
 
 Each skill in this repository is governed by its own license. For specific terms
-and conditions, please consult the `LICENSE` file located within each skill's
-individual directory.
+and conditions, please consult the `LICENSE.txt` file located within each
+skill's individual directory.
