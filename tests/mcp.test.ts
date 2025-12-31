@@ -63,7 +63,7 @@ describe('configureMCP', () => {
 
         // Should check for directory ensures
         expect(mockedFs.ensureDir).toHaveBeenCalled();
-        // Should write empty first then updating
+        // Should write empty config first, then update it
         expect(mockedFs.writeJSON).toHaveBeenCalledTimes(2);
     });
 
