@@ -1,0 +1,49 @@
+{
+  "name": "clix-agent-skills",
+  "version": "0.1.0",
+  "description": "CLI to install Clix Agent Skills and configure MCP servers",
+  "main": "dist/index.js",
+  "bin": {
+    "clix-agent-skills": "dist/bin/cli.js"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/bin/cli.js",
+    "dev": "ts-node src/bin/cli.ts",
+    "test": "jest",
+    "lint": "prettier --check .",
+    "lint:fix": "prettier --write ."
+  },
+  "keywords": [
+    "clix",
+    "mcp",
+    "agent",
+    "skills",
+    "cli"
+  ],
+  "author": "Clix",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^14.0.2",
+    "fs-extra": "^11.3.3",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.3",
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
