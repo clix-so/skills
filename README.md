@@ -15,15 +15,17 @@ npx clix-agent-skills install <skill-name> --client <your-client>
 ```
 
 **Supported Clients:**
-*   `--client amp` → `.amp/skills/`
-*   `--client claude` → `.claude/skills/`
-*   `--client codex` → `.codex/skills/`
-*   `--client cursor` → `.cursor/skills/`
-*   `--client github` → `.github/skills/`
-*   `--client goose` → `.goose/skills/`
-*   `--client letta` → `.letta/skills/`
-*   `--client opencode` → `.opencode/skills/`
-*   `--client vscode` → `.vscode/skills/`
+
+| Client | Flag | Default Path |
+| :--- | :--- | :--- |
+| Amp | `--client amp` | `.amp/skills/` |
+| Claude | `--client claude` | `.claude/skills/` |
+| Codex | `--client codex` | `.codex/skills/` |
+| Cursor | `--client cursor` | `.cursor/skills/` |
+| GitHub | `--client github` | `.github/skills/` |
+| Goose | `--client goose` | `.goose/skills/` |
+| Letta | `--client letta` | `.letta/skills/` |
+| OpenCode | `--client opencode` | `.opencode/skills/` |
 
 ### Claude Code
 
