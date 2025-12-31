@@ -52,8 +52,9 @@ To install specific skills:
 
 Alternatively, you can install a single skill directly by running:
 
-```
+```bash
 /plugin install <plugin-name>@<marketplace-name>
+# For example
 /plugin install clix-integration@clix-agent-skills
 ```
 
