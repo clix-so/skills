@@ -93,7 +93,7 @@ class MyApplication : Application() {
         val projectId = BuildConfig.CLIX_PROJECT_ID ?: ""
         val apiKey = BuildConfig.CLIX_PUBLIC_API_KEY ?: ""
         
-        // Use Builder Pattern if available, or data class constructor
+
         val config = ClixConfig(
             projectId = projectId,
             apiKey = apiKey,

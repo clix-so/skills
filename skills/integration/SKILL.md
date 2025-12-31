@@ -268,7 +268,7 @@ Clix.initialize({
 
 **Initialization Pattern:**
 ```dart
-import 'package:clix/clix.dart';
+import 'package:clix_flutter/clix_flutter.dart';
 
 Future<void> main() async {
   // Load credentials from build-time configuration (do NOT hardcode).

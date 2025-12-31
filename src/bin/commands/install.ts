@@ -15,8 +15,26 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     // 1. Locate Skill in current package
     // Assuming 'skills' directory is at package root.
     // When running from dist/bin/cli.js, package root is ../../
-    const packageRoot = path.resolve(__dirname, '../../../');
-    const skillSourcePath = path.join(packageRoot, 'skills', skillName);
+    // Robustly find package root by looking for package.json
+    let packageRoot = __dirname;
+    while (!fs.existsSync(path.join(packageRoot, 'package.json'))) {
+        const parent = path.dirname(packageRoot);
+        if (parent === packageRoot) {
+            // Reached root without finding package.json, fallback to CWD or throw
+            packageRoot = process.cwd();
+            break;
+        }
+        packageRoot = parent;
+    }
+
+    // Verify skills directory exists
+    let skillSourcePath = path.join(packageRoot, 'skills', skillName);
+    if (!fs.existsSync(skillSourcePath)) {
+        // Fallback for development if skills is not in dist but in root
+        // (Not needed if finding package.json correctly, but good for sanity)
+        console.warn(chalk.yellow(`Skill not found at ${skillSourcePath}, trying CWD...`));
+        skillSourcePath = path.resolve(process.cwd(), 'skills', skillName);
+    }
 
     if (!fs.existsSync(skillSourcePath)) {
         spinner.fail(`Skill ${chalk.bold(skillName)} not found locally.`);

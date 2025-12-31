@@ -2,6 +2,7 @@ import { configureMCP } from '../src/bin/utils/mcp';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import os from 'os';
+import path from 'path';
 
 jest.mock('fs-extra');
 jest.mock('inquirer');
@@ -64,6 +65,40 @@ describe('configureMCP', () => {
         expect(mockedFs.ensureDir).toHaveBeenCalled();
         // Should write empty config first, then update it
         expect(mockedFs.writeJSON).toHaveBeenCalledTimes(2);
+    });
+
+    it('should prioritize project-level config for Cursor', async () => {
+        const projectPath = path.join(process.cwd(), '.cursor/mcp.json');
+        mockedFs.existsSync.mockImplementation((p) => {
+            if (p === projectPath) return true;
+            return false;
+        });
+
+        // Mock prompt response to avoid crash
+        mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+        await configureMCP('cursor');
+
+        // Should attempt to read from project path
+        expect(mockedFs.readJSON).toHaveBeenCalledWith(projectPath);
+    });
+
+    it('should fallback to global config for Cursor if project-level missing', async () => {
+        const globalPath = path.join(mockHome, '.cursor/mcp.json');
+        mockedFs.existsSync.mockImplementation((p) => {
+            if (p === path.join(process.cwd(), '.cursor/mcp.json')) return false; // Project missing
+            if (p === globalPath) return true; // Global exists
+            return false;
+        });
+        // We also need to mock readJSON success for the global file to proceed to existence check
+        mockedFs.readJSON.mockResolvedValue({ mcpServers: {} });
+
+        // Mock prompt response to avoid crash
+        mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+        await configureMCP('cursor');
+
+        expect(mockedFs.readJSON).toHaveBeenCalledWith(globalPath);
     });
 
     it('should not inject if already present', async () => {

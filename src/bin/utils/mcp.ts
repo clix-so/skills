@@ -106,12 +106,12 @@ function getConfigPath(client: string): string | null {
     const home = os.homedir();
     switch (client.toLowerCase()) {
         case 'cursor':
-            // Cursor typically uses file at project root for project-specific or global at ~/.cursor/mcp.json?
-            // Official docs say ~/.cursor/mcp.json is a common place, or project specific .cursor/mcp.json
-            // Let's assume global for now as it's safer for "Agent Skills" global tool.
-            // But many users use project .cursor/mcp.json. Let's check project first? 
-            // For simplicity in this v1, let's target the global User one if checking for installed tools.
-            // Actually, wait, Cursor recently moved to using project-level or global.
+            // Check for project-level definition first
+            const projectCursorPath = path.join(process.cwd(), '.cursor', 'mcp.json');
+            if (fs.existsSync(projectCursorPath)) {
+                return projectCursorPath;
+            }
+            // Fallback to global
             return path.join(home, '.cursor', 'mcp.json');
 
         case 'claude':

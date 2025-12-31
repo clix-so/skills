@@ -29,7 +29,7 @@ npx clix-agent-skills install <skill-name> --client <your-client>
 
 To register this repository as a plugin marketplace in Claude Code, run the following command:
 
-```
+```bash
 /plugin marketplace add clix-so/skills
 ```
 
