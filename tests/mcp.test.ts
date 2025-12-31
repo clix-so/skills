@@ -60,7 +60,7 @@ describe('configureMCP', () => {
 
         await configureMCP('vscode');
 
-        // Should check for directory ensures
+        // Should ensure directory exists
         expect(mockedFs.ensureDir).toHaveBeenCalled();
         // Should write empty config first, then update it
         expect(mockedFs.writeJSON).toHaveBeenCalledTimes(2);
