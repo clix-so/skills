@@ -2,7 +2,6 @@ import { configureMCP } from '../src/bin/utils/mcp';
 import fs from 'fs-extra';
 import inquirer from 'inquirer';
 import os from 'os';
-import path from 'path';
 
 jest.mock('fs-extra');
 jest.mock('inquirer');
