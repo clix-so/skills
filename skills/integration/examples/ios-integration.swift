@@ -6,9 +6,9 @@
 // - Samples/BasicApp/Sources/AppState.swift
 //
 // It demonstrates:
-// - Subclassing `ClixAppDelegate`
-// - Loading config from `ClixConfig.json` in the app bundle
-// - Initializing `Clix` early in app launch
+// - Using a standard `AppDelegate` that conforms to `UIApplicationDelegate`
+// - Creating `ClixConfig` from environment variables (e.g., CLIX_PROJECT_ID, CLIX_PUBLIC_API_KEY)
+// - Initializing `Clix` early in `application(_:didFinishLaunchingWithOptions:)`
 
 import Clix
 import FirebaseCore
