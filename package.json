@@ -1,5 +1,5 @@
 {
-  "name": "clix-agent-skills",
+  "name": "@clix-so/clix-agent-skills",
   "version": "0.1.0",
   "description": "CLI to install Clix Agent Skills and configure MCP servers",
   "main": "dist/index.js",
