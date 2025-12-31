@@ -4,7 +4,7 @@ This repository contains a collection of **Agent Skills for Clix**. Each skill i
 
 ## Installing Skills
 
-Agents skills on this repository are build on the [open agent skills standard](https://agentskills.io/home). Please refer to the [official documentation](https://agentskills.io/docs) for up-to-date information of support AI clients. Depending on the AI client you are using, you can install skills in different ways.
+Agents skills on this repository are built on the [open agent skills standard](https://agentskills.io/home). Please refer to the [official documentation](https://agentskills.io/docs) for up-to-date information of support AI clients. Depending on the AI client you are using, you can install skills in different ways.
 
 ### Universal CLI (Recommended)
 
