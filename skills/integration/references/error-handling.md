@@ -118,7 +118,7 @@ if (!initialized) {
 3. Check package name matches: `so.clix.core.Clix`
 4. Rebuild project
 
-### React Native: "Cannot find module '@clix/react-native-sdk'"
+### React Native: "Cannot find module '@clix-so/react-native-sdk'"
 
 **Solutions:**
 1. Run `npm install` or `yarn install`
