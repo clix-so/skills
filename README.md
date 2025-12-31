@@ -34,7 +34,7 @@ To register this repository as a plugin marketplace in Claude Code, run the foll
 ```
 
 To install specific skills:
-1. Select `Browser and install plugins`
+1. Select `Browse and install plugins`
 2. Select `clix-agent-skills` from the list
 3. Choose the skills you wish to install
 4. Click `Install` to proceed
