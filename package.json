@@ -33,7 +33,6 @@
         "ora": "^5.4.1"
     },
     "devDependencies": {
-        "@types/figlet": "^1.7.0",
         "@types/fs-extra": "^11.0.4",
         "@types/inquirer": "^9.0.9",
         "@types/jest": "^30.0.0",
