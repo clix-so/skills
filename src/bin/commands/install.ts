@@ -39,7 +39,13 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     if (!fs.existsSync(skillSourcePath)) {
         spinner.fail(`Skill ${chalk.bold(skillName)} not found locally.`);
         console.log(chalk.yellow(`Searching in: ${skillSourcePath}`));
-        console.log(chalk.yellow(`Available skills: ${fs.readdirSync(path.join(packageRoot, 'skills')).join(', ')}`));
+
+        const skillsDir = path.join(packageRoot, 'skills');
+        if (fs.existsSync(skillsDir)) {
+            console.log(chalk.yellow(`Available skills: ${fs.readdirSync(skillsDir).join(', ')}`));
+        } else {
+            console.log(chalk.yellow(`Skills directory not found at: ${skillsDir}`));
+        }
         return;
     }
 
