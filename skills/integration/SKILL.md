@@ -114,9 +114,9 @@ implementation("so.clix:clix-android-sdk:latest")
 
 **React Native:**
 ```bash
-npm install @clix/react-native-sdk
+npm install @clix-so/react-native-sdk
 # or
-yarn add @clix/react-native-sdk
+yarn add @clix-so/react-native-sdk
 ```
 
 **Flutter:**
