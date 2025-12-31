@@ -1,0 +1,61 @@
+name: Release to NPM
+
+run-name: "Release ${{ inputs.version }} to NPM"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to be released"
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
+          always-auth: true
+
+      - name: Validate Version
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          INPUT_VERSION="${{ github.event.inputs.version }}"
+          if [ "$PACKAGE_VERSION" != "$INPUT_VERSION" ]; then
+            echo "Error: Version mismatch!"
+            echo "package.json contains: '$PACKAGE_VERSION'"
+            echo "Input version is: '$INPUT_VERSION'"
+            echo "Please update the package.json file to match the release version."
+            exit 1
+          fi
+          echo "Version validation passed: $INPUT_VERSION"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Build
+        run: npm run build
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.version }}
+          name: ${{ github.event.inputs.version }}
+          generateReleaseNotes: true
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release to npm
+        run: npm publish --provenance --access public
