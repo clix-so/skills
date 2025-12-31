@@ -5,7 +5,6 @@ description:
   projects. Provides step-by-step guidance for installation, initialization, and
   verification. Use when the user asks to install, setup, or configure Clix
   analytics.
-version: 0.1.3
 ---
 
 # Clix SDK Integration Skill

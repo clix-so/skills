@@ -147,6 +147,20 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
+  it("should install to .kiro/skills when client is kiro", async () => {
+    await installSkill("integration", { client: "kiro" });
+
+    const expectedDest = path.resolve(process.cwd(), ".kiro/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to .amazonq/skills when client is amazonq", async () => {
+    await installSkill("integration", { client: "amazonq" });
+
+    const expectedDest = path.resolve(process.cwd(), ".amazonq/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
   it("should install to custom path when client starts with dot", async () => {
     await installSkill("integration", { client: ".custom" });
 

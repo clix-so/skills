@@ -9,6 +9,16 @@ interface InstallOptions {
   path?: string;
 }
 
+/**
+ * Extracts error message from unknown error type
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
 export async function installSkill(skillName: string, options: InstallOptions) {
   const spinner = ora(`Installing skill: ${chalk.bold(skillName)}`).start();
 
@@ -84,6 +94,12 @@ export async function installSkill(skillName: string, options: InstallOptions) {
       case "amp":
         relativeDest = ".amp/skills";
         break;
+      case "kiro":
+        relativeDest = ".kiro/skills";
+        break;
+      case "amazonq":
+        relativeDest = ".amazonq/skills";
+        break;
       default:
         relativeDest = options.client.startsWith(".") ? `${options.client}/skills` : `.clix/skills`;
     }
@@ -96,16 +112,16 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     await fs.ensureDir(destPath);
     await fs.copy(skillSourcePath, destPath);
     spinner.succeed(`Skill files installed to ${chalk.green(relativeDest + "/" + skillName)}`);
-  } catch (err: any) {
-    spinner.fail(`Failed to copy skill files: ${err.message}`);
-    throw err;
+  } catch (error: unknown) {
+    spinner.fail(`Failed to copy skill files: ${getErrorMessage(error)}`);
+    throw error;
   }
 
   // 4. MCP Configuration
   try {
     await configureMCP(options.client);
-  } catch (err: any) {
-    console.warn(chalk.yellow(`MCP Configuration warning: ${err.message}`));
+  } catch (error: unknown) {
+    console.warn(chalk.yellow(`MCP Configuration warning: ${getErrorMessage(error)}`));
   }
 
   console.log(`\n${chalk.green("✔")} Skill ${chalk.bold(skillName)} is ready to use!`);

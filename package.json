@@ -16,7 +16,11 @@
     "dev": "ts-node src/bin/cli.ts",
     "test": "jest",
     "lint": "prettier --check .",
-    "lint:fix": "prettier --write ."
+    "lint:fix": "prettier --write .",
+    "sync-version": "ts-node scripts/sync-version.ts",
+    "preversion": "npm run sync-version",
+    "postversion": "npm run sync-version",
+    "prepublishOnly": "npm run sync-version && npm run build && npm test"
   },
   "keywords": [
     "clix",
@@ -32,6 +36,7 @@
     "url": "https://github.com/clix-so/skills"
   },
   "dependencies": {
+    "@iarna/toml": "^2.2.5",
     "chalk": "^4.1.2",
     "commander": "^14.0.2",
     "fs-extra": "^11.3.3",
@@ -40,6 +45,7 @@
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
+    "@types/iarna__toml": "^2.0.5",
     "@types/inquirer": "^9.0.9",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.3",
