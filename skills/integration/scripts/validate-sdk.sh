@@ -52,7 +52,7 @@ EOF
 }
 
 detect_platform() {
-  if [[ -f "Podfile" ]] || [[ -f "Package.swift" ]] || [[ -d "*.xcodeproj" ]] || find . -maxdepth 2 -name "*.xcodeproj" -o -name "*.xcworkspace" 2>/dev/null | grep -q .; then
+  if [[ -f "Podfile" ]] || [[ -f "Package.swift" ]] || find . -maxdepth 2 -name "*.xcodeproj" -o -name "*.xcworkspace" 2>/dev/null | grep -q .; then
     echo "ios"
   elif [[ -f "build.gradle.kts" ]] || [[ -f "build.gradle" ]] || [[ -f "settings.gradle.kts" ]] || [[ -f "settings.gradle" ]]; then
     echo "android"
