@@ -249,7 +249,7 @@ class MyApplication : Application() {
 
 **Initialization Pattern:**
 ```typescript
-import { Clix } from '@clix/react-native-sdk';
+import { Clix } from '@clix-so/react-native-sdk';
 import Config from 'react-native-config';
 
 // In App.tsx or index.js
