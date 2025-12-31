@@ -53,11 +53,6 @@ export async function configureMCP(client?: string) {
     console.log(chalk.blue(`Checking MCP config at ${nicePath}...`));
 
     if (!fs.existsSync(configPath)) {
-        // Attempt to create if it's a known directory structure
-        const dir = path.dirname(configPath);
-        if (!fs.existsSync(dir) && targetClient !== 'cursor') { // Cursor usually creates its own dir, but we can verify
-            // Safe to create dir?
-        }
         // For now, confirm before creating new file
         const { create } = await inquirer.prompt([{
             type: 'confirm',
@@ -65,10 +60,20 @@ export async function configureMCP(client?: string) {
             message: `Config file not found at ${nicePath}. Create it?`,
             default: true
         }]);
-        if (!create) return;
 
-        await fs.ensureDir(path.dirname(configPath));
-        await fs.writeJSON(configPath, { mcpServers: {} }, { spaces: 2 });
+        if (!create) {
+            console.log(chalk.yellow('Skipping MCP configuration. You can configure manually later.'));
+            return;
+        }
+
+        try {
+            await fs.ensureDir(path.dirname(configPath));
+            await fs.writeJSON(configPath, { mcpServers: {} }, { spaces: 2 });
+            console.log(chalk.green(`✔ Created config file at ${nicePath}`));
+        } catch (error: any) {
+            console.log(chalk.red(`Failed to create config file: ${error.message}`));
+            return;
+        }
     }
 
     // Read config
