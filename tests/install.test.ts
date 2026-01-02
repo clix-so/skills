@@ -235,8 +235,6 @@ describe("installSkill", () => {
     (mockedFs.copy as jest.Mock).mockRejectedValueOnce(nonError);
 
     await expect(installSkill("integration", {})).rejects.toBe(nonError);
-    expect(mockSpinner.fail).toHaveBeenCalledWith(
-      expect.stringContaining("string error")
-    );
+    expect(mockSpinner.fail).toHaveBeenCalledWith(expect.stringContaining("string error"));
   });
 });
