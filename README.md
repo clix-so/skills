@@ -85,7 +85,9 @@ configuration directory:
 
 Or install a specific skill using the command line:
 
-```
+```bash
+$skill-installer install <link-to-skill-folder>
+# For example
 $skill-installer install https://github.com/clix-so/skills/tree/main/skills/integration
 ```
 
