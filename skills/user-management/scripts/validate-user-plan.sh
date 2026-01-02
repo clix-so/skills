@@ -68,12 +68,12 @@ else:
       errors.append(f"properties['{key}'].required must be boolean if present")
 
 if errors:
-  print("user-plan validation failed:")
+  print("❌ user-plan validation failed:")
   for e in errors:
     print(f"- {e}")
   sys.exit(1)
 
-print("user-plan validation passed")
+print("✅ user-plan validation passed")
 PY
 }
 
@@ -84,10 +84,9 @@ fi
 
 echo "Warning: python3 not found; only checking JSON validity with node if available." >&2
 if command -v node >/dev/null 2>&1; then
-  node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); console.log('JSON is valid');" "$plan_path"
+  node -e "JSON.parse(require('fs').readFileSync(process.argv[1], 'utf8')); console.log('✅ JSON is valid');" "$plan_path"
   exit 0
 fi
 
 echo "Error: neither python3 nor node found; cannot validate." >&2
 exit 2
-
