@@ -23,6 +23,8 @@ npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client
 # npx @clix-so/clix-agent-skills@latest install integration --client cursor
 # For example, to install event tracking skill on Cursor:
 # npx @clix-so/clix-agent-skills@latest install event-tracking --client cursor
+# For example, to install user management skill on Cursor:
+# npx @clix-so/clix-agent-skills@latest install user-management --client cursor
 ```
 
 ### Available Skills
@@ -30,6 +32,8 @@ npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client
 - **clix-integration**: Integrate Clix Mobile SDK and MCP server setup
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
   practices and campaign-ready validation
+- **clix-user-management**: Implement `Clix.setUserId` + user properties with
+  logout best practices, personalization (`user.*`), and audience targeting
 
 **Supported Clients:**
 
