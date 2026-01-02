@@ -29,6 +29,42 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/user-management"]
+    },
+    {
+      "name": "clix-mcp-server",
+      "source": {
+        "type": "github",
+        "url": "https://github.com/clix-so/clix-mcp-server"
+      },
+      "description": "A Model Context Protocol server enabling AI agents to deliver real-time, trustworthy Clix documentation and SDK code examples. Provides documentation search with semantic ranking, SDK source code search across iOS/Android/Flutter/React Native, and CLI installation guides.",
+      "author": {
+        "name": "Clix",
+        "email": "contact@clix.so"
+      },
+      "homepage": "https://docs.clix.so/mcp-server/clix-mcp-server",
+      "repository": "https://github.com/clix-so/clix-mcp-server",
+      "license": "MIT with Custom Restrictions",
+      "keywords": [
+        "mcp",
+        "clix",
+        "push-notifications",
+        "sdk",
+        "ios",
+        "android",
+        "flutter",
+        "react-native",
+        "mobile-sdk",
+        "documentation",
+        "code-search"
+      ],
+      "category": "productivity",
+      "strict": false,
+      "mcpServers": {
+        "clix-mcp-server": {
+          "command": "npx",
+          "args": ["-y", "@clix-so/clix-mcp-server@latest"]
+        }
+      }
     }
   ]
 }
