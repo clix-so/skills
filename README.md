@@ -18,11 +18,14 @@ For **Cursor**, **VS Code**, **Claude Desktop**, **OpenCode**, **Goose**,
 and configure the Clix MCP Server automatically:
 
 ```bash
+# Install a specific skill
 npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
-# For example, to install skills on Cursor:
+# For example, to install a skill on Cursor:
 npx @clix-so/clix-agent-skills@latest install integration --client cursor
-npx @clix-so/clix-agent-skills@latest install event-tracking --client cursor
-npx @clix-so/clix-agent-skills@latest install user-management --client cursor
+
+# Install all available skills at once
+npx @clix-so/clix-agent-skills@latest install --all --client cursor
+# This will install: integration, event-tracking, user-management
 ```
 
 ### Available Skills

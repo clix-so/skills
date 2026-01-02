@@ -1,4 +1,4 @@
-import { installSkill } from "../src/bin/commands/install";
+import { installSkill, installAllSkills } from "../src/bin/commands/install";
 import fs from "fs-extra";
 import path from "path";
 import ora from "ora";
@@ -236,5 +236,204 @@ describe("installSkill", () => {
 
     await expect(installSkill("integration", {})).rejects.toBe(nonError);
     expect(mockSpinner.fail).toHaveBeenCalledWith(expect.stringContaining("string error"));
+  });
+});
+
+describe("installAllSkills", () => {
+  const mockSpinner = {
+    start: jest.fn().mockReturnThis(),
+    fail: jest.fn().mockReturnThis(),
+    succeed: jest.fn().mockReturnThis(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedOra.mockReturnValue(mockSpinner as any);
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.ensureDir.mockImplementation(() => Promise.resolve());
+    mockedFs.copy.mockImplementation(() => Promise.resolve());
+    (mockedFs.readdir as unknown as jest.Mock).mockResolvedValue([
+      { name: "integration", isDirectory: () => true },
+      { name: "event-tracking", isDirectory: () => true },
+      { name: "user-management", isDirectory: () => true },
+    ]);
+  });
+
+  it("should install all available skills successfully", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "cursor" });
+
+    // Should discover skills
+    expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("Found"));
+
+    // Should install each skill
+    expect(mockedFs.copy).toHaveBeenCalledTimes(3);
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/integration"),
+      expect.stringContaining(".cursor/skills/integration")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/event-tracking"),
+      expect.stringContaining(".cursor/skills/event-tracking")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/user-management"),
+      expect.stringContaining(".cursor/skills/user-management")
+    );
+
+    // Should show success message
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Successfully installed all"));
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle partial failures gracefully", async () => {
+    const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+    const consoleLogSpy = jest.spyOn(console, "log").mockImplementation();
+
+    // Make second skill fail
+    let callCount = 0;
+    (mockedFs.copy as jest.Mock).mockImplementation(() => {
+      callCount++;
+      if (callCount === 2) {
+        return Promise.reject(new Error("Copy failed"));
+      }
+      return Promise.resolve();
+    });
+
+    await installAllSkills({ client: "cursor" });
+
+    // Should still install other skills
+    expect(mockedFs.copy).toHaveBeenCalledTimes(3);
+
+    // Should show error for failed skill
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining("Failed to install"));
+
+    // Should show partial success message
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining("Installed"));
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining("failed"));
+
+    consoleErrorSpy.mockRestore();
+    consoleLogSpy.mockRestore();
+  });
+
+  it("should handle no skills found", async () => {
+    (mockedFs.readdir as unknown as jest.Mock).mockResolvedValue([]);
+
+    await installAllSkills({ client: "cursor" });
+
+    expect(mockSpinner.fail).toHaveBeenCalledWith("No skills found to install.");
+    expect(mockedFs.copy).not.toHaveBeenCalled();
+  });
+
+  it("should handle skills directory not existing", async () => {
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      if (pathStr.includes("skills") && !pathStr.includes("package.json")) {
+        return false;
+      }
+      return true;
+    });
+
+    await installAllSkills({ client: "cursor" });
+
+    expect(mockSpinner.fail).toHaveBeenCalledWith("No skills found to install.");
+    expect(mockedFs.copy).not.toHaveBeenCalled();
+  });
+
+  it("should filter out directories without SKILL.md", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    (mockedFs.readdir as unknown as jest.Mock).mockResolvedValue([
+      { name: "integration", isDirectory: () => true },
+      { name: "invalid-skill", isDirectory: () => true }, // No SKILL.md
+      { name: "event-tracking", isDirectory: () => true },
+    ]);
+
+    // Mock existsSync to return false for invalid-skill/SKILL.md
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      if (pathStr.includes("invalid-skill") && pathStr.includes("SKILL.md")) {
+        return false;
+      }
+      return true;
+    });
+
+    await installAllSkills({ client: "cursor" });
+
+    // Should only install skills with SKILL.md
+    expect(mockedFs.copy).toHaveBeenCalledTimes(2);
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("integration"),
+      expect.any(String)
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("event-tracking"),
+      expect.any(String)
+    );
+    expect(mockedFs.copy).not.toHaveBeenCalledWith(
+      expect.stringContaining("invalid-skill"),
+      expect.any(String)
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should use custom path option for all skills", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ path: "./custom/skills" });
+
+    // All skills should be installed to custom path
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("integration"),
+      expect.stringContaining("custom/skills/integration")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("event-tracking"),
+      expect.stringContaining("custom/skills/event-tracking")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("user-management"),
+      expect.stringContaining("custom/skills/user-management")
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should use client option for all skills", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "claude" });
+
+    // All skills should be installed to .claude/skills
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("integration"),
+      expect.stringContaining(".claude/skills/integration")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("event-tracking"),
+      expect.stringContaining(".claude/skills/event-tracking")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("user-management"),
+      expect.stringContaining(".claude/skills/user-management")
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should configure MCP for each skill installation", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "cursor" });
+
+    // MCP should be configured (called once per skill, but configureMCP is idempotent)
+    // Actually, configureMCP is called once per installSkill call
+    expect(mockedConfigureMCP).toHaveBeenCalledTimes(3);
+    expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+
+    consoleSpy.mockRestore();
   });
 });

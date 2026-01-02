@@ -128,3 +128,75 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   console.log(`  - Docs: ${path.join(destPath, "SKILL.md")}`);
   console.log(`  - Instruct your agent to read these docs to start working.`);
 }
+
+/**
+ * Find all available skills in the skills directory
+ */
+async function findAllSkills(): Promise<string[]> {
+  // Find package root (same logic as installSkill)
+  let packageRoot = __dirname;
+  while (!fs.existsSync(path.join(packageRoot, "package.json"))) {
+    const parent = path.dirname(packageRoot);
+    if (parent === packageRoot) {
+      packageRoot = process.cwd();
+      break;
+    }
+    packageRoot = parent;
+  }
+
+  const skillsDir = path.join(packageRoot, "skills");
+  if (!fs.existsSync(skillsDir)) {
+    return [];
+  }
+
+  const entries = await fs.readdir(skillsDir, { withFileTypes: true });
+  return entries
+    .filter((entry) => entry.isDirectory())
+    .filter((entry) => fs.existsSync(path.join(skillsDir, entry.name, "SKILL.md")))
+    .map((entry) => entry.name);
+}
+
+/**
+ * Install all available skills
+ */
+export async function installAllSkills(options: InstallOptions) {
+  const spinner = ora("Discovering available skills...").start();
+
+  const skills = await findAllSkills();
+
+  if (skills.length === 0) {
+    spinner.fail("No skills found to install.");
+    return;
+  }
+
+  spinner.succeed(`Found ${chalk.bold(skills.length)} skill(s): ${skills.join(", ")}`);
+  console.log();
+
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const skillName of skills) {
+    try {
+      await installSkill(skillName, options);
+      successCount++;
+    } catch (error: unknown) {
+      console.error(
+        chalk.red(`\n✗ Failed to install ${chalk.bold(skillName)}: ${getErrorMessage(error)}`)
+      );
+      failCount++;
+    }
+  }
+
+  console.log();
+  if (failCount === 0) {
+    console.log(
+      chalk.green(`\n✔ Successfully installed all ${chalk.bold(successCount)} skill(s)!`)
+    );
+  } else {
+    console.log(
+      chalk.yellow(
+        `\n⚠ Installed ${chalk.bold(successCount)} skill(s), ${chalk.bold(failCount)} failed.`
+      )
+    );
+  }
+}

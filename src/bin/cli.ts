@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import chalk from "chalk";
-import { installSkill } from "./commands/install";
+import { installSkill, installAllSkills } from "./commands/install";
 import { version } from "../../package.json";
 
 /**
@@ -22,18 +22,26 @@ program
   .version(version);
 
 program
-  .command("install <skill>")
-  .description("Install a specific agent skill")
+  .command("install [skill]")
+  .description("Install agent skill(s)")
   .option(
     "-c, --client <client>",
     "Target AI client (cursor, claude, vscode, amp, kiro, amazonq, codex, opencode, manual)"
   )
   .option("-p, --path <path>", "Custom installation path (default: .clix/skills)")
+  .option("-a, --all", "Install all available skills")
   .action(async (skill, options) => {
     try {
-      await installSkill(skill, options);
+      if (options.all) {
+        await installAllSkills(options);
+      } else if (skill) {
+        await installSkill(skill, options);
+      } else {
+        console.error(chalk.red("Error: Please specify a skill name or use --all flag"));
+        process.exit(1);
+      }
     } catch (error: unknown) {
-      console.error(chalk.red("Error installing skill:"), getErrorMessage(error));
+      console.error(chalk.red("Error installing skill(s):"), getErrorMessage(error));
       process.exit(1);
     }
   });
