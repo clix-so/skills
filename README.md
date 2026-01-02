@@ -21,7 +21,15 @@ and configure the Clix MCP Server automatically:
 npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
 # For example, to install integration skill on Cursor:
 # npx @clix-so/clix-agent-skills@latest install integration --client cursor
+# For example, to install event tracking skill on Cursor:
+# npx @clix-so/clix-agent-skills@latest install event-tracking --client cursor
 ```
+
+### Available Skills
+
+- **clix-integration**: Integrate Clix Mobile SDK and MCP server setup
+- **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
+  practices and campaign-ready validation
 
 **Supported Clients:**
 
@@ -78,7 +86,11 @@ Ensure you restart Codex after installation to detect the new skills.
 
 ## Disclaimer
 
-Please be aware that these skills may occasionally fail or execute incorrectly due to the non-deterministic nature of AI. It is critical that you carefully review and verify all actions performed by these skills. While they are designed to be helpful, you remain responsible for checking their output before use. Please use them with caution and supervision.
+Please be aware that these skills may occasionally fail or execute incorrectly
+due to the non-deterministic nature of AI. It is critical that you carefully
+review and verify all actions performed by these skills. While they are designed
+to be helpful, you remain responsible for checking their output before use.
+Please use them with caution and supervision.
 
 ## License
 

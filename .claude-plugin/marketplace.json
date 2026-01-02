@@ -15,6 +15,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/integration"]
+    },
+    {
+      "name": "clix-event-tracking",
+      "description": "Implements Clix event tracking (Clix.trackEvent) with naming and schema best practices",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/event-tracking"]
     }
   ]
 }
