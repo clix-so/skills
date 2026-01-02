@@ -76,6 +76,13 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
+  it("should install to .github/skills when client is github", async () => {
+    await installSkill("integration", { client: "github" });
+
+    const expectedDest = path.resolve(process.cwd(), ".github/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
   it("should install to .goose/skills when client is goose", async () => {
     await installSkill("integration", { client: "goose" });
 
@@ -221,5 +228,15 @@ describe("installSkill", () => {
 
     // Should still work by falling back to process.cwd()
     expect(mockedFs.copy).toHaveBeenCalled();
+  });
+
+  it("should handle non-Error objects in error messages", async () => {
+    const nonError = "string error";
+    (mockedFs.copy as jest.Mock).mockRejectedValueOnce(nonError);
+
+    await expect(installSkill("integration", {})).rejects.toBe(nonError);
+    expect(mockSpinner.fail).toHaveBeenCalledWith(
+      expect.stringContaining("string error")
+    );
   });
 });

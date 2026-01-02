@@ -196,6 +196,34 @@ describe("configureMCP", () => {
     });
   });
 
+  it("should handle missing APPDATA on Windows for Claude Desktop", async () => {
+    const originalPlatform = process.platform;
+    const originalAppData = process.env.APPDATA;
+    Object.defineProperty(process, "platform", {
+      value: "win32",
+      writable: true,
+    });
+
+    delete process.env.APPDATA;
+
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+    await configureMCP("claude");
+
+    // Should still work with empty string fallback
+    expect(mockedFs.readJSON).toHaveBeenCalledWith(
+      expect.stringMatching(/Claude[\\\/]claude_desktop_config\.json/)
+    );
+
+    Object.defineProperty(process, "platform", {
+      value: originalPlatform,
+      writable: true,
+    });
+    if (originalAppData) {
+      process.env.APPDATA = originalAppData;
+    }
+  });
+
   it("should use Linux path for Claude Desktop on linux", async () => {
     const originalPlatform = process.platform;
     Object.defineProperty(process, "platform", {
@@ -646,6 +674,34 @@ args = ["-y", "@clix-so/clix-mcp-server@latest"]
         value: originalPlatform,
         writable: true,
       });
+    });
+
+    it("should handle missing USERPROFILE on Windows for Amp", async () => {
+      const originalPlatform = process.platform;
+      const originalUserProfile = process.env.USERPROFILE;
+      Object.defineProperty(process, "platform", {
+        value: "win32",
+        writable: true,
+      });
+
+      delete process.env.USERPROFILE;
+
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+      await configureMCP("amp");
+
+      // Should fallback to home directory
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(
+        expect.stringMatching(/\.config[\\\/]amp[\\\/]settings\.json/)
+      );
+
+      Object.defineProperty(process, "platform", {
+        value: originalPlatform,
+        writable: true,
+      });
+      if (originalUserProfile) {
+        process.env.USERPROFILE = originalUserProfile;
+      }
     });
 
     it("should handle unsupported platform for Claude Desktop", async () => {
