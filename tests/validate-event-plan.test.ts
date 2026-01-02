@@ -3,8 +3,11 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 
+const tempDirs: string[] = [];
+
 function runValidator(plan: unknown) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "clix-event-plan-"));
+  tempDirs.push(tmpDir);
   const planPath = path.join(tmpDir, "event-plan.json");
   fs.writeFileSync(planPath, JSON.stringify(plan, null, 2) + "\n", "utf8");
 
@@ -25,6 +28,18 @@ function runValidator(plan: unknown) {
 }
 
 describe("validate-event-plan.sh", () => {
+  afterEach(() => {
+    // Clean up temporary directories
+    for (const tmpDir of tempDirs) {
+      try {
+        fs.rmSync(tmpDir, { recursive: true, force: true });
+      } catch {
+        // Ignore cleanup errors
+      }
+    }
+    tempDirs.length = 0;
+  });
+
   it("passes a minimal valid event plan (based on docs example)", () => {
     // Based on Clix docs example event: signup_completed with properties like method, trial_days, completed_at
     // https://docs.clix.so/event-tracking/event-tracking
@@ -214,5 +229,38 @@ describe("validate-event-plan.sh", () => {
 
     expect(result.status).toBe(1);
     expect(result.stdout).toContain("required must be boolean if present");
+  });
+
+  it("fails if event name is missing", () => {
+    const { result } = runValidator({
+      events: [
+        {
+          when: "after signup",
+          purpose: ["analytics"],
+          properties: {},
+        },
+      ],
+    });
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain("events[0].name must be snake_case string");
+  });
+
+  it("fails if property type field is missing", () => {
+    const { result } = runValidator({
+      events: [
+        {
+          name: "signup_completed",
+          when: "after signup",
+          purpose: ["analytics"],
+          properties: {
+            method: { required: true }, // missing type field
+          },
+        },
+      ],
+    });
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain("events[0].properties['method'].type is required");
   });
 });

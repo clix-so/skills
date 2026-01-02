@@ -32,7 +32,10 @@ Default stance: **do not track PII** unless the user explicitly approves.
 
 ## Event Plan template
 
-Create `event-plan.json` in the target repo:
+Create `event-plan.json` in `.clix/` directory (recommended) or project root:
+
+**Recommended**: `.clix/event-plan.json` (organized, hidden, committable)
+**Alternative**: `event-plan.json` in project root (simpler)
 
 ```json
 {
@@ -57,3 +60,8 @@ Create `event-plan.json` in the target repo:
   ]
 }
 ```
+
+**Note**: The `conventions` and `pii` fields are optional metadata for
+documentation purposes. The validation script only validates the `events` array
+structure. These fields help document your team's naming conventions and PII
+policies but are not enforced by the validator.

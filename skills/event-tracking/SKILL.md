@@ -73,13 +73,32 @@ exactly** in the Clix console.
 
 ## 3) Validate the plan (fast feedback loop)
 
-Create `event-plan.json` (in the target project, not in this repo) and validate
-it:
+Create `event-plan.json` in `.clix/` directory (recommended) or project root:
+
+**Recommended location**: `.clix/event-plan.json`
+
+- Organized: keeps tooling configs together
+- Hidden: doesn't clutter project root
+- Committable: planning document for team review
+
+**Alternative**: `event-plan.json` in project root (simpler, but less organized)
+
+**For agents**: Locate `scripts/validate-event-plan.sh` in the installed skill
+directory, then run it:
 
 ```bash
-# Run from the installed skill directory (the folder containing this SKILL.md):
-bash scripts/validate-event-plan.sh /absolute/path/to/event-plan.json
+# From project root:
+bash <skill-dir>/scripts/validate-event-plan.sh .clix/event-plan.json
+# Or if in root:
+bash <skill-dir>/scripts/validate-event-plan.sh event-plan.json
 ```
+
+The skill directory is typically:
+
+- `.cursor/skills/event-tracking/` (Cursor)
+- `.claude/skills/event-tracking/` (Claude Desktop)
+- `.vscode/skills/event-tracking/` (VS Code/Amp)
+- Or check where this skill was installed
 
 If validation fails: fix the plan first, then implement.
 

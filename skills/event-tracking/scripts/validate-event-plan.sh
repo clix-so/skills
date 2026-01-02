@@ -80,7 +80,9 @@ else:
           errors.append(f"events[{i}].properties['{key}'] must be an object")
           continue
         t = spec.get("type")
-        if t not in ("string", "number", "boolean", "datetime"):
+        if t is None:
+          errors.append(f"events[{i}].properties['{key}'].type is required")
+        elif t not in ("string", "number", "boolean", "datetime"):
           errors.append(
             f"events[{i}].properties['{key}'].type must be one of: string, number, boolean, datetime"
           )
@@ -111,4 +113,3 @@ fi
 
 echo "Error: neither python3 nor node found; cannot validate." >&2
 exit 2
-
