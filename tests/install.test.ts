@@ -255,12 +255,8 @@ describe("installSkill", () => {
         expect.stringContaining("skills/integration"),
         expectedDest
       );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining("repo root")
-      );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining(process.cwd())
-      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("repo root"));
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining(process.cwd()));
     });
 
     it("should install to system root (global) when global flag is set", async () => {
@@ -272,12 +268,8 @@ describe("installSkill", () => {
         expect.stringContaining("skills/integration"),
         expectedDest
       );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining("system root")
-      );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining(mockHomeDir)
-      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("system root"));
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining(mockHomeDir));
     });
 
     it("should install to project root for default client when global is false", async () => {
@@ -288,9 +280,7 @@ describe("installSkill", () => {
         expect.stringContaining("skills/integration"),
         expectedDest
       );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining("repo root")
-      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("repo root"));
     });
 
     it("should install to system root for multiple clients when global is true", async () => {
@@ -305,9 +295,7 @@ describe("installSkill", () => {
           expect.stringContaining("skills/integration"),
           expectedDest
         );
-        expect(mockSpinner.succeed).toHaveBeenCalledWith(
-          expect.stringContaining("system root")
-        );
+        expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("system root"));
       }
     });
 
@@ -323,9 +311,7 @@ describe("installSkill", () => {
           expect.stringContaining("skills/integration"),
           expectedDest
         );
-        expect(mockSpinner.succeed).toHaveBeenCalledWith(
-          expect.stringContaining("repo root")
-        );
+        expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("repo root"));
       }
     });
 
@@ -337,9 +323,7 @@ describe("installSkill", () => {
         expect.stringContaining("skills/integration"),
         expectedDest
       );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining("repo root")
-      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("repo root"));
     });
 
     it("should use custom path with system root when global is true", async () => {
@@ -350,9 +334,7 @@ describe("installSkill", () => {
         expect.stringContaining("skills/integration"),
         expectedDest
       );
-      expect(mockSpinner.succeed).toHaveBeenCalledWith(
-        expect.stringContaining("system root")
-      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(expect.stringContaining("system root"));
     });
 
     it("should always configure MCP globally regardless of global flag", async () => {

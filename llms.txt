@@ -1,0 +1,77 @@
+<!-- Clix Agent Skills llms.txt -->
+
+# Clix Agent Skills
+
+This file contains a comprehensive index of all Clix Agent Skills files.
+Each entry includes the file path, type, and description for semantic search.
+
+---
+
+## clix-event-tracking
+
+Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe property schemas, and campaign-ready validation. Use when adding, reviewing, or debugging event tracking; when configuring event-triggered campaigns; or when the user mentions events, tracking, funnels, or properties.
+
+- [clix-event-tracking](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/SKILL.md): Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe property schemas, and campaign-ready validation. Use when adding, reviewing, or debugging event tracking; when configuring event-triggered campaigns; or when the user mentions events, tracking, funnels, or properties.
+
+### References
+
+- [Campaign Mapping (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/references/campaign-mapping.md): Reference documentation for event-tracking skill
+- [Debugging (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/references/debugging.md): Reference documentation for event-tracking skill
+- [Implementation Patterns (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/references/implementation-patterns.md): Reference documentation for event-tracking skill
+- [Naming And Schema (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/references/naming-and-schema.md): Reference documentation for event-tracking skill
+- [Trackevent Contract (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/references/trackevent-contract.md): Reference documentation for event-tracking skill
+
+### Scripts
+
+- [Validate Event Plan (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/scripts/validate-event-plan.sh): Utility script for event-tracking skill
+
+---
+
+## clix-integration
+
+Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects. Provides step-by-step guidance for installation, initialization, and verification. Use when the user asks to install, setup, or configure Clix analytics.
+
+- [clix-integration](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/SKILL.md): Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects. Provides step-by-step guidance for installation, initialization, and verification. Use when the user asks to install, setup, or configure Clix analytics.
+
+### References
+
+- [Error Handling (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/references/error-handling.md): Reference documentation for integration skill
+- [Framework Patterns (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/references/framework-patterns.md): Reference documentation for integration skill
+- [Mcp Integration (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/references/mcp-integration.md): Reference documentation for integration skill
+- [Sdk Reference (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/references/sdk-reference.md): Reference documentation for integration skill
+
+### Examples
+
+- [Android Integration (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/examples/android-integration.kt): Code example for integration skill
+- [Flutter Integration (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/examples/flutter-integration.dart): Code example for integration skill
+- [Ios Integration (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/examples/ios-integration.swift): Code example for integration skill
+- [React Native Integration (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/examples/react-native-integration.tsx): Code example for integration skill
+
+### Scripts
+
+- [Install Mcp (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/scripts/install-mcp.sh): Utility script for integration skill
+- [Validate Sdk (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/scripts/validate-sdk.sh): Utility script for integration skill
+
+---
+
+## clix-user-management
+
+Implements Clix user identification and user properties (setUserId, removeUserId, setUserProperty/setUserProperties, removeUserProperty/removeUserProperties) with safe schemas, logout best practices, and campaign-ready personalization/audience usage. Use when the user mentions login/logout, userId, user properties, personalization, or audience targeting.
+
+- [clix-user-management](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/SKILL.md): Implements Clix user identification and user properties (setUserId, removeUserId, setUserProperty/setUserProperties, removeUserProperty/removeUserProperties) with safe schemas, logout best practices, and campaign-ready personalization/audience usage. Use when the user mentions login/logout, userId, user properties, personalization, or audience targeting.
+
+### References
+
+- [Debugging (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/debugging.md): Reference documentation for user-management skill
+- [Implementation Patterns (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/implementation-patterns.md): Reference documentation for user-management skill
+- [Logout And Switching (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/logout-and-switching.md): Reference documentation for user-management skill
+- [Personalization And Audience (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/personalization-and-audience.md): Reference documentation for user-management skill
+- [Property Schema (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/property-schema.md): Reference documentation for user-management skill
+- [User Management Contract (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/references/user-management-contract.md): Reference documentation for user-management skill
+
+### Scripts
+
+- [Validate User Plan (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/scripts/validate-user-plan.sh): Utility script for user-management skill
+
+---
+
