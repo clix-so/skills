@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Collection of Agent Skills for Clix.",
-    "version": "0.1.4"
+    "version": "0.1.5"
   },
   "plugins": [
     {

@@ -11,8 +11,8 @@ is a self-contained package that can be loaded and executed by AI clients.
 Agent skills in this repository are built on the
 [open agent skills standard](https://agentskills.io/home). Please refer to the
 [official documentation](https://agentskills.io/home#adoption) for up-to-date
-information on supported AI clients. Depending on the AI client you are using, you
-can install skills in different ways.
+information on supported AI clients. Depending on the AI client you are using,
+you can install skills in different ways.
 
 ### Universal CLI (Recommended)
 
@@ -20,15 +20,40 @@ For **Cursor**, **VS Code**, **Claude Desktop**, **OpenCode**, **Goose**,
 **GitHub Copilot**, **Amp**, and **Letta**, use our CLI tool to install skills
 and configure the Clix MCP Server automatically:
 
+#### Installation Modes
+
+The CLI supports two installation modes for skills:
+
+1. **Repo Root (Project-specific)** - Installs skills to the current project
+   directory (default)
+   - Skills are available only for the current project
+   - Best for project-specific configurations
+
+2. **System Root (Global)** - Installs skills to your home directory
+   - Skills are available across all projects
+   - Best for personal development setup
+
+**Note:** MCP (Model Context Protocol) server configuration is always set up
+globally (system root), regardless of the skill installation mode. This ensures
+the MCP server is available across all your projects.
+
 ```bash
-# Install a specific skill
+# Install a specific skill (repo root - default)
 npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
 # For example, to install a skill on Cursor:
 npx @clix-so/clix-agent-skills@latest install integration --client cursor
 
-# Install all available skills at once
+# Install a specific skill globally (system root)
+npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client> --global
+# For example:
+npx @clix-so/clix-agent-skills@latest install integration --client cursor --global
+
+# Install all available skills at once (repo root)
 npx @clix-so/clix-agent-skills@latest install --all --client cursor
 # This will install: integration, event-tracking, user-management
+
+# Install all available skills globally (system root)
+npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 ```
 
 ### Available Skills

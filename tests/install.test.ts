@@ -1,16 +1,19 @@
 import { installSkill, installAllSkills } from "../src/bin/commands/install";
 import fs from "fs-extra";
 import path from "path";
+import os from "os";
 import ora from "ora";
 import { configureMCP } from "../src/bin/utils/mcp";
 
 // Mock dependencies
 jest.mock("fs-extra");
 jest.mock("ora");
+jest.mock("os");
 jest.mock("../src/bin/utils/mcp");
 
 const mockedFs = fs as jest.Mocked<typeof fs>;
 const mockedOra = ora as jest.MockedFunction<typeof ora>;
+const mockedOs = os as jest.Mocked<typeof os>;
 const mockedConfigureMCP = configureMCP as jest.MockedFunction<typeof configureMCP>;
 
 describe("installSkill", () => {
@@ -21,9 +24,13 @@ describe("installSkill", () => {
     s: jest.fn(),
   };
 
+  const mockHomeDir = "/mock/home";
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockedOra.mockReturnValue(mockSpinner as any);
+    // Mock os.homedir() to return a consistent test home directory
+    (mockedOs.homedir as jest.Mock).mockReturnValue(mockHomeDir);
     // Mock existence of skill
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.ensureDir.mockImplementation(() => Promise.resolve());
@@ -237,6 +244,128 @@ describe("installSkill", () => {
     await expect(installSkill("integration", {})).rejects.toBe(nonError);
     expect(mockSpinner.fail).toHaveBeenCalledWith(expect.stringContaining("string error"));
   });
+
+  describe("Installation modes: global vs project-level", () => {
+    it("should install to project root (default) when global flag is not set", async () => {
+      await installSkill("integration", { client: "cursor" });
+
+      // Should install to project directory (process.cwd())
+      const expectedDest = path.resolve(process.cwd(), ".cursor/skills/integration");
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expectedDest
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining("repo root")
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining(process.cwd())
+      );
+    });
+
+    it("should install to system root (global) when global flag is set", async () => {
+      await installSkill("integration", { client: "cursor", global: true });
+
+      // Should install to home directory
+      const expectedDest = path.resolve(mockHomeDir, ".cursor/skills/integration");
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expectedDest
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining("system root")
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining(mockHomeDir)
+      );
+    });
+
+    it("should install to project root for default client when global is false", async () => {
+      await installSkill("integration", { global: false });
+
+      const expectedDest = path.resolve(process.cwd(), ".clix/skills/integration");
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expectedDest
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining("repo root")
+      );
+    });
+
+    it("should install to system root for multiple clients when global is true", async () => {
+      const clients = ["cursor", "claude", "vscode", "amp", "kiro"];
+
+      for (const client of clients) {
+        jest.clearAllMocks();
+        await installSkill("integration", { client, global: true });
+
+        const expectedDest = path.resolve(mockHomeDir, `.${client}/skills/integration`);
+        expect(mockedFs.copy).toHaveBeenCalledWith(
+          expect.stringContaining("skills/integration"),
+          expectedDest
+        );
+        expect(mockSpinner.succeed).toHaveBeenCalledWith(
+          expect.stringContaining("system root")
+        );
+      }
+    });
+
+    it("should install to project root for multiple clients when global is false", async () => {
+      const clients = ["cursor", "claude", "vscode", "amp", "kiro"];
+
+      for (const client of clients) {
+        jest.clearAllMocks();
+        await installSkill("integration", { client, global: false });
+
+        const expectedDest = path.resolve(process.cwd(), `.${client}/skills/integration`);
+        expect(mockedFs.copy).toHaveBeenCalledWith(
+          expect.stringContaining("skills/integration"),
+          expectedDest
+        );
+        expect(mockSpinner.succeed).toHaveBeenCalledWith(
+          expect.stringContaining("repo root")
+        );
+      }
+    });
+
+    it("should use custom path with project root when global is false", async () => {
+      await installSkill("integration", { path: "./custom/skills", global: false });
+
+      const expectedDest = path.resolve(process.cwd(), "./custom/skills/integration");
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expectedDest
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining("repo root")
+      );
+    });
+
+    it("should use custom path with system root when global is true", async () => {
+      await installSkill("integration", { path: "./custom/skills", global: true });
+
+      const expectedDest = path.resolve(mockHomeDir, "./custom/skills/integration");
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expectedDest
+      );
+      expect(mockSpinner.succeed).toHaveBeenCalledWith(
+        expect.stringContaining("system root")
+      );
+    });
+
+    it("should always configure MCP globally regardless of global flag", async () => {
+      // MCP should always be configured globally
+      await installSkill("integration", { client: "cursor", global: false });
+      expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+
+      jest.clearAllMocks();
+
+      await installSkill("integration", { client: "cursor", global: true });
+      expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+    });
+  });
 });
 
 describe("installAllSkills", () => {
@@ -246,9 +375,12 @@ describe("installAllSkills", () => {
     succeed: jest.fn().mockReturnThis(),
   };
 
+  const mockHomeDir = "/mock/home";
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockedOra.mockReturnValue(mockSpinner as any);
+    (mockedOs.homedir as jest.Mock).mockReturnValue(mockHomeDir);
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.ensureDir.mockImplementation(() => Promise.resolve());
     mockedFs.copy.mockImplementation(() => Promise.resolve());
@@ -435,5 +567,101 @@ describe("installAllSkills", () => {
     expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
 
     consoleSpy.mockRestore();
+  });
+
+  describe("Installation modes: global vs project-level for installAllSkills", () => {
+    it("should install all skills to project root when global is not set", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+      await installAllSkills({ client: "cursor" });
+
+      // All skills should be installed to project directory
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expect.stringContaining(process.cwd())
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/event-tracking"),
+        expect.stringContaining(process.cwd())
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/user-management"),
+        expect.stringContaining(process.cwd())
+      );
+
+      // Should not use home directory
+      expect(mockedFs.copy).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining(mockHomeDir)
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should install all skills to system root when global is true", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+      await installAllSkills({ client: "cursor", global: true });
+
+      // All skills should be installed to home directory
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        expect.stringContaining(mockHomeDir)
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/event-tracking"),
+        expect.stringContaining(mockHomeDir)
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/user-management"),
+        expect.stringContaining(mockHomeDir)
+      );
+
+      // Should not use project directory
+      expect(mockedFs.copy).not.toHaveBeenCalledWith(
+        expect.any(String),
+        expect.stringContaining(process.cwd())
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should install all skills to project root when global is false", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+      await installAllSkills({ client: "claude", global: false });
+
+      // All skills should be installed to project directory
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/integration"),
+        path.resolve(process.cwd(), ".claude/skills/integration")
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/event-tracking"),
+        path.resolve(process.cwd(), ".claude/skills/event-tracking")
+      );
+      expect(mockedFs.copy).toHaveBeenCalledWith(
+        expect.stringContaining("skills/user-management"),
+        path.resolve(process.cwd(), ".claude/skills/user-management")
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should always configure MCP globally for installAllSkills regardless of global flag", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+      // Test with global: false
+      await installAllSkills({ client: "cursor", global: false });
+      expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+
+      jest.clearAllMocks();
+
+      // Test with global: true
+      await installAllSkills({ client: "cursor", global: true });
+      expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+
+      consoleSpy.mockRestore();
+    });
   });
 });

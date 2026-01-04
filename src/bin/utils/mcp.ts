@@ -103,18 +103,14 @@ function createEmptyConfig(configKey: "mcpServers" | "amp.mcpServers"): MCPConfi
 
 /**
  * Gets config path, key, and format for a specific client
+ * MCP configuration is always global (system root)
  */
 function getClientConfig(client: string): ClientConfig | null {
   const home = os.homedir();
 
   switch (client.toLowerCase()) {
     case "cursor": {
-      // Check for project-level definition first
-      const projectCursorPath = path.join(process.cwd(), ".cursor", "mcp.json");
-      if (fs.existsSync(projectCursorPath)) {
-        return { path: projectCursorPath, configKey: "mcpServers", format: "json" };
-      }
-      // Fallback to global
+      // MCP is always configured globally
       return {
         path: path.join(home, ".cursor", "mcp.json"),
         configKey: "mcpServers",
@@ -163,8 +159,9 @@ function getClientConfig(client: string): ClientConfig | null {
     }
 
     case "kiro":
+      // MCP is always configured globally
       return {
-        path: path.join(process.cwd(), ".kiro", "settings", "mcp.json"),
+        path: path.join(home, ".kiro", "settings", "mcp.json"),
         configKey: "mcpServers",
         format: "json",
       };
@@ -279,8 +276,9 @@ interface OpenCodeConfig {
 }
 
 async function configureOpenCode(): Promise<void> {
-  const configPath = path.join(process.cwd(), "opencode.json");
-  const nicePath = "opencode.json";
+  // MCP is always configured globally
+  const configPath = path.join(os.homedir(), "opencode.json");
+  const nicePath = path.join("~", "opencode.json");
   console.log(chalk.blue(`Checking MCP config at ${nicePath}...`));
 
   let config: OpenCodeConfig = {};
@@ -395,7 +393,7 @@ export async function configureMCP(client?: string): Promise<void> {
     return;
   }
 
-  // Get client config
+  // Get client config (MCP is always global)
   const clientConfig = getClientConfig(targetClient!);
 
   if (!clientConfig) {

@@ -67,38 +67,23 @@ describe("configureMCP", () => {
     expect(mockedFs.writeJSON).toHaveBeenCalledTimes(2);
   });
 
-  it("should prioritize project-level config for Cursor", async () => {
-    const projectPath = path.join(process.cwd(), ".cursor/mcp.json");
-    mockedFs.existsSync.mockImplementation((p) => {
-      if (p === projectPath) return true;
-      return false;
-    });
-
-    // Mock prompt response to avoid crash
-    mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
-
-    await configureMCP("cursor");
-
-    // Should attempt to read from project path
-    expect(mockedFs.readJSON).toHaveBeenCalledWith(projectPath);
-  });
-
-  it("should fallback to global config for Cursor if project-level missing", async () => {
+  it("should always use global config for Cursor (MCP is always global)", async () => {
     const globalPath = path.join(mockHome, ".cursor/mcp.json");
     mockedFs.existsSync.mockImplementation((p) => {
-      if (p === path.join(process.cwd(), ".cursor/mcp.json")) return false; // Project missing
-      if (p === globalPath) return true; // Global exists
+      if (p === globalPath) return true;
       return false;
     });
-    // We also need to mock readJSON success for the global file to proceed to existence check
-    mockedFs.readJSON.mockResolvedValue({ mcpServers: {} });
 
     // Mock prompt response to avoid crash
     mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
 
     await configureMCP("cursor");
 
+    // Should always use global path, never project path
     expect(mockedFs.readJSON).toHaveBeenCalledWith(globalPath);
+    expect(mockedFs.readJSON).not.toHaveBeenCalledWith(
+      path.join(process.cwd(), ".cursor/mcp.json")
+    );
   });
 
   it("should not inject if already present", async () => {
@@ -300,18 +285,26 @@ describe("configureMCP", () => {
     );
   });
 
-  it("should configure Kiro with project-level config", async () => {
+  it("should configure Kiro with global config (MCP is always global)", async () => {
+    const globalPath = path.join(mockHome, ".kiro/settings/mcp.json");
     mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
 
     await configureMCP("kiro");
 
+    // Should use global path in home directory, not project path
     expect(mockedFs.writeJSON).toHaveBeenCalledWith(
-      expect.stringMatching(/\.kiro[\\\/]settings[\\\/]mcp\.json/),
+      globalPath,
       expect.objectContaining({
         mcpServers: expect.objectContaining({
           "clix-mcp-server": expect.anything(),
         }),
       }),
+      expect.anything()
+    );
+    // Should not use project path
+    expect(mockedFs.writeJSON).not.toHaveBeenCalledWith(
+      expect.stringContaining(process.cwd()),
+      expect.anything(),
       expect.anything()
     );
   });

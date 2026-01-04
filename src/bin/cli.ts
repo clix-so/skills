@@ -30,6 +30,7 @@ program
   )
   .option("-p, --path <path>", "Custom installation path (default: .clix/skills)")
   .option("-a, --all", "Install all available skills")
+  .option("-g, --global", "Install globally to system root (default: installs to repo root)")
   .action(async (skill, options) => {
     try {
       if (options.all) {
