@@ -15,11 +15,15 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      pull-requests: write
     env:
       NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -59,3 +63,10 @@ jobs:
 
       - name: Release to npm
         run: npm publish --provenance --access public
+
+  generate-llms:
+    needs: release
+    uses: ./.github/workflows/generate-llms.yml
+    with:
+      release_version: ${{ github.event.inputs.version }}
+    secrets: inherit

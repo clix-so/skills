@@ -8,7 +8,8 @@
   },
   "files": [
     "dist",
-    "skills"
+    "skills",
+    "llms.txt"
   ],
   "scripts": {
     "build": "tsc",
@@ -18,9 +19,10 @@
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
     "sync-version": "ts-node scripts/sync-version.ts",
+    "generate-llms": "ts-node scripts/generate-llms.ts",
     "preversion": "npm run sync-version",
     "postversion": "npm run sync-version",
-    "prepublishOnly": "npm run sync-version && npm run build && npm test"
+    "prepublishOnly": "npm run sync-version && npm run build && npm test && npm run generate-llms"
   },
   "keywords": [
     "clix",

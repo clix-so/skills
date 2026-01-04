@@ -115,7 +115,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   try {
     await fs.ensureDir(destPath);
     await fs.copy(skillSourcePath, destPath);
-    const installLocation = options.global 
+    const installLocation = options.global
       ? `system root (${path.join(os.homedir(), relativeDest, skillName)})`
       : `repo root (${path.join(process.cwd(), relativeDest, skillName)})`;
     spinner.succeed(`Skill files installed to ${chalk.green(installLocation)}`);
