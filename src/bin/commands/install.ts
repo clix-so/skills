@@ -1,4 +1,5 @@
 import path from "path";
+import os from "os";
 import fs from "fs-extra";
 import chalk from "chalk";
 import ora from "ora";
@@ -7,6 +8,7 @@ import { configureMCP } from "../utils/mcp";
 interface InstallOptions {
   client?: string;
   path?: string;
+  global?: boolean;
 }
 
 /**
@@ -105,19 +107,24 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     }
   }
 
-  const destPath = path.resolve(process.cwd(), relativeDest, skillName);
+  // Determine installation root: repo root (cwd) or system root (home directory)
+  const installRoot = options.global ? os.homedir() : process.cwd();
+  const destPath = path.resolve(installRoot, relativeDest, skillName);
 
   // 3. Copy Files
   try {
     await fs.ensureDir(destPath);
     await fs.copy(skillSourcePath, destPath);
-    spinner.succeed(`Skill files installed to ${chalk.green(relativeDest + "/" + skillName)}`);
+    const installLocation = options.global 
+      ? `system root (${path.join(os.homedir(), relativeDest, skillName)})`
+      : `repo root (${path.join(process.cwd(), relativeDest, skillName)})`;
+    spinner.succeed(`Skill files installed to ${chalk.green(installLocation)}`);
   } catch (error: unknown) {
     spinner.fail(`Failed to copy skill files: ${getErrorMessage(error)}`);
     throw error;
   }
 
-  // 4. MCP Configuration
+  // 4. MCP Configuration (always global/system root)
   try {
     await configureMCP(options.client);
   } catch (error: unknown) {
