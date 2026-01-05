@@ -42,7 +42,8 @@ latest verified SDK source code.
      - The script will:
        - Verify the package is available
        - Configure the MCP server for the specified client
-       - (If you omit `--client` and multiple clients are installed, the script will stop and ask you to choose.)
+       - (If you omit `--client` and multiple clients are installed, the script
+         will stop and ask you to choose.)
        - Automatically configure the MCP server in the appropriate config file
        - Provide clear instructions for restart
      - Instruct user to restart their agent/IDE to load the new server.

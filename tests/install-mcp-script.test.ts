@@ -145,9 +145,10 @@ exit 0
     const opencodePath = path.join(tmp, "opencode.jsonc");
     fs.writeFileSync(
       opencodePath,
-      `{
+      String.raw`{
   // comment line that must be stripped
   "$schema": "https://opencode.ai/config.json",
+  "note": "keep // inside string, and escaped quote: \"ok\"",
   "mcp": {
     /* block comment */
   }
@@ -204,9 +205,10 @@ exit 0
     const settingsPath = path.join(tmp, ".vscode", "settings.json");
     fs.writeFileSync(
       settingsPath,
-      `{
+      String.raw`{
   // comment
   "someUrl": "https://example.com/schema",
+  "note": "escaped quote: \"ok\" and // inside string",
   "amp.mcpServers": {
     /* block comment */
   }
