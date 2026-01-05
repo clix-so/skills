@@ -18,6 +18,64 @@ log() {
   printf "%b\n" "$1"
 }
 
+log_err() {
+  printf "%b\n" "$1" >&2
+}
+
+usage() {
+  cat <<'EOF'
+Clix MCP Server Installer
+
+Usage:
+  bash scripts/install-mcp.sh [--client <client>]
+
+Options:
+  --client <client>      Explicitly select the MCP client to configure.
+                         Supported: claude_code, opencode, amp, codex, cursor, claude, vscode
+  --help                 Show this help.
+
+Environment:
+  CLIX_MCP_CLIENT         Same as --client (takes precedence).
+
+Notes:
+  If multiple MCP clients are detected on this machine, you MUST pass --client
+  (or set CLIX_MCP_CLIENT). A shell script cannot reliably know "which client is
+  currently running" on a machine with multiple clients installed.
+EOF
+}
+
+# Parse args/env
+CLIENT_OVERRIDE="${CLIX_MCP_CLIENT:-}"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    --client)
+      shift
+      CLIENT_OVERRIDE="${1:-}"
+      ;;
+    --client=*)
+      CLIENT_OVERRIDE="${1#*=}"
+      ;;
+    *)
+      log_err "${YELLOW}⚠️  Unknown argument: $1${RESET}"
+      usage
+      exit 2
+      ;;
+  esac
+  shift || true
+done
+
+validate_client() {
+  case "${1:-}" in
+    claude_code|opencode|amp|codex|cursor|claude|vscode) return 0 ;;
+    "") return 1 ;;
+    *) return 1 ;;
+  esac
+}
+
 # Detect platform
 detect_platform() {
   case "$(uname -s)" in
@@ -35,6 +93,10 @@ get_config_path() {
   local platform=$(detect_platform)
 
   case "$client" in
+    claude_code)
+      # Claude Code CLI manages MCP via `claude mcp ...` commands (no direct config file here)
+      echo ""
+      ;;
     codex)
       echo "${home}/.codex/config.toml"
       ;;
@@ -52,7 +114,8 @@ get_config_path() {
       elif [ "$platform" = "win32" ]; then
         echo "${APPDATA:-}/Claude/claude_desktop_config.json"
       else
-        echo "${home}/.config/claude/claude_desktop_config.json"
+        # Linux
+        echo "${home}/.config/Claude/claude_desktop_config.json"
       fi
       ;;
     vscode)
@@ -86,6 +149,25 @@ get_config_path() {
       echo ""
       ;;
   esac
+}
+
+# Configure MCP for Claude Code CLI
+configure_claude_code() {
+  if ! command -v claude &> /dev/null; then
+    log "${RED}❌ Claude CLI not found on PATH.${RESET}"
+    exit 1
+  fi
+
+  # Best-effort: avoid failing if already configured.
+  # If list isn't supported, we'll just attempt add.
+  if claude mcp list 2>/dev/null | grep -q "clix-mcp-server"; then
+    log "${GREEN}✔ Clix MCP Server already configured in Claude Code${RESET}"
+    return 0
+  fi
+
+  # Configure via CLI (non-interactive)
+  claude mcp add --transport stdio clix-mcp-server -- npx -y @clix-so/clix-mcp-server@latest
+  log "${GREEN}✔ Configured Clix MCP Server in Claude Code${RESET}"
 }
 
 # Configure MCP for Codex (TOML format)
@@ -158,7 +240,7 @@ configure_amp() {
     return 0
   fi
 
-  # Use node to safely update JSON
+  # Use node to safely update JSON/JSONC (VS Code settings often allow comments)
   if command -v node &> /dev/null; then
     node <<EOF
 const fs = require('fs');
@@ -166,7 +248,61 @@ const path = '$config_path';
 let config = {};
 try {
   const content = fs.readFileSync(path, 'utf8');
-  config = JSON.parse(content);
+  const stripJsonc = (input) => {
+    // Strips // and /* */ comments, but preserves anything inside strings.
+    let out = '';
+    let inStr = false;
+    let esc = false;
+    let inLine = false;
+    let inBlock = false;
+    for (let i = 0; i < input.length; i++) {
+      const c = input[i];
+      const n = input[i + 1];
+      if (inLine) {
+        if (c === '\n') {
+          inLine = false;
+          out += c;
+        }
+        continue;
+      }
+      if (inBlock) {
+        if (c === '*' && n === '/') {
+          inBlock = false;
+          i++;
+        }
+        continue;
+      }
+      if (inStr) {
+        out += c;
+        if (esc) {
+          esc = false;
+        } else if (c === '\\\\') {
+          esc = true;
+        } else if (c === '"') {
+          inStr = false;
+        }
+        continue;
+      }
+      if (c === '"') {
+        inStr = true;
+        out += c;
+        continue;
+      }
+      if (c === '/' && n === '/') {
+        inLine = true;
+        i++;
+        continue;
+      }
+      if (c === '/' && n === '*') {
+        inBlock = true;
+        i++;
+        continue;
+      }
+      out += c;
+    }
+    return out;
+  };
+  config = JSON.parse(stripJsonc(content));
 } catch (e) {
   config = {};
 }
@@ -218,17 +354,72 @@ EOF
 const fs = require('fs');
 const path = '$config_path';
 let content = fs.readFileSync(path, 'utf8');
-// Remove comments for JSONC parsing (simple approach)
-let jsonContent = content.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '');
-let config = JSON.parse(jsonContent);
+const stripJsonc = (input) => {
+  // Strips // and /* */ comments, but preserves anything inside strings.
+  let out = '';
+  let inStr = false;
+  let esc = false;
+  let inLine = false;
+  let inBlock = false;
+  for (let i = 0; i < input.length; i++) {
+    const c = input[i];
+    const n = input[i + 1];
+    if (inLine) {
+      if (c === '\n') {
+        inLine = false;
+        out += c;
+      }
+      continue;
+    }
+    if (inBlock) {
+      if (c === '*' && n === '/') {
+        inBlock = false;
+        i++;
+      }
+      continue;
+    }
+    if (inStr) {
+      out += c;
+      if (esc) {
+        esc = false;
+      } else if (c === '\\\\') {
+        esc = true;
+      } else if (c === '"') {
+        inStr = false;
+      }
+      continue;
+    }
+    if (c === '"') {
+      inStr = true;
+      out += c;
+      continue;
+    }
+    if (c === '/' && n === '/') {
+      inLine = true;
+      i++;
+      continue;
+    }
+    if (c === '/' && n === '*') {
+      inBlock = true;
+      i++;
+      continue;
+    }
+    out += c;
+  }
+  return out;
+};
+let config = {};
+try {
+  config = JSON.parse(stripJsonc(content));
+} catch (e) {
+  config = {};
+}
 if (!config.mcp) config.mcp = {};
 config.mcp['clix-mcp-server'] = {
   type: 'local',
   command: ['npx', '-y', '@clix-so/clix-mcp-server@latest'],
   enabled: true
 };
-// Write back as JSONC if original was .jsonc, otherwise JSON
-const isJsonc = path.endsWith('.jsonc');
 fs.writeFileSync(path, JSON.stringify(config, null, 2) + '\n');
 EOF
     log "${GREEN}✔ Configured Clix MCP Server in OpenCode${RESET}"
@@ -291,48 +482,96 @@ EOF
   fi
 }
 
-# Auto-detect client
-detect_client() {
-  # Check for OpenCode (check for opencode.json/jsonc or opencode command)
-  if [ -f "opencode.json" ] || [ -f "opencode.jsonc" ] || command -v opencode &> /dev/null; then
-    echo "opencode"
-    return
+# Detect all matching clients (heuristics). Output one per line.
+detect_clients() {
+  # Claude Code CLI (supports `claude mcp ...`)
+  if command -v claude &> /dev/null && claude mcp --help &> /dev/null; then
+    echo "claude_code"
   fi
 
-  # Check for Amp (check for amp.mcpServers in settings.json or amp command)
+  # OpenCode (project config files or opencode command)
+  if [ -f "opencode.json" ] || [ -f "opencode.jsonc" ] || command -v opencode &> /dev/null; then
+    echo "opencode"
+  fi
+
+  # Amp (amp command or amp.mcpServers present)
   if command -v amp &> /dev/null || \
      grep -q "amp.mcpServers" ".vscode/settings.json" 2>/dev/null || \
      grep -q "amp.mcpServers" "${HOME}/.vscode/settings.json" 2>/dev/null; then
     echo "amp"
-    return
   fi
 
-  # Check for Codex
+  # Codex
   if [ -f "${HOME}/.codex/config.toml" ] || command -v codex &> /dev/null; then
     echo "codex"
-    return
   fi
 
-  # Check for Cursor
+  # Cursor
   if [ -f "${HOME}/.cursor/mcp.json" ] || [ -f ".cursor/mcp.json" ]; then
     echo "cursor"
-    return
   fi
 
-  # Check for Claude Desktop
+  # Claude Desktop
   if [ -f "${HOME}/Library/Application Support/Claude/claude_desktop_config.json" ] 2>/dev/null || \
-     [ -f "${APPDATA:-}/Claude/claude_desktop_config.json" ] 2>/dev/null; then
+     [ -f "${APPDATA:-}/Claude/claude_desktop_config.json" ] 2>/dev/null || \
+     [ -f "${HOME}/.config/Claude/claude_desktop_config.json" ] 2>/dev/null; then
     echo "claude"
-    return
   fi
 
-  # Check for VS Code
+  # VS Code
   if [ -f "${HOME}/.vscode/mcp.json" ]; then
     echo "vscode"
+  fi
+}
+
+choose_client() {
+  if [ -n "${CLIENT_OVERRIDE:-}" ]; then
+    if ! validate_client "$CLIENT_OVERRIDE"; then
+      log_err "${RED}❌ Invalid --client / CLIX_MCP_CLIENT: ${CLIENT_OVERRIDE}${RESET}"
+      usage
+      exit 2
+    fi
+    echo "$CLIENT_OVERRIDE"
     return
   fi
 
-  echo "unknown"
+  local detected
+  detected="$(detect_clients | awk 'NF' | sort -u)"
+  local count
+  count="$(printf "%s\n" "$detected" | awk 'NF' | wc -l | tr -d ' ')"
+
+  if [ "${count:-0}" -eq 0 ]; then
+    echo "unknown"
+    return
+  fi
+
+  if [ "${count:-0}" -eq 1 ]; then
+    printf "%s\n" "$detected"
+    return
+  fi
+
+  # Multiple detected: we can't know which one is "currently running".
+  log_err "${YELLOW}⚠️  Multiple MCP clients detected on this machine:${RESET}"
+  printf "%s\n" "$detected" | sed 's/^/  - /' >&2
+
+  if [ -t 0 ]; then
+    log_err "${BLUE}Select which client to configure:${RESET}"
+    local options=()
+    while IFS= read -r line; do options+=("$line"); done <<<"$detected"
+    options+=("cancel")
+    select opt in "${options[@]}"; do
+      if [ "$opt" = "cancel" ] || [ -z "${opt:-}" ]; then
+        log_err "${YELLOW}Cancelled.${RESET}"
+        exit 2
+      fi
+      echo "$opt"
+      return
+    done
+  fi
+
+  log_err "${RED}❌ Ambiguous MCP client selection in non-interactive mode.${RESET}"
+  log_err "${YELLOW}Please re-run with: bash scripts/install-mcp.sh --client <client>${RESET}"
+  exit 2
 }
 
 log "${BLUE}📦 Installing Clix MCP Server...${RESET}"
@@ -355,13 +594,18 @@ fi
 
 # Auto-detect and configure
 log "${BLUE}🔍 Detecting MCP client...${RESET}"
-detected_client=$(detect_client)
+detected_client=$(choose_client)
 
 if [ "$detected_client" != "unknown" ]; then
   log "${GREEN}Detected: $detected_client${RESET}"
   config_path=$(get_config_path "$detected_client")
 
-  if [ -n "$config_path" ]; then
+  if [ "$detected_client" = "claude_code" ]; then
+    log "${BLUE}Configuring MCP server for Claude Code...${RESET}"
+    configure_claude_code
+    log "${GREEN}✅ Successfully configured Clix MCP Server!${RESET}"
+    log "${YELLOW}⚠️  IMPORTANT: Please RESTART Claude Code for the changes to take effect.${RESET}"
+  elif [ -n "$config_path" ]; then
     log "${BLUE}Configuring MCP server for $detected_client...${RESET}"
 
     if [ "$detected_client" = "codex" ]; then
