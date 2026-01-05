@@ -38,11 +38,12 @@ latest verified SDK source code.
   1. **Ask the user**: "The Clix MCP Server is not detected. It provides the
      latest official SDK code. Would you like me to install it now?"
   2. **If User says YES**:
-     - Run: `bash scripts/install-mcp.sh`
+     - Run: `bash scripts/install-mcp.sh --client <your-client>`
      - The script will:
        - Verify the package is available
-       - Auto-detect the MCP client (OpenCode, Amp, Codex, Cursor, Claude
-         Desktop, VS Code, etc.)
+       - Configure the MCP server for the specified client
+       - (If you omit `--client` and multiple clients are installed, the script
+         will stop and ask you to choose.)
        - Automatically configure the MCP server in the appropriate config file
        - Provide clear instructions for restart
      - Instruct user to restart their agent/IDE to load the new server.
