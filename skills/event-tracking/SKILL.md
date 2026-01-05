@@ -4,7 +4,8 @@ description:
   Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe
   property schemas, and campaign-ready validation. Use when adding, reviewing,
   or debugging event tracking; when configuring event-triggered campaigns; or
-  when the user mentions events, tracking, funnels, or properties.
+  when the user mentions events, tracking, funnels, or properties — or when the
+  user types `clix-event-tracking`.
 ---
 
 # Tracking Clix Events
