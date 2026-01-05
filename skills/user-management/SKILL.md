@@ -5,8 +5,8 @@ description:
   removeUserId, setUserProperty/setUserProperties,
   removeUserProperty/removeUserProperties) with safe schemas, logout best
   practices, and campaign-ready personalization/audience usage. Use when the
-  user mentions login/logout, userId, user properties, personalization, or
-  audience targeting.
+  user mentions login/logout, userId, user properties, personalization, audience
+  targeting or when the user types `clix-user-management`.
 ---
 
 # Clix User Management

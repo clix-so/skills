@@ -1,6 +1,6 @@
 {
   "name": "@clix-so/clix-agent-skills",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "An open collection of agent skills for Clix.",
   "main": "dist/index.js",
   "bin": {
