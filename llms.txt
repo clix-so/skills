@@ -54,6 +54,24 @@ Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects
 
 ---
 
+## clix-personalization
+
+Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types `clix-personalization`.
+
+- [clix-personalization](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/SKILL.md): Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types `clix-personalization`.
+
+### References
+
+- [Common Patterns (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/references/common-patterns.md): Reference documentation for personalization skill
+- [Debugging (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/references/debugging.md): Reference documentation for personalization skill
+- [Template Syntax (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/references/template-syntax.md): Reference documentation for personalization skill
+
+### Scripts
+
+- [Validate Template (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/scripts/validate-template.sh): Utility script for personalization skill
+
+---
+
 ## clix-user-management
 
 Implements Clix user identification and user properties (setUserId, removeUserId, setUserProperty/setUserProperties, removeUserProperty/removeUserProperties) with safe schemas, logout best practices, and campaign-ready personalization/audience usage. Use when the user mentions login/logout, userId, user properties, personalization, audience targeting or when the user types `clix-user-management`.
