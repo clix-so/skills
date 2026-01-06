@@ -58,7 +58,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 
 ### Available Skills
 
-- **clix-integration**: Integrate Clix Mobile SDK and MCP server setup
+- **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile application with Clix MCP Server
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
   practices and campaign-ready validation
 - **clix-user-management**: Implement `Clix.setUserId` + user properties with
