@@ -98,7 +98,9 @@ async function configureClaudeCode(): Promise<void> {
   }
   if (helpRes.status !== 0) {
     console.log(
-      chalk.yellow("Claude CLI does not appear to support `claude mcp`. Skipping MCP configuration.")
+      chalk.yellow(
+        "Claude CLI does not appear to support `claude mcp`. Skipping MCP configuration."
+      )
     );
     return;
   }

@@ -219,7 +219,6 @@ describe("configureMCP", () => {
     consoleSpy.mockRestore();
   });
 
-
   it("should return null for unknown client", async () => {
     const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 

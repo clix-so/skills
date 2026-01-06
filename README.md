@@ -16,9 +16,9 @@ you can install skills in different ways.
 
 ### Universal CLI (Recommended)
 
-For **Cursor**, **VS Code**, **Claude Code**, **OpenCode**, **Goose**,
-**GitHub Copilot**, **Amp**, and **Letta**, use our CLI tool to install skills
-and configure the Clix MCP Server automatically:
+For **Cursor**, **VS Code**, **Claude Code**, **OpenCode**, **Goose**, **GitHub
+Copilot**, **Amp**, and **Letta**, use our tool to install skills and
+configure the Clix MCP Server automatically:
 
 #### Installation Modes
 
@@ -66,16 +66,16 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 
 **Supported Clients:**
 
-| Client         | Flag                | Default Path       |
-| :------------- | :------------------ | :----------------- |
-| Amp            | `--client amp`      | `.amp/skills/`     |
-| Claude Code | `--client claude` (or `claude-code`) | `.claude/skills/` |
-| Codex          | `--client codex`    | `.codex/skills/`   |
-| Cursor         | `--client cursor`   | `.cursor/skills/`  |
-| GitHub Copilot | `--client github`   | `.github/skills/`  |
-| Goose          | `--client goose`    | `.goose/skills/`   |
-| Letta          | `--client letta`    | `.skills/`         |
-| OpenCode       | `--client opencode` | `.opencode/skill/` |
+| Client         | Flag                                 | Default Path       |
+| :------------- | :----------------------------------- | :----------------- |
+| Amp            | `--client amp`                       | `.amp/skills/`     |
+| Claude Code    | `--client claude` (or `claude-code`) | `.claude/skills/`  |
+| Codex          | `--client codex`                     | `.codex/skills/`   |
+| Cursor         | `--client cursor`                    | `.cursor/skills/`  |
+| GitHub Copilot | `--client github`                    | `.github/skills/`  |
+| Goose          | `--client goose`                     | `.goose/skills/`   |
+| Letta          | `--client letta`                     | `.skills/`         |
+| OpenCode       | `--client opencode`                  | `.opencode/skill/` |
 
 ### Claude Code
 
