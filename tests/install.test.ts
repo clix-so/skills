@@ -385,6 +385,30 @@ describe("installAllSkills", () => {
     ]);
   });
 
+  it("should fall back to process.cwd() when searching for package.json (covers package root traversal)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    // Force findAllSkills() package root detection loop to traverse to filesystem root
+    // and hit the `parent === packageRoot` break branch.
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      if (pathStr.endsWith(`${path.sep}package.json`)) return false;
+      return true;
+    });
+
+    await installAllSkills({ client: "cursor" });
+
+    // findAllSkills should read from `${process.cwd()}/skills` after fallback
+    expect(mockedFs.readdir).toHaveBeenCalledWith(path.join(process.cwd(), "skills"), {
+      withFileTypes: true,
+    });
+
+    // Should still install skills normally
+    expect(mockedFs.copy).toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
   it("should install all available skills successfully", async () => {
     const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 

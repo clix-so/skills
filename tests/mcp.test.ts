@@ -83,6 +83,60 @@ describe("configureMCP", () => {
     );
   });
 
+  it("should skip Claude configuration when Claude CLI cannot be executed (helpRes.error)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedSpawnSync.mockReturnValueOnce({
+      status: 0,
+      stdout: "",
+      stderr: "",
+      error: new Error("ENOENT: claude not found"),
+    });
+
+    await configureMCP("claude");
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/Could not run Claude CLI/));
+    expect(mockedSpawnSync).toHaveBeenCalledTimes(1);
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should skip Claude configuration when Claude CLI does not support `claude mcp` (helpRes.status !== 0)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedSpawnSync.mockReturnValueOnce({
+      status: 1,
+      stdout: "",
+      stderr: "unknown command",
+      error: undefined,
+    });
+
+    await configureMCP("claude");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/does not appear to support `claude mcp`/)
+    );
+    expect(mockedSpawnSync).toHaveBeenCalledTimes(1);
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should handle Claude CLI add failure gracefully (addRes.status !== 0)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedSpawnSync
+      .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
+      .mockReturnValueOnce({ status: 0, stdout: "", stderr: "", error: undefined }) // mcp list (not present)
+      .mockReturnValueOnce({ status: 1, stdout: "stdout msg", stderr: "stderr msg", error: undefined }); // mcp add fails
+
+    await configureMCP("claude");
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/Failed to configure MCP via Claude Code CLI/)
+    );
+    // ensure it surfaced captured output (stdout/stderr)
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/stdout msg|stderr msg/));
+
+    consoleSpy.mockRestore();
+  });
+
   it("should skip Claude configuration when already present", async () => {
     mockedSpawnSync
       .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
@@ -114,6 +168,17 @@ describe("configureMCP", () => {
       ["mcp", "--help"],
       expect.objectContaining({ encoding: "utf8" })
     );
+  });
+
+  it("should skip MCP configuration when prompt returns no client (no client selected)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedInquirer.prompt.mockResolvedValueOnce({ client: undefined });
+
+    await configureMCP(undefined);
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/No client selected/));
+
+    consoleSpy.mockRestore();
   });
 
   it("should prompt to create file if missing", async () => {
