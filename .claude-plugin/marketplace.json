@@ -29,6 +29,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/user-management"]
+    },
+    {
+      "name": "clix-personalization",
+      "description": "Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types \"clix-personalization\".",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/personalization"]
     }
   ]
 }
