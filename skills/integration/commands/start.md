@@ -1,1 +1,0 @@
-/Users/hieuho/clix-cli-project/skills/skills/integration/SKILL.md

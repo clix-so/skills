@@ -14,8 +14,7 @@
       "description": "Integrates Clix SDK into mobile projects. Use when the user asks to install/setup/integrate Clix, or when the user types \"clix-integration\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/integration"],
-      "commands": ["./skills/integration/commands"]
+      "skills": ["./skills/integration"]
     },
     {
       "name": "clix-event-tracking",
