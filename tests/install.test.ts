@@ -37,6 +37,33 @@ describe("installSkill", () => {
     mockedFs.copy.mockImplementation(() => Promise.resolve());
   });
 
+  it("should fall back to CWD skills directory when skill is not found under packageRoot", async () => {
+    const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation();
+
+    const cwdSkillPath = path.resolve(process.cwd(), "skills", "integration");
+
+    mockedFs.existsSync.mockImplementation((p) => {
+      const pathStr = String(p);
+      // Short-circuit package root discovery (not central to this test).
+      if (pathStr.endsWith(`${path.sep}package.json`)) return true;
+
+      // Pretend skill is missing in the first checked location...
+      if (pathStr.includes(`${path.sep}skills${path.sep}integration`)) {
+        return pathStr === cwdSkillPath;
+      }
+
+      return true;
+    });
+
+    await installSkill("integration", {});
+
+    // Should warn about initial path, then proceed using CWD
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringMatching(/trying CWD/i));
+    expect(mockedFs.copy).toHaveBeenCalledWith(cwdSkillPath, expect.any(String));
+
+    consoleWarnSpy.mockRestore();
+  });
+
   it("should install to default .clix/skills when no client is specified", async () => {
     await installSkill("integration", {});
 

@@ -124,7 +124,12 @@ describe("configureMCP", () => {
     mockedSpawnSync
       .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
       .mockReturnValueOnce({ status: 0, stdout: "", stderr: "", error: undefined }) // mcp list (not present)
-      .mockReturnValueOnce({ status: 1, stdout: "stdout msg", stderr: "stderr msg", error: undefined }); // mcp add fails
+      .mockReturnValueOnce({
+        status: 1,
+        stdout: "stdout msg",
+        stderr: "stderr msg",
+        error: undefined,
+      }); // mcp add fails
 
     await configureMCP("claude");
 
@@ -133,6 +138,37 @@ describe("configureMCP", () => {
     );
     // ensure it surfaced captured output (stdout/stderr)
     expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/stdout msg|stderr msg/));
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should attempt Claude mcp add even if `claude mcp list` fails (listRes.status !== 0)", async () => {
+    mockedSpawnSync
+      .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
+      .mockReturnValueOnce({ status: 1, stdout: "", stderr: "list failed", error: undefined }) // mcp list fails
+      .mockReturnValueOnce({ status: 0, stdout: "added", stderr: "", error: undefined }); // mcp add succeeds
+
+    await configureMCP("claude");
+
+    expect(mockedSpawnSync).toHaveBeenCalledTimes(3);
+    expect(mockedSpawnSync).toHaveBeenNthCalledWith(
+      3,
+      "claude",
+      expect.arrayContaining(["mcp", "add"]),
+      expect.objectContaining({ encoding: "utf8" })
+    );
+  });
+
+  it("should print 'No output captured' when Claude mcp add fails without stdout/stderr", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+    mockedSpawnSync
+      .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
+      .mockReturnValueOnce({ status: 0, stdout: "", stderr: "", error: undefined }) // mcp list (not present)
+      .mockReturnValueOnce({ status: 1, stdout: "", stderr: "", error: undefined }); // mcp add fails with no output
+
+    await configureMCP("claude");
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/No output captured/));
 
     consoleSpy.mockRestore();
   });
@@ -321,6 +357,51 @@ describe("configureMCP", () => {
     );
   });
 
+  it("should preserve unrelated JSON config keys when injecting for Cursor", async () => {
+    mockedFs.readJSON.mockResolvedValue({
+      mcpServers: {},
+      editor: { theme: "dark" },
+      nested: { keep: { me: true } },
+    });
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
+
+    await configureMCP("cursor");
+
+    expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        editor: { theme: "dark" },
+        nested: { keep: { me: true } },
+        mcpServers: expect.objectContaining({
+          "clix-mcp-server": expect.anything(),
+        }),
+      }),
+      expect.anything()
+    );
+  });
+
+  it("should preserve existing MCP server entries when injecting for Cursor", async () => {
+    mockedFs.readJSON.mockResolvedValue({
+      mcpServers: {
+        "other-server": { command: "node", args: ["server.js"] },
+      },
+    });
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
+
+    await configureMCP("cursor");
+
+    expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        mcpServers: expect.objectContaining({
+          "other-server": expect.objectContaining({ command: "node" }),
+          "clix-mcp-server": expect.anything(),
+        }),
+      }),
+      expect.anything()
+    );
+  });
+
   // New client tests
 
   it("should configure Amp with amp.mcpServers key", async () => {
@@ -331,6 +412,27 @@ describe("configureMCP", () => {
     expect(mockedFs.writeJSON).toHaveBeenCalledWith(
       expect.stringMatching(/\.config[\\\/]amp[\\\/]settings\.json/),
       expect.objectContaining({
+        "amp.mcpServers": expect.objectContaining({
+          "clix-mcp-server": expect.anything(),
+        }),
+      }),
+      expect.anything()
+    );
+  });
+
+  it("should preserve unrelated JSON keys when injecting for Amp", async () => {
+    mockedFs.readJSON.mockResolvedValue({
+      "amp.mcpServers": {},
+      otherSettings: { telemetry: false },
+    });
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
+
+    await configureMCP("amp");
+
+    expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        otherSettings: { telemetry: false },
         "amp.mcpServers": expect.objectContaining({
           "clix-mcp-server": expect.anything(),
         }),

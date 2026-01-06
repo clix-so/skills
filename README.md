@@ -17,8 +17,8 @@ you can install skills in different ways.
 ### Universal CLI (Recommended)
 
 For **Cursor**, **VS Code**, **Claude Code**, **OpenCode**, **Goose**, **GitHub
-Copilot**, **Amp**, and **Letta**, use our tool to install skills and
-configure the Clix MCP Server automatically:
+Copilot**, **Amp**, and **Letta**, use our tool to install skills and configure
+the Clix MCP Server automatically:
 
 #### Installation Modes
 
