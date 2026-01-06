@@ -4,6 +4,7 @@ import os from "os";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import * as TOML from "@iarna/toml";
+import { spawnSync } from "child_process";
 
 // ============================================================================
 // Type Definitions
@@ -49,6 +50,18 @@ const CLIX_MCP_SERVER_ENTRY: MCPServerEntry = {
   args: ["-y", "@clix-so/clix-mcp-server@latest"],
 };
 
+const CLAUDE_CODE_MCP_ADD_ARGS = [
+  "mcp",
+  "add",
+  "--transport",
+  "stdio",
+  "clix-mcp-server",
+  "--",
+  "npx",
+  "-y",
+  "@clix-so/clix-mcp-server@latest",
+];
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -61,6 +74,68 @@ function getErrorMessage(error: unknown): string {
     return error.message;
   }
   return String(error);
+}
+
+function hasClixServerInClaudeMcpListOutput(output: string): boolean {
+  return output.toLowerCase().includes("clix-mcp-server");
+}
+
+/**
+ * Configure MCP for Claude Code using the `claude` CLI (no config file editing).
+ */
+async function configureClaudeCode(): Promise<void> {
+  console.log(chalk.blue("Checking MCP config via Claude Code CLI (`claude mcp`)..."));
+
+  // Verify Claude CLI exists and supports MCP.
+  const helpRes = spawnSync("claude", ["mcp", "--help"], { encoding: "utf8" });
+  if (helpRes.error) {
+    console.log(
+      chalk.yellow(
+        `Could not run Claude CLI (${getErrorMessage(helpRes.error)}). Skipping MCP configuration.`
+      )
+    );
+    return;
+  }
+  if (helpRes.status !== 0) {
+    console.log(
+      chalk.yellow("Claude CLI does not appear to support `claude mcp`. Skipping MCP configuration.")
+    );
+    return;
+  }
+
+  // Best-effort idempotency: if list works and already contains the server, skip.
+  const listRes = spawnSync("claude", ["mcp", "list"], { encoding: "utf8" });
+  const listOut = `${listRes.stdout ?? ""}\n${listRes.stderr ?? ""}`;
+  if (!listRes.error && listRes.status === 0 && hasClixServerInClaudeMcpListOutput(listOut)) {
+    console.log(chalk.green("✔ Clix MCP Server is already configured."));
+    return;
+  }
+
+  const addRes = spawnSync("claude", CLAUDE_CODE_MCP_ADD_ARGS, { encoding: "utf8" });
+  if (addRes.error || addRes.status !== 0) {
+    const out = `${addRes.stdout ?? ""}\n${addRes.stderr ?? ""}`.trim();
+    console.log(
+      chalk.yellow(
+        `Failed to configure MCP via Claude Code CLI. ${
+          out ? `Output:\n${out}` : "No output captured."
+        }`
+      )
+    );
+    return;
+  }
+
+  console.log(chalk.green("✔ Added Clix MCP Server to configuration. Please restart claude."));
+}
+
+function isClaudeCodeClient(client: string): boolean {
+  const c = client.toLowerCase();
+  return (
+    c === "claude" ||
+    c === "claude_code" ||
+    c === "claude-code" ||
+    c === "claudecode" ||
+    c === "claude code"
+  );
 }
 
 /**
@@ -116,24 +191,6 @@ function getClientConfig(client: string): ClientConfig | null {
         configKey: "mcpServers",
         format: "json",
       };
-    }
-
-    case "claude": {
-      let configPath: string | null = null;
-      if (process.platform === "darwin") {
-        configPath = path.join(
-          home,
-          "Library",
-          "Application Support",
-          "Claude",
-          "claude_desktop_config.json"
-        );
-      } else if (process.platform === "win32") {
-        configPath = path.join(process.env.APPDATA || "", "Claude", "claude_desktop_config.json");
-      } else if (process.platform === "linux") {
-        configPath = path.join(home, ".config", "Claude", "claude_desktop_config.json");
-      }
-      return configPath ? { path: configPath, configKey: "mcpServers", format: "json" } : null;
     }
 
     case "vscode":
@@ -365,7 +422,7 @@ export async function configureMCP(client?: string): Promise<void> {
         message: "Which AI client are you using?",
         choices: [
           { name: "Cursor", value: "cursor" },
-          { name: "Claude Desktop", value: "claude" },
+          { name: "Claude Code", value: "claude" },
           { name: "VS Code", value: "vscode" },
           { name: "Amp", value: "amp" },
           { name: "Kiro", value: "kiro" },
@@ -382,8 +439,19 @@ export async function configureMCP(client?: string): Promise<void> {
     targetClient = answers.client;
   }
 
+  if (!targetClient) {
+    console.log(chalk.yellow("No client selected. Skipping MCP configuration."));
+    return;
+  }
+
   if (targetClient === "manual") {
     console.log(chalk.blue("Skipping automatic MCP configuration."));
+    return;
+  }
+
+  // Claude Code is configured via the `claude` CLI (no file editing).
+  if (targetClient && isClaudeCodeClient(targetClient)) {
+    await configureClaudeCode();
     return;
   }
 

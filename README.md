@@ -16,7 +16,7 @@ you can install skills in different ways.
 
 ### Universal CLI (Recommended)
 
-For **Cursor**, **VS Code**, **Claude Desktop**, **OpenCode**, **Goose**,
+For **Cursor**, **VS Code**, **Claude Code**, **OpenCode**, **Goose**,
 **GitHub Copilot**, **Amp**, and **Letta**, use our CLI tool to install skills
 and configure the Clix MCP Server automatically:
 
@@ -69,7 +69,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | Client         | Flag                | Default Path       |
 | :------------- | :------------------ | :----------------- |
 | Amp            | `--client amp`      | `.amp/skills/`     |
-| Claude         | `--client claude`   | `.claude/skills/`  |
+| Claude Code | `--client claude` (or `claude-code`) | `.claude/skills/` |
 | Codex          | `--client codex`    | `.codex/skills/`   |
 | Cursor         | `--client cursor`   | `.cursor/skills/`  |
 | GitHub Copilot | `--client github`   | `.github/skills/`  |

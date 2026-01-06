@@ -55,6 +55,13 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
+  it("should install to .claude/skills when client is claude-code", async () => {
+    await installSkill("integration", { client: "claude-code" });
+
+    const expectedDest = path.resolve(process.cwd(), ".claude/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
   it("should install to .cursor/skills when client is cursor", async () => {
     await installSkill("integration", { client: "cursor" });
 
@@ -119,6 +126,11 @@ describe("installSkill", () => {
   it("should attempt to configure MCP", async () => {
     await installSkill("integration", { client: "cursor" });
     expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
+  });
+
+  it("should attempt to configure MCP for Claude Code when client is claude-code", async () => {
+    await installSkill("integration", { client: "claude-code" });
+    expect(mockedConfigureMCP).toHaveBeenCalledWith("claude-code");
   });
 
   it("should handle copy errors gracefully", async () => {

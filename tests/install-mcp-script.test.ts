@@ -117,7 +117,7 @@ exit 0
 `
     );
 
-    const res = runScriptWithArgs(scriptPath, tmp, ["--client", "claude_code"], {
+    const res = runScriptWithArgs(scriptPath, tmp, ["--client", "claude"], {
       HOME: homeDir,
       PATH: `${binDir}:/usr/bin:/bin`,
     });
@@ -252,25 +252,40 @@ exit 0
     expect(updated).toMatch(/"clix-mcp-server"/);
   });
 
-  it("detects Claude Desktop on Linux (~/.config/Claude/...) and writes mcpServers", () => {
+  it("treats --client claude as Claude Code and runs `claude mcp add`", () => {
     const tmp = makeTempDir();
     const binDir = path.join(tmp, "bin");
     const homeDir = path.join(tmp, "home");
+    const claudeLog = path.join(tmp, "claude.log");
 
     writeFakeNpm(binDir);
     writeNodeShim(binDir);
 
-    // Force platform detection to Linux for get_config_path().
+    // Fake claude CLI with mcp support.
     writeExecutable(
-      path.join(binDir, "uname"),
+      path.join(binDir, "claude"),
       `#!/usr/bin/env bash
-echo "Linux"
+set -euo pipefail
+echo "$@" >> "${claudeLog}"
+
+if [ "\${1:-}" = "mcp" ] && [ "\${2:-}" = "--help" ]; then
+  echo "help"
+  exit 0
+fi
+
+if [ "\${1:-}" = "mcp" ] && [ "\${2:-}" = "list" ]; then
+  # No servers configured
+  exit 0
+fi
+
+if [ "\${1:-}" = "mcp" ] && [ "\${2:-}" = "add" ]; then
+  echo "added"
+  exit 0
+fi
+
+exit 0
 `
     );
-
-    const claudeLinuxPath = path.join(homeDir, ".config", "Claude", "claude_desktop_config.json");
-    fs.mkdirSync(path.dirname(claudeLinuxPath), { recursive: true });
-    fs.writeFileSync(claudeLinuxPath, `{"mcpServers": {}}\n`, "utf8");
 
     const res = runScriptWithArgs(scriptPath, tmp, ["--client", "claude"], {
       HOME: homeDir,
@@ -278,9 +293,12 @@ echo "Linux"
     });
 
     expect(res.status).toBe(0);
-    const updated = fs.readFileSync(claudeLinuxPath, "utf8");
-    expect(updated).toMatch(/"mcpServers"/);
-    expect(updated).toMatch(/"clix-mcp-server"/);
+    expect(fs.existsSync(claudeLog)).toBe(true);
+    const log = fs.readFileSync(claudeLog, "utf8");
+    expect(log).toMatch(/mcp list/);
+    expect(log).toMatch(
+      /mcp add --transport stdio clix-mcp-server -- npx -y @clix-so\/clix-mcp-server@latest/
+    );
   });
 
   it("fails safely when multiple clients are detected and no --client is provided (non-interactive)", () => {

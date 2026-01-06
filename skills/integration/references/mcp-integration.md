@@ -263,26 +263,6 @@ claude mcp add --transport stdio clix-mcp-server -- npx -y @clix-so/clix-mcp-ser
 }
 ```
 
-#### Claude Desktop App
-
-**Setup**
-
-1. Open config
-   (`~/Library/Application Support/Claude/claude_desktop_config.json` or
-   `%APPDATA%\\Claude\\claude_desktop_config.json`).
-2. Add and restart:
-
-```json
-{
-  "mcpServers": {
-    "clix-mcp-server": {
-      "command": "npx",
-      "args": ["-y", "@clix-so/clix-mcp-server@latest"]
-    }
-  }
-}
-```
-
 #### Amp
 
 **Setup**

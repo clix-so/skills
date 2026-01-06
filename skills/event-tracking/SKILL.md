@@ -97,7 +97,7 @@ bash <skill-dir>/scripts/validate-event-plan.sh event-plan.json
 The skill directory is typically:
 
 - `.cursor/skills/event-tracking/` (Cursor)
-- `.claude/skills/event-tracking/` (Claude Desktop)
+- `.claude/skills/event-tracking/` (Claude Code)
 - `.vscode/skills/event-tracking/` (VS Code/Amp)
 - Or check where this skill was installed
 

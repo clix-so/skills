@@ -31,7 +31,7 @@ Usage:
 
 Options:
   --client <client>      Explicitly select the MCP client to configure.
-                         Supported: claude_code, opencode, amp, codex, cursor, claude, vscode
+                         Supported: claude, claude-code, opencode, amp, codex, cursor, vscode
   --help                 Show this help.
 
 Environment:
@@ -70,7 +70,7 @@ done
 
 validate_client() {
   case "${1:-}" in
-    claude_code|opencode|amp|codex|cursor|claude|vscode) return 0 ;;
+    claude|claude-code|opencode|amp|codex|cursor|vscode) return 0 ;;
     "") return 1 ;;
     *) return 1 ;;
   esac
@@ -93,7 +93,7 @@ get_config_path() {
   local platform=$(detect_platform)
 
   case "$client" in
-    claude_code)
+    claude-code)
       # Claude Code CLI manages MCP via `claude mcp ...` commands (no direct config file here)
       echo ""
       ;;
@@ -109,14 +109,8 @@ get_config_path() {
       fi
       ;;
     claude)
-      if [ "$platform" = "darwin" ]; then
-        echo "${home}/Library/Application Support/Claude/claude_desktop_config.json"
-      elif [ "$platform" = "win32" ]; then
-        echo "${APPDATA:-}/Claude/claude_desktop_config.json"
-      else
-        # Linux
-        echo "${home}/.config/Claude/claude_desktop_config.json"
-      fi
+      # Alias for Claude Code
+      echo ""
       ;;
     vscode)
       echo "${home}/.vscode/mcp.json"
@@ -486,7 +480,7 @@ EOF
 detect_clients() {
   # Claude Code CLI (supports `claude mcp ...`)
   if command -v claude &> /dev/null && claude mcp --help &> /dev/null; then
-    echo "claude_code"
+    echo "claude"
   fi
 
   # OpenCode (project config files or opencode command)
@@ -511,13 +505,6 @@ detect_clients() {
     echo "cursor"
   fi
 
-  # Claude Desktop
-  if [ -f "${HOME}/Library/Application Support/Claude/claude_desktop_config.json" ] 2>/dev/null || \
-     [ -f "${APPDATA:-}/Claude/claude_desktop_config.json" ] 2>/dev/null || \
-     [ -f "${HOME}/.config/Claude/claude_desktop_config.json" ] 2>/dev/null; then
-    echo "claude"
-  fi
-
   # VS Code
   if [ -f "${HOME}/.vscode/mcp.json" ]; then
     echo "vscode"
@@ -530,6 +517,10 @@ choose_client() {
       log_err "${RED}❌ Invalid --client / CLIX_MCP_CLIENT: ${CLIENT_OVERRIDE}${RESET}"
       usage
       exit 2
+    fi
+    if [ "$CLIENT_OVERRIDE" = "claude-code" ]; then
+      echo "claude"
+      return
     fi
     echo "$CLIENT_OVERRIDE"
     return
@@ -600,7 +591,7 @@ if [ "$detected_client" != "unknown" ]; then
   log "${GREEN}Detected: $detected_client${RESET}"
   config_path=$(get_config_path "$detected_client")
 
-  if [ "$detected_client" = "claude_code" ]; then
+  if [ "$detected_client" = "claude" ]; then
     log "${BLUE}Configuring MCP server for Claude Code...${RESET}"
     configure_claude_code
     log "${GREEN}✅ Successfully configured Clix MCP Server!${RESET}"
@@ -631,7 +622,7 @@ else
   log "${BLUE}  - Amp: Add to .vscode/settings.json or ~/.vscode/settings.json${RESET}"
   log "${BLUE}  - Codex: Add to ~/.codex/config.toml${RESET}"
   log "${BLUE}  - Cursor: Add to .cursor/mcp.json or ~/.cursor/mcp.json${RESET}"
-  log "${BLUE}  - Claude Desktop: Add to config file${RESET}"
+  log "${BLUE}  - Claude Code: Run: claude mcp add --transport stdio clix-mcp-server -- npx -y @clix-so/clix-mcp-server@latest${RESET}"
   log "${BLUE}See references/mcp-integration.md for detailed instructions.${RESET}"
 fi
 

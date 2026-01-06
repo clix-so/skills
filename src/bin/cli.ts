@@ -26,7 +26,7 @@ program
   .description("Install agent skill(s)")
   .option(
     "-c, --client <client>",
-    "Target AI client (cursor, claude, vscode, amp, kiro, amazonq, codex, opencode, manual)"
+    "Target AI client (cursor, claude|claude-code, vscode, amp, kiro, amazonq, codex, opencode, manual)"
   )
   .option("-p, --path <path>", "Custom installation path (default: .clix/skills)")
   .option("-a, --all", "Install all available skills")

@@ -69,6 +69,8 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   } else if (options.client) {
     switch (options.client.toLowerCase()) {
       case "claude":
+      case "claude-code":
+        // Claude Code uses the .claude/ folder convention, but MCP is configured via `claude mcp ...`
         relativeDest = ".claude/skills";
         break;
       case "cursor":
