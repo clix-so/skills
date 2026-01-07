@@ -601,14 +601,13 @@ describe("installAllSkills", () => {
     consoleSpy.mockRestore();
   });
 
-  it("should configure MCP for each skill installation", async () => {
+  it("should configure MCP once for installAllSkills (not once per skill)", async () => {
     const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 
     await installAllSkills({ client: "cursor" });
 
-    // MCP should be configured (called once per skill, but configureMCP is idempotent)
-    // Actually, configureMCP is called once per installSkill call
-    expect(mockedConfigureMCP).toHaveBeenCalledTimes(3);
+    // MCP should be configured once per `--all` run (not once per skill)
+    expect(mockedConfigureMCP).toHaveBeenCalledTimes(1);
     expect(mockedConfigureMCP).toHaveBeenCalledWith("cursor");
 
     consoleSpy.mockRestore();

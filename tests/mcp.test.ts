@@ -250,6 +250,15 @@ describe("configureMCP", () => {
     );
   });
 
+  it("should treat github/copilot as an alias for VS Code MCP config", async () => {
+    const globalPath = path.join(mockHome, ".vscode", "mcp.json");
+    mockedInquirer.prompt.mockResolvedValueOnce({ inject: false });
+
+    await configureMCP("github");
+
+    expect(mockedFs.readJSON).toHaveBeenCalledWith(globalPath);
+  });
+
   it("should not inject if already present", async () => {
     mockedFs.readJSON.mockResolvedValue({
       mcpServers: { "clix-mcp-server": { command: "test" } },
