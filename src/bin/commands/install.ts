@@ -9,6 +9,11 @@ interface InstallOptions {
   client?: string;
   path?: string;
   global?: boolean;
+  /**
+   * Internal/testing flag: when true, skip MCP configuration step for this call.
+   * `install --all` uses this to avoid prompting/writing config once per skill.
+   */
+  skipMCPConfig?: boolean;
 }
 
 /**
@@ -127,10 +132,12 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   }
 
   // 4. MCP Configuration (always global/system root)
-  try {
-    await configureMCP(options.client);
-  } catch (error: unknown) {
-    console.warn(chalk.yellow(`MCP Configuration warning: ${getErrorMessage(error)}`));
+  if (!options.skipMCPConfig) {
+    try {
+      await configureMCP(options.client);
+    } catch (error: unknown) {
+      console.warn(chalk.yellow(`MCP Configuration warning: ${getErrorMessage(error)}`));
+    }
   }
 
   console.log(`\n${chalk.green("✔")} Skill ${chalk.bold(skillName)} is ready to use!`);
@@ -186,13 +193,23 @@ export async function installAllSkills(options: InstallOptions) {
 
   for (const skillName of skills) {
     try {
-      await installSkill(skillName, options);
+      // Avoid configuring MCP once per skill. We'll do it once at the end.
+      await installSkill(skillName, { ...options, skipMCPConfig: true });
       successCount++;
     } catch (error: unknown) {
       console.error(
         chalk.red(`\n✗ Failed to install ${chalk.bold(skillName)}: ${getErrorMessage(error)}`)
       );
       failCount++;
+    }
+  }
+
+  // Configure MCP once per `--all` run (always global/system root)
+  if (successCount > 0) {
+    try {
+      await configureMCP(options.client);
+    } catch (error: unknown) {
+      console.warn(chalk.yellow(`MCP Configuration warning: ${getErrorMessage(error)}`));
     }
   }
 

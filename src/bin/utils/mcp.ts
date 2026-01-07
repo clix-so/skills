@@ -195,7 +195,13 @@ function getClientConfig(client: string): ClientConfig | null {
       };
     }
 
+    // GitHub Copilot runs inside VS Code, so its MCP configuration lives in VS Code's MCP config.
+    // We accept `github` / `copilot` as aliases and write to the same file as `vscode`.
     case "vscode":
+    case "github":
+    case "copilot":
+    case "github-copilot":
+    case "github copilot":
       return {
         path: path.join(home, ".vscode", "mcp.json"),
         configKey: "mcpServers",
