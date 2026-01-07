@@ -1,7 +1,7 @@
 # Agent Skills for Clix
 
 [![npm version](https://img.shields.io/npm/v/%40clix-so%2Fclix-agent-skills.svg?logo=npm&label=npm)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
-[![npm downloads](https://img.shields.io/npm/dm/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
+[![npm downloads](https://img.shields.io/npm/d18m/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 
 This repository contains a collection of **Agent Skills for Clix**. Each skill
 is a self-contained package that can be loaded and executed by AI clients.
