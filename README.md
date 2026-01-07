@@ -1,7 +1,7 @@
 # Agent Skills for Clix
 
-[![npm version](https://img.shields.io/npm/v/%40clix-so%2Fclix-agent-skills.svg?logo=npm&label=npm)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
-[![npm downloads](https://img.shields.io/npm/d18m/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
+[npm version](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
+[npm downloads](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 
 This repository contains a collection of **Agent Skills for Clix**. Each skill
 is a self-contained package that can be loaded and executed by AI clients.
@@ -26,12 +26,14 @@ The CLI supports two installation modes for skills:
 
 1. **Repo Root (Project-specific)** - Installs skills to the current project
    directory (default)
-   - Skills are available only for the current project
-   - Best for project-specific configurations
+
+- Skills are available only for the current project
+- Best for project-specific configurations
 
 2. **System Root (Global)** - Installs skills to your home directory
-   - Skills are available across all projects
-   - Best for personal development setup
+
+- Skills are available across all projects
+- Best for personal development setup
 
 **Note:** MCP (Model Context Protocol) server configuration is always set up
 globally (system root), regardless of the skill installation mode. This ensures
@@ -74,7 +76,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 **Supported Clients:**
 
 | Client         | Flag                                 | Default Path       |
-| :------------- | :----------------------------------- | :----------------- |
+| -------------- | ------------------------------------ | ------------------ |
 | Amp            | `--client amp`                       | `.amp/skills/`     |
 | Claude Code    | `--client claude` (or `claude-code`) | `.claude/skills/`  |
 | Codex          | `--client codex`                     | `.codex/skills/`   |
@@ -91,6 +93,7 @@ following command:
 
 ```bash
 /plugin marketplace add clix-so/skills
+/plugin install all@clix-agent-skills
 ```
 
 To install specific skills:

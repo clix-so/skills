@@ -10,6 +10,19 @@
   },
   "plugins": [
     {
+      "name": "all",
+      "description": "All available agent skills for Clix.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/integration",
+        "./skills/event-tracking",
+        "./skills/user-management",
+        "./skills/personalization",
+        "./skills/api-triggered-campaigns"
+      ]
+    },
+    {
       "name": "clix-integration",
       "description": "Integrates Clix SDK into mobile projects. Use when the user asks to install/setup/integrate Clix, or when the user types \"clix-integration\".",
       "source": "./",
@@ -36,6 +49,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/personalization"]
+    },
+    {
+      "name": "clix-api-triggered-campaigns",
+      "description": "Configures API-triggered campaigns in the console and triggers them from your backend with safe auth, dynamic filters (trigger.*), and personalization patterns. Use when the user talks about API-triggered campaigns, API-triggered campaigns setup, API-triggered campaigns triggers, API-triggered campaigns filters, API-triggered campaigns personalization, or when the user types \"clix-api-triggered-campaigns\".",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/api-triggered-campaigns"]
     }
   ]
 }
