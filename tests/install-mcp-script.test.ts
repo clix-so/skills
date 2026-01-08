@@ -1,10 +1,16 @@
 import { spawnSync } from "child_process";
 import fs from "fs";
-import os from "os";
 import path from "path";
 
+const REPO_ROOT = path.resolve(__dirname, "..");
+const TMP_TESTS_ROOT = path.join(REPO_ROOT, ".tmp-tests");
+const createdTempDirs: string[] = [];
+
 function makeTempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), "clix-agent-skills-"));
+  fs.mkdirSync(TMP_TESTS_ROOT, { recursive: true });
+  const dir = fs.mkdtempSync(path.join(TMP_TESTS_ROOT, "clix-agent-skills-"));
+  createdTempDirs.push(dir);
+  return dir;
 }
 
 function writeExecutable(filePath: string, content: string) {
@@ -74,6 +80,18 @@ describe("skills/integration/scripts/install-mcp.sh", () => {
     "scripts",
     "install-mcp.sh"
   );
+
+  afterEach(() => {
+    // Keep the workspace clean and avoid accumulating tmp dirs.
+    while (createdTempDirs.length) {
+      const dir = createdTempDirs.pop()!;
+      try {
+        fs.rmSync(dir, { recursive: true, force: true });
+      } catch {
+        // best-effort cleanup
+      }
+    }
+  });
 
   it("detects Claude Code CLI first (even if opencode.jsonc exists) and runs `claude mcp add`", () => {
     const tmp = makeTempDir();

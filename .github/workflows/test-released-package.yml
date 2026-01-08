@@ -1,0 +1,101 @@
+name: Test Released Package
+
+run-name: 'Test released package @latest'
+
+on:
+  workflow_run:
+    workflows: ['Release to NPM']
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to test (optional, defaults to @latest)'
+        required: false
+        type: string
+
+jobs:
+  test-released:
+    runs-on: ubuntu-latest
+    # Only run if the release workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for npm propagation
+        run: |
+          echo "Waiting for npm package to propagate..."
+          echo "This ensures @latest points to the newly published version"
+          # Wait up to 2 minutes, checking every 10 seconds
+          MAX_ATTEMPTS=12
+          ATTEMPT=0
+          while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+            if npm view @clix-so/clix-agent-skills@latest version &>/dev/null; then
+              VERSION=$(npm view @clix-so/clix-agent-skills@latest version)
+              echo "✓ Package is available on npm: version $VERSION"
+              break
+            fi
+            ATTEMPT=$((ATTEMPT + 1))
+            if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+              echo "Attempt $ATTEMPT/$MAX_ATTEMPTS: Package not yet available, waiting 10 seconds..."
+              sleep 10
+            else
+              echo "⚠️  Package not found after $MAX_ATTEMPTS attempts, proceeding anyway..."
+            fi
+          done
+
+      - name: Verify package version
+        run: |
+          VERSION=$(npm view @clix-so/clix-agent-skills@latest version)
+          echo "Testing published package version: $VERSION"
+          echo "::notice title=Testing Version::Testing @clix-so/clix-agent-skills@$VERSION"
+
+      - name: Run released package smoke test
+        env:
+          CLIX_RELEASE_SMOKE_TEST: '1'
+        run: |
+          echo "Running smoke test against published package..."
+          echo "This will test installation for all supported clients:"
+          echo "  - amp, claude, claude-code, codex, cursor, github, goose, letta, opencode"
+          echo ""
+          echo "Test scenarios:"
+          echo "  1. Repo root installation (project-level, MCP config skipped)"
+          echo "  2. Repo root installation with MCP configuration"
+          echo "  3. Global installation (system root) with MCP configuration"
+          echo ""
+          echo "Each test verifies:"
+          echo "  - Skills install correctly in the expected location"
+          echo "  - All required files are present (SKILL.md, LICENSE.txt, references/, scripts/)"
+          echo "  - MCP configuration is attempted (may fail in CI, that's OK)"
+          npm run test:released
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            .tmp-tests/**
+          retention-days: 1
+
+      - name: Cleanup test directories
+        if: always()
+        run: |
+          echo "Cleaning up test directories..."
+          if [ -d ".tmp-tests" ]; then
+            rm -rf .tmp-tests
+            echo "✓ Removed .tmp-tests directory"
+          else
+            echo "No .tmp-tests directory to clean"
+          fi
