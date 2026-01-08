@@ -6,6 +6,7 @@ description:
   Use when the user mentions personalization variables, Liquid, templates,
   conditional logic, loops, filters, deep links, message logs, or when the user
   types `clix-personalization`.
+user-invocable: true
 ---
 
 # Clix Personalization

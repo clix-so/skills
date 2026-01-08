@@ -6,6 +6,7 @@ description:
   audience filters (trigger.*), and personalization best practices. Use when the
   user mentions transactional notifications, backend-triggered sends,
   campaign_id trigger APIs, or "API-triggered campaigns".
+user-invocable: true
 ---
 
 # API-Triggered Campaigns (Backend → Clix)

@@ -7,6 +7,7 @@ description:
   practices, and campaign-ready personalization/audience usage. Use when the
   user mentions login/logout, userId, user properties, personalization, audience
   targeting or when the user types `clix-user-management`.
+user-invocable: true
 ---
 
 # Clix User Management

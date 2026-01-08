@@ -5,6 +5,7 @@ description:
   projects. Provides step-by-step guidance for installation, initialization, and
   verification. Use when the user asks to install, setup, integrate Clix or when
   the user types `clix-integration` / "clix integration".
+user-invocable: true
 ---
 
 # Clix SDK Integration Skill

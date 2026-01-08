@@ -25,7 +25,7 @@ configure the Clix MCP Server.
 The CLI supports two installation modes for skills:
 
 1. **Repo Root (Project-specific)** - Installs skills to the current project
-   directory (default)
+  directory (default)
 
 - Skills are available only for the current project
 - Best for project-specific configurations
@@ -61,19 +61,20 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 ### Available Skills
 
 - **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
-  application with Clix MCP Server
+application with Clix MCP Server
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
-  practices and campaign-ready validation
+practices and campaign-ready validation
 - **clix-user-management**: Implement `Clix.setUserId` + user properties with
-  logout best practices, personalization (`user.*`), and audience targeting
+logout best practices, personalization (`user.*`), and audience targeting
 - **clix-personalization**: Author and debug personalization templates for
-  message content, deep links/URLs, and audience targeting rules (`user.*`,
-  `event.*`, `trigger.*`, `device.*`)
+message content, deep links/URLs, and audience targeting rules (`user.*`,
+`event.*`, `trigger.*`, `device.*`)
 - **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
-  console and trigger them from your backend with safe auth, dynamic filters
-  (`trigger.*`), and personalization patterns
+console and trigger them from your backend with safe auth, dynamic filters
+(`trigger.*`), and personalization patterns
 
 **Supported Clients:**
+
 
 | Client         | Flag                                 | Default Path       |
 | -------------- | ------------------------------------ | ------------------ |
@@ -85,6 +86,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | Goose          | `--client goose`                     | `.goose/skills/`   |
 | Letta          | `--client letta`                     | `.skills/`         |
 | OpenCode       | `--client opencode`                  | `.opencode/skill/` |
+
 
 ### Claude Code
 
@@ -115,7 +117,7 @@ Alternatively, you can install a single skill directly by running:
 /plugin install clix-api-triggered-campaigns@clix-agent-skills
 ```
 
-Remember to restart Claude Code after installation to load the new skills.
+**Note for Claude Code users**: Skills now support automatic hot-reload! Skills created or modified in `~/.claude/skills` or `.claude/skills` are immediately available without restarting the session. Skills also show real-time progress while executing, displaying tool uses as they happen.
 
 ### Codex
 
@@ -132,6 +134,7 @@ $skill-installer install https://github.com/clix-so/skills/tree/main/skills/inte
 ```
 
 Ensure you restart Codex after installation to detect the new skills.
+
 
 ## Disclaimer
 
