@@ -31,7 +31,7 @@ Usage:
 
 Options:
   --client <client>      Explicitly select the MCP client to configure.
-                         Supported: claude, claude-code, opencode, amp, codex, cursor, vscode
+                         Supported: claude, claude-code, gemini, opencode, amp, codex, cursor, vscode
   --help                 Show this help.
 
 Environment:
@@ -70,7 +70,7 @@ done
 
 validate_client() {
   case "${1:-}" in
-    claude|claude-code|opencode|amp|codex|cursor|vscode) return 0 ;;
+    claude|claude-code|gemini|opencode|amp|codex|cursor|vscode) return 0 ;;
     "") return 1 ;;
     *) return 1 ;;
   esac
@@ -93,6 +93,10 @@ get_config_path() {
   local platform=$(detect_platform)
 
   case "$client" in
+    gemini)
+      # Gemini CLI stores MCP config in user scope: ~/.gemini/settings.json
+      echo "${home}/.gemini/settings.json"
+      ;;
     claude-code)
       # Claude Code CLI manages MCP via `claude mcp ...` commands (no direct config file here)
       echo ""
@@ -483,6 +487,11 @@ detect_clients() {
     echo "claude"
   fi
 
+  # Gemini CLI (user config: ~/.gemini/settings.json)
+  if command -v gemini &> /dev/null || [ -f "${HOME}/.gemini/settings.json" ]; then
+    echo "gemini"
+  fi
+
   # OpenCode (project config files or opencode command)
   if [ -f "opencode.json" ] || [ -f "opencode.jsonc" ] || command -v opencode &> /dev/null; then
     echo "opencode"
@@ -618,6 +627,7 @@ if [ "$detected_client" != "unknown" ]; then
 else
   log "${YELLOW}⚠️  Could not auto-detect MCP client.${RESET}"
   log "${BLUE}The package is ready to use. Configure manually:${RESET}"
+  log "${BLUE}  - Gemini CLI: Add to ~/.gemini/settings.json${RESET}"
   log "${BLUE}  - OpenCode: Add to opencode.json or opencode.jsonc${RESET}"
   log "${BLUE}  - Amp: Add to .vscode/settings.json or ~/.vscode/settings.json${RESET}"
   log "${BLUE}  - Codex: Add to ~/.codex/config.toml${RESET}"

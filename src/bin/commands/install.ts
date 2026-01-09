@@ -122,6 +122,22 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   const installRoot = options.global ? os.homedir() : process.cwd();
   const destPath = path.resolve(installRoot, relativeDest, skillName);
 
+  // Gemini note: by default we install to project scope (.gemini/skills).
+  // If the user expects Gemini to see these skills in *any* project, they should use --global.
+  if (
+    options.client?.toLowerCase() === "gemini" &&
+    !options.global &&
+    !options.path &&
+    skillName === "integration"
+  ) {
+    spinner.info(
+      chalk.yellow(
+        "Gemini note: skills were installed to this project's .gemini/skills. " +
+          "To make skills available across all projects, re-run with --global (installs to ~/.gemini/skills)."
+      )
+    );
+  }
+
   // 3. Copy Files
   try {
     await fs.ensureDir(destPath);
