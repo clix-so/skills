@@ -186,6 +186,14 @@ function getClientConfig(client: string): ClientConfig | null {
   const home = os.homedir();
 
   switch (client.toLowerCase()) {
+    case "gemini":
+      // Gemini CLI stores MCP server configuration in `~/.gemini/settings.json` (user scope)
+      return {
+        path: path.join(home, ".gemini", "settings.json"),
+        configKey: "mcpServers",
+        format: "json",
+      };
+
     case "cursor": {
       // MCP is always configured globally
       return {
@@ -455,17 +463,6 @@ export async function configureMCP(client?: string): Promise<void> {
 
   if (targetClient === "manual") {
     console.log(chalk.blue("Skipping automatic MCP configuration."));
-    return;
-  }
-
-  // Gemini CLI MCP configuration depends on local Gemini settings and is not managed via a single config file.
-  // We support installing skills for Gemini, but skip MCP auto-configuration here.
-  if (targetClient === "gemini") {
-    console.log(
-      chalk.blue(
-        "Gemini CLI MCP setup is not auto-configured by this installer. Please add the Clix MCP Server in Gemini settings."
-      )
-    );
     return;
   }
 
