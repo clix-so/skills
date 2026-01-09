@@ -43,28 +43,28 @@ describe("configureMCP", () => {
     expect(mockedFs.readJSON).not.toHaveBeenCalled();
   });
 
-  it("should configure Gemini CLI via ~/.gemini/settings.json (Option B: settings.json mcpServers)", async () => {
-    mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
+  describe("Gemini CLI configuration", () => {
+    it("should configure Gemini CLI via ~/.gemini/settings.json", async () => {
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: true });
 
-    await configureMCP("gemini");
+      await configureMCP("gemini");
 
-    const globalPath = path.join(mockHome, ".gemini", "settings.json");
-    expect(mockedFs.readJSON).toHaveBeenCalledWith(globalPath);
-    expect(mockedFs.writeJSON).toHaveBeenCalledWith(
-      globalPath,
-      expect.objectContaining({
-        mcpServers: expect.objectContaining({
-          "clix-mcp-server": expect.objectContaining({
-            command: "npx",
-            args: ["-y", "@clix-so/clix-mcp-server@latest"],
+      const globalPath = path.join(mockHome, ".gemini", "settings.json");
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(globalPath);
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        globalPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.objectContaining({
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            }),
           }),
         }),
-      }),
-      expect.anything()
-    );
-  });
+        expect.anything()
+      );
+    });
 
-  describe("Gemini CLI (settings.json) edge cases", () => {
     it("should prompt to create ~/.gemini/settings.json when missing and user declines", async () => {
       const globalPath = path.join(mockHome, ".gemini", "settings.json");
       mockedFs.existsSync.mockImplementation((p) => String(p) !== globalPath);
