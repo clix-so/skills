@@ -96,6 +96,13 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
+  it("should install to .gemini/skills when client is gemini", async () => {
+    await installSkill("integration", { client: "gemini" });
+
+    const expectedDest = path.resolve(process.cwd(), ".gemini/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
   it("should install to .opencode/skill when client is opencode", async () => {
     await installSkill("integration", { client: "opencode" });
 

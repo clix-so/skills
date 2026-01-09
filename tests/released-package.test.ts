@@ -126,10 +126,12 @@ describe("released package smoke test", () => {
     { name: "claude-code", path: ".claude/skills" },
     { name: "codex", path: ".codex/skills" },
     { name: "cursor", path: ".cursor/skills" },
+    { name: "gemini", path: ".gemini/skills" },
     { name: "github", path: ".github/skills" },
     { name: "goose", path: ".goose/skills" },
     { name: "letta", path: ".skills" },
     { name: "opencode", path: ".opencode/skill" },
+    { name: "vscode", path: ".vscode/skills" },
   ];
 
   // First, verify CLI works

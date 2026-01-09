@@ -429,17 +429,22 @@ export async function configureMCP(client?: string): Promise<void> {
         name: "client",
         message: "Which AI client are you using?",
         choices: [
-          { name: "Cursor", value: "cursor" },
+          { name: "Amazon Q", value: "amazonq" },
+          { name: "Amp", value: "amp" },
           { name: "Claude Code", value: "claude" },
           { name: "VS Code", value: "vscode" },
           { name: "Amp", value: "amp" },
           { name: "Kiro", value: "kiro" },
           { name: "Amazon Q", value: "amazonq" },
           { name: "Codex", value: "codex" },
-          { name: "OpenCode", value: "opencode" },
-          { name: "Letta", value: "letta" },
+          { name: "Cursor", value: "cursor" },
+          { name: "Gemini CLI", value: "gemini" },
           { name: "Goose", value: "goose" },
           { name: "GitHub", value: "github" },
+          { name: "Kiro", value: "kiro" },
+          { name: "Letta", value: "letta" },
+          { name: "OpenCode", value: "opencode" },
+          { name: "VS Code", value: "vscode" },
           { name: "None / Manual", value: "manual" },
         ],
       },
@@ -454,6 +459,17 @@ export async function configureMCP(client?: string): Promise<void> {
 
   if (targetClient === "manual") {
     console.log(chalk.blue("Skipping automatic MCP configuration."));
+    return;
+  }
+
+  // Gemini CLI MCP configuration depends on local Gemini settings and is not managed via a single config file.
+  // We support installing skills for Gemini, but skip MCP auto-configuration here.
+  if (targetClient === "gemini") {
+    console.log(
+      chalk.blue(
+        "Gemini CLI MCP setup is not auto-configured by this installer. Please add the Clix MCP Server in Gemini settings."
+      )
+    );
     return;
   }
 

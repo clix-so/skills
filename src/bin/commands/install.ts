@@ -73,22 +73,30 @@ export async function installSkill(skillName: string, options: InstallOptions) {
     relativeDest = options.path;
   } else if (options.client) {
     switch (options.client.toLowerCase()) {
+      case "amazonq":
+        relativeDest = ".amazonq/skills";
+        break;
+      case "amp":
+        relativeDest = ".amp/skills";
+        break;
       case "claude":
       case "claude-code":
         // Claude Code uses the .claude/ folder convention, but MCP is configured via `claude mcp ...`
         relativeDest = ".claude/skills";
         break;
-      case "cursor":
-        relativeDest = ".cursor/skills";
-        break;
-      case "vscode":
-        relativeDest = ".vscode/skills";
-        break;
       case "codex":
         relativeDest = ".codex/skills";
         break;
-      case "opencode":
-        relativeDest = ".opencode/skill";
+      case "copilot":
+      case "github":
+        relativeDest = ".github/skills";
+        break;
+      case "cursor":
+        relativeDest = ".cursor/skills";
+        break;
+      case "gemini":
+        // Gemini CLI discovers project skills in `.gemini/skills/` and user skills in `~/.gemini/skills/`
+        relativeDest = ".gemini/skills";
         break;
       case "letta":
         relativeDest = ".skills";
@@ -96,18 +104,14 @@ export async function installSkill(skillName: string, options: InstallOptions) {
       case "goose":
         relativeDest = ".goose/skills";
         break;
-      case "github":
-      case "copilot":
-        relativeDest = ".github/skills";
-        break;
-      case "amp":
-        relativeDest = ".amp/skills";
-        break;
       case "kiro":
         relativeDest = ".kiro/skills";
         break;
-      case "amazonq":
-        relativeDest = ".amazonq/skills";
+      case "opencode":
+        relativeDest = ".opencode/skill";
+        break;
+      case "vscode":
+        relativeDest = ".vscode/skills";
         break;
       default:
         relativeDest = options.client.startsWith(".") ? `${options.client}/skills` : `.clix/skills`;

@@ -43,6 +43,18 @@ describe("configureMCP", () => {
     expect(mockedFs.readJSON).not.toHaveBeenCalled();
   });
 
+  it("should skip auto-configuration for Gemini CLI (no single config file)", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await configureMCP("gemini");
+
+    expect(consoleSpy).toHaveBeenCalledWith(expect.stringMatching(/Gemini CLI MCP setup/i));
+    expect(mockedFs.readJSON).not.toHaveBeenCalled();
+    expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
   it("should configure Claude via `claude mcp add` (no config file edits)", async () => {
     mockedSpawnSync
       .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help
