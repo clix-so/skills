@@ -1,5 +1,7 @@
 ---
 name: clix-api-triggered-campaigns
+display-name: API-Triggered Campaigns
+short-description: API-triggered campaign setup
 description:
   Helps developers configure API-triggered campaigns in the Clix console and
   trigger them from backend services with safe auth, payload schemas, dynamic

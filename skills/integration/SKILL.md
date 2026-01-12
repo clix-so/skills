@@ -1,5 +1,7 @@
 ---
 name: clix-integration
+display-name: SDK Integration
+short-description: SDK integration guide
 description:
   Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native
   projects. Provides step-by-step guidance for installation, initialization, and
