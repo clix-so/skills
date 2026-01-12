@@ -1,5 +1,7 @@
 ---
 name: clix-event-tracking
+display-name: Event Tracking
+short-description: Event tracking setup
 description:
   Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe
   property schemas, and campaign-ready validation. Use when adding, reviewing,

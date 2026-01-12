@@ -1,5 +1,7 @@
 ---
 name: clix-personalization
+display-name: Personalization
+short-description: Personalization templates
 description:
   Helps developers author and debug Clix personalization templates
   (Liquid-style) for message content, deep links/URLs, and audience targeting.
