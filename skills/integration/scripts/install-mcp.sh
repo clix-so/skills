@@ -94,8 +94,13 @@ get_config_path() {
 
   case "$client" in
     gemini)
-      # Gemini CLI stores MCP config in user scope: ~/.gemini/settings.json
-      echo "${home}/.gemini/settings.json"
+      # Gemini supports project scope (.gemini/settings.json) and user scope (~/.gemini/settings.json).
+      # Prefer project config when it exists (Gemini prioritizes project over user).
+      if [ -f ".gemini/settings.json" ]; then
+        echo ".gemini/settings.json"
+      else
+        echo "${home}/.gemini/settings.json"
+      fi
       ;;
     claude-code)
       # Claude Code CLI manages MCP via `claude mcp ...` commands (no direct config file here)
@@ -147,6 +152,72 @@ get_config_path() {
       echo ""
       ;;
   esac
+}
+
+# Returns candidate config paths (one per line) for a client, including both
+# project-level and user-level locations where applicable.
+get_candidate_config_paths() {
+  local client=$1
+  local home="${HOME:-$HOME}"
+  local platform
+  platform=$(detect_platform)
+
+  case "$client" in
+    gemini)
+      # Gemini supports project scope (.gemini/settings.json) and user scope (~/.gemini/settings.json)
+      echo ".gemini/settings.json"
+      echo "${home}/.gemini/settings.json"
+      ;;
+    cursor)
+      # Cursor supports workspace (.cursor/mcp.json) and user (~/.cursor/mcp.json)
+      echo ".cursor/mcp.json"
+      echo "${home}/.cursor/mcp.json"
+      ;;
+    amp)
+      # Amp can be configured via VS Code workspace/user settings (per this script),
+      # and is also commonly stored under ~/.config/amp/settings.json.
+      echo ".vscode/settings.json"
+      echo "${home}/.vscode/settings.json"
+      if [ "$platform" = "win32" ]; then
+        echo "${USERPROFILE:-$home}/.config/amp/settings.json"
+      else
+        echo "${home}/.config/amp/settings.json"
+      fi
+      ;;
+    vscode)
+      echo "${home}/.vscode/mcp.json"
+      ;;
+    codex)
+      echo "${home}/.codex/config.toml"
+      ;;
+    opencode)
+      echo "opencode.jsonc"
+      echo "opencode.json"
+      ;;
+    *)
+      local p
+      p="$(get_config_path "$client")"
+      [ -n "$p" ] && echo "$p"
+      ;;
+  esac
+}
+
+find_existing_clix_mcp_configs() {
+  local client=$1
+  local any_found=0
+
+  # Print matching paths to stdout (one per line).
+  while IFS= read -r p; do
+    [ -z "${p:-}" ] && continue
+    [ ! -f "$p" ] && continue
+    if grep -q "clix-mcp-server" "$p" 2>/dev/null; then
+      echo "$p"
+      any_found=1
+    fi
+  done < <(get_candidate_config_paths "$client" | awk 'NF' | sort -u)
+
+  # Return 0 if found any, 1 otherwise.
+  [ "$any_found" -eq 1 ]
 }
 
 # Configure MCP for Claude Code CLI
@@ -232,10 +303,29 @@ configure_amp() {
     log "${GREEN}✔ Created Amp settings file${RESET}"
   fi
 
-  # Check if already configured
+  # Check both project + user locations before deciding.
+  # If config_path already has it, we can skip. If it's only present elsewhere,
+  # we still proceed to configure config_path so the selected scope works.
   if grep -q "clix-mcp-server" "$config_path" 2>/dev/null; then
     log "${GREEN}✔ Clix MCP Server already configured in Amp${RESET}"
     return 0
+  fi
+  local existing_paths=""
+  # NOTE: Use the function's exit status (0 = found elsewhere, 1 = not found) in a way
+  # that's safe under `set -e` (conditions don't trigger errexit).
+  if existing_paths="$(find_existing_clix_mcp_configs "amp")"; then
+    log ""
+    log "${YELLOW}⚠️  DUPLICATE CONFIGURATION DETECTED${RESET}"
+    log "${YELLOW}   Found clix-mcp-server in other config location(s).${RESET}"
+    log "${YELLOW}   clix-mcp-server is already configured in:${RESET}"
+    printf "%s\n" "$existing_paths" | sed 's/^/     /'
+    log ""
+    log "${YELLOW}   Now also adding to: ${config_path}${RESET}"
+    log ""
+    log "${BLUE}   ℹ️  Having multiple configurations may cause confusion.${RESET}"
+    log "${BLUE}      To avoid duplicates, you can remove the server from other locations.${RESET}"
+    log "${BLUE}      Amp typically prioritizes workspace (.vscode) over user (~/.vscode) settings.${RESET}"
+    log ""
   fi
 
   # Use node to safely update JSON/JSONC (VS Code settings often allow comments)
@@ -437,7 +527,8 @@ EOF
 
 # Configure MCP for JSON-based clients
 configure_json_client() {
-  local config_path="$1"
+  local client="$1"
+  local config_path="$2"
   local config_dir=$(dirname "$config_path")
 
   mkdir -p "$config_dir"
@@ -447,10 +538,41 @@ configure_json_client() {
     log "${GREEN}✔ Created config file${RESET}"
   fi
 
-  # Check if already configured
+  # Check both project + user locations before deciding.
+  # If config_path already has it, we can skip. If it's only present elsewhere,
+  # we still proceed to configure config_path so the selected scope works.
   if grep -q "clix-mcp-server" "$config_path" 2>/dev/null; then
     log "${GREEN}✔ Clix MCP Server already configured${RESET}"
     return 0
+  fi
+  local existing_paths=""
+  # NOTE: Use the function's exit status (0 = found elsewhere, 1 = not found) in a way
+  # that's safe under `set -e` (conditions don't trigger errexit).
+  if existing_paths="$(find_existing_clix_mcp_configs "$client")"; then
+    log ""
+    log "${YELLOW}⚠️  DUPLICATE CONFIGURATION DETECTED${RESET}"
+    log "${YELLOW}   Found clix-mcp-server in other config location(s).${RESET}"
+    log "${YELLOW}   clix-mcp-server is already configured in:${RESET}"
+    printf "%s\n" "$existing_paths" | sed 's/^/     /'
+    log ""
+    log "${YELLOW}   Now also adding to: ${config_path}${RESET}"
+    log ""
+    log "${BLUE}   ℹ️  Having multiple configurations may cause confusion.${RESET}"
+    log "${BLUE}      To avoid duplicates, you can remove the server from other locations.${RESET}"
+
+    # Client-specific priority information
+    case "$client" in
+      cursor)
+        log "${BLUE}      Cursor prioritizes workspace (.cursor) over user (~/.cursor) configs.${RESET}"
+        ;;
+      gemini)
+        log "${BLUE}      Gemini prioritizes project (.gemini) over user (~/.gemini) configs.${RESET}"
+        ;;
+      vscode)
+        log "${BLUE}      VS Code prioritizes workspace over user-level configs.${RESET}"
+        ;;
+    esac
+    log ""
   fi
 
   # Use node to safely update JSON
@@ -615,7 +737,7 @@ if [ "$detected_client" != "unknown" ]; then
     elif [ "$detected_client" = "opencode" ]; then
       configure_opencode "$config_path"
     else
-      configure_json_client "$config_path"
+      configure_json_client "$detected_client" "$config_path"
     fi
 
     log "${GREEN}✅ Successfully configured Clix MCP Server!${RESET}"
