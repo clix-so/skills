@@ -106,7 +106,7 @@ Example 2: Advanced usage
     path.join(scriptsDir, "validate.sh"),
     `#!/usr/bin/env bash
 # Validation script for ${skillName}
-echo "✅ validation passed"
+echo "OK: validation passed"
 exit 0
 `,
     "utf8"
@@ -179,12 +179,12 @@ describe("skill-creator integration", () => {
       // Stage 1: Location validation
       const locationResult = runLocationValidator(skillDir, ["--mode", "repo"]);
       expect(locationResult.status).toBe(0);
-      expect(locationResult.stdout).toContain("✅ skill location looks OK (repo)");
+      expect(locationResult.stdout).toContain("OK: skill location looks OK (repo)");
 
       // Stage 2: Scaffold validation
       const scaffoldResult = runScaffoldValidator(skillDir);
       expect(scaffoldResult.status).toBe(0);
-      expect(scaffoldResult.stdout).toContain("✅ skill scaffold validation passed");
+      expect(scaffoldResult.stdout).toContain("OK: skill scaffold validation passed");
     });
 
     it("fails at location stage if skill is in wrong directory", () => {
@@ -198,7 +198,7 @@ describe("skill-creator integration", () => {
       // Stage 1: Location validation should fail
       const locationResult = runLocationValidator(skillDir, ["--mode", "repo"]);
       expect(locationResult.status).toBe(1);
-      expect(locationResult.stdout || locationResult.stderr).toContain("❌ Invalid location:");
+      expect(locationResult.stdout || locationResult.stderr).toContain("ERROR: Invalid location:");
 
       // Don't proceed to Stage 2 when Stage 1 fails
     });
@@ -276,12 +276,12 @@ describe("skill-creator integration", () => {
         "cursor",
       ]);
       expect(locationResult.status).toBe(0);
-      expect(locationResult.stdout).toContain("✅ skill location looks OK (client)");
+      expect(locationResult.stdout).toContain("OK: skill location looks OK (client)");
 
       // Stage 2: Scaffold validation (should work the same)
       const scaffoldResult = runScaffoldValidator(cursorSkillsDir);
       expect(scaffoldResult.status).toBe(0);
-      expect(scaffoldResult.stdout).toContain("✅ skill scaffold validation passed");
+      expect(scaffoldResult.stdout).toContain("OK: skill scaffold validation passed");
     });
 
     it("validates a skill installed in Claude Code", () => {
@@ -415,7 +415,7 @@ Uses clix-mcp-server.
       // Scaffold should fail with clear error
       const scaffoldResult = runScaffoldValidator(skillDir);
       expect(scaffoldResult.status).toBe(1);
-      expect(scaffoldResult.stdout).toContain("❌ skill scaffold validation failed:");
+      expect(scaffoldResult.stdout).toContain("ERROR: skill scaffold validation failed:");
       expect(scaffoldResult.stdout).toContain("missing required directory: scripts/");
     });
   });

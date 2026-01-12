@@ -115,7 +115,7 @@ describe("validate-skill-scaffold.sh", () => {
     const { result } = runValidator(skillDir);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("✅ skill scaffold validation passed");
+    expect(result.stdout).toContain("OK: skill scaffold validation passed");
   });
 
   it("passes a minimal valid scaffold (without examples)", () => {
@@ -131,7 +131,7 @@ describe("validate-skill-scaffold.sh", () => {
     const { result } = runValidator(skillDir);
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("✅ skill scaffold validation passed");
+    expect(result.stdout).toContain("OK: skill scaffold validation passed");
   });
 
   it("fails if SKILL.md is missing", () => {
@@ -148,7 +148,7 @@ describe("validate-skill-scaffold.sh", () => {
     const { result } = runValidator(skillDir);
 
     expect(result.status).toBe(1);
-    expect(result.stdout).toContain("❌ skill scaffold validation failed:");
+    expect(result.stdout).toContain("ERROR: skill scaffold validation failed:");
     expect(result.stdout).toContain("missing required file: SKILL.md");
   });
 
@@ -403,7 +403,7 @@ short-description: A test
     const { result } = runValidator(skillDir);
 
     expect(result.status).toBe(1);
-    expect(result.stdout).toContain("❌ skill scaffold validation failed:");
+    expect(result.stdout).toContain("ERROR: skill scaffold validation failed:");
     // Should contain multiple errors
     const errorCount = (result.stdout.match(/- /g) || []).length;
     expect(errorCount).toBeGreaterThan(3);

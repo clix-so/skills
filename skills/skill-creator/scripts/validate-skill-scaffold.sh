@@ -67,6 +67,13 @@ if not m:
   errors.append("SKILL.md must start with YAML frontmatter delimited by ---")
 else:
   frontmatter = m.group(1)
+  # IMPORTANT: avoid substring false-positives:
+  # - "display-name:" contains "name:"
+  # - "short-description:" contains "description:"
+  # So we must match keys at beginning-of-line only.
+  def has_key(key: str) -> bool:
+    return re.search(rf"^{re.escape(key)}\s*", frontmatter, re.M) is not None
+
   required_keys = [
     "name:",
     "display-name:",
@@ -75,7 +82,7 @@ else:
     "user-invocable:",
   ]
   for k in required_keys:
-    if k not in frontmatter:
+    if not has_key(k):
       errors.append(f"frontmatter missing key: {k.rstrip(':')}")
 
   name_match = re.search(r"^name:\s*(.+)$", frontmatter, re.M)
@@ -94,12 +101,12 @@ if "clix-mcp-server" not in content:
   errors.append("SKILL.md must reference 'clix-mcp-server' (MCP-first requirement)")
 
 if errors:
-  print("❌ skill scaffold validation failed:")
+  print("ERROR: skill scaffold validation failed:")
   for e in errors:
     print(f"- {e}")
   sys.exit(1)
 
-print("✅ skill scaffold validation passed")
+print("OK: skill scaffold validation passed")
 PY
 }
 
@@ -116,6 +123,14 @@ const path = require("path");
 
 const skillDir = process.argv[1];
 const errors = [];
+
+function hasFrontmatterKey(frontmatter, key) {
+  // Match key at beginning of line only (avoid substring collisions):
+  // - "display-name:" contains "name:"
+  // - "short-description:" contains "description:"
+  const re = new RegExp(`^${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "m");
+  return re.test(frontmatter);
+}
 
 function requireFile(name) {
   const p = path.join(skillDir, name);
@@ -145,16 +160,44 @@ try {
   errors.push(`failed to read SKILL.md: ${String(e)}`);
 }
 
-if (!content.startsWith("---\n")) errors.push("SKILL.md must start with YAML frontmatter (---)");
+// Frontmatter validation (best-effort; mirrors Python validator behavior).
+if (!content.startsWith("---\n")) {
+  errors.push("SKILL.md must start with YAML frontmatter (---)");
+} else {
+  const m = content.match(/^---\n([\s\S]*?)\n---\n/);
+  if (!m) {
+    errors.push("SKILL.md must start with YAML frontmatter delimited by ---");
+  } else {
+    const frontmatter = m[1];
+    const required = ["name:", "display-name:", "short-description:", "description:", "user-invocable:"];
+    for (const k of required) {
+      if (!hasFrontmatterKey(frontmatter, k)) {
+        errors.push(`frontmatter missing key: ${k.replace(/:$/, "")}`);
+      }
+    }
+
+    const nameMatch = frontmatter.match(/^name:\s*(.+)$/m);
+    if (nameMatch) {
+      const name = (nameMatch[1] || "").trim();
+      if (!name.startsWith("clix-")) errors.push("frontmatter name should start with 'clix-'");
+    }
+
+    const invMatch = frontmatter.match(/^user-invocable:\s*(.+)$/m);
+    if (invMatch) {
+      const val = (invMatch[1] || "").trim().toLowerCase();
+      if (!["true", "false"].includes(val)) errors.push("frontmatter user-invocable must be true or false");
+    }
+  }
+}
 if (!content.includes("clix-mcp-server")) errors.push("SKILL.md must reference 'clix-mcp-server'");
 
 if (errors.length) {
-  console.error("❌ skill scaffold validation failed:");
+  console.error("ERROR: skill scaffold validation failed:");
   for (const e of errors) console.error(`- ${e}`);
   process.exit(1);
 }
 
-console.log("✅ skill scaffold validation passed");
+console.log("OK: skill scaffold validation passed");
 NODE
   exit 0
 fi

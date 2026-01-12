@@ -2,7 +2,8 @@
 name: clix-skill-creator
 display-name: Skill Creator
 short-description: Generate new Clix agent skills
-description: Helps authors create new Clix agent skills by first researching the latest Clix
+description:
+  Helps authors create new Clix agent skills by first researching the latest Clix
   SDK + docs via the Clix MCP Server, then generating a complete skill folder
   (SKILL.md, references, scripts, examples) aligned with the conventions in this
   repository. Use when the user asks to create/author a new Clix skill, extend
@@ -77,15 +78,28 @@ Ask only what’s needed to define a stable skill boundary:
 - **Constraints**: PII policy, compliance, performance limits, rate limits
 - **Success criteria**: what does “done” look like?
 
-## 2) Scope check: avoid duplicates
+## 2) Reference official skills (match repo style)
 
-Before creating a new skill, research on structure of current clix skills
+Before creating a new skill, use the existing **official Clix skills** in this
+repo as your style guide so the generated skill matches the standards here
+(format, tone, workflow, validators), while still being tailored to the user’s
+need.
+
+- Study how they are written:
+  - YAML frontmatter conventions
+  - MCP-first “source of truth” behavior
+  - Progressive disclosure (`references/`, `scripts/`, `examples/`)
+  - Plan artifacts + deterministic validators (bash scripts)
+- Then generate the new skill based on the user’s need using the same patterns.
+  If the need is clearly a tiny addition to an existing skill, prefer adding a
+  `references/` doc or `examples/` file there instead of creating a new skill.
 
 - `clix-integration`
 - `clix-event-tracking`
 - `clix-user-management`
 - `clix-personalization`
 - `clix-api-triggered-campaigns`
+
 
 ## 3) MCP research: build an “Evidence Pack”
 
@@ -105,12 +119,12 @@ skill), with the search queries you used so future maintainers can refresh it.
 
 ## 4) Draft a Skill Brief (output format)
 
-Produce this brief for approval _before_ generating files:
+Produce this brief for approval *before* generating files:
 
 ```yaml
 skill:
-  folder_name: "<kebab-case>" # e.g. "push-troubleshooting"
-  name: "clix-<kebab-case>" # e.g. "clix-push-troubleshooting"
+  folder_name: "<kebab-case>"           # e.g. "push-troubleshooting"
+  name: "clix-<kebab-case>"             # e.g. "clix-push-troubleshooting"
   display_name: "<Title Case>"
   short_description: "<short>"
   description: "<2-3 lines>"
@@ -177,3 +191,4 @@ This should check:
 
 - `references/skill-template.md`
 - `references/mcp-research-playbook.md`
+

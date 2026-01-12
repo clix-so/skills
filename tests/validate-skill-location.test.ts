@@ -53,7 +53,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (repo)");
+      expect(result.stdout).toContain("OK: skill location looks OK (repo)");
     });
 
     it("fails when skill is NOT in skills/ directory", () => {
@@ -64,7 +64,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
 
       expect(result.status).toBe(1);
-      expect(result.stdout || result.stderr).toContain("❌ Invalid location:");
+      expect(result.stdout || result.stderr).toContain("ERROR: Invalid location:");
       expect(result.stdout || result.stderr).toContain(
         "expected skill folder under 'skills/<name>/'"
       );
@@ -78,7 +78,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
 
       expect(result.status).toBe(1);
-      expect(result.stdout || result.stderr).toContain("❌ Invalid location:");
+      expect(result.stdout || result.stderr).toContain("ERROR: Invalid location:");
     });
   });
 
@@ -91,7 +91,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes when skill is in client skill/ directory (OpenCode)", () => {
@@ -102,7 +102,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("fails when skill is NOT in skills/ or skill/ directory", () => {
@@ -113,9 +113,9 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client"]);
 
       expect(result.status).toBe(1);
-      expect(result.stdout || result.stderr).toContain("❌ Invalid location:");
+      expect(result.stdout || result.stderr).toContain("ERROR: Invalid location:");
       expect(result.stdout || result.stderr).toContain(
-        "expected skill folder under '<client>/(skills|skill)/<name>/'"
+        "expected skill folder under '<client>/(skills|skill|.skills)/<name>/'"
       );
     });
   });
@@ -129,7 +129,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "cursor"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("fails for Cursor skill NOT in .cursor/skills/", () => {
@@ -141,7 +141,7 @@ describe("validate-skill-location.sh", () => {
 
       expect(result.status).toBe(1);
       expect(result.stdout || result.stderr).toContain(
-        "❌ Expected Cursor skill path to include '.cursor/skills/'"
+        "ERROR: Expected Cursor skill path to include '.cursor/skills/'"
       );
     });
 
@@ -153,7 +153,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "claude"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for Claude Code skill in .claude/skills/", () => {
@@ -164,7 +164,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "claude-code"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for Codex skill in .codex/skills/", () => {
@@ -175,7 +175,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "codex"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for OpenCode skill in .opencode/skill/", () => {
@@ -186,7 +186,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "opencode"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for VS Code skill in .vscode/skills/", () => {
@@ -197,7 +197,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "vscode"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for Amp skill in .amp/skills/", () => {
@@ -208,7 +208,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "amp"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
     it("passes for unknown client (skips strict check)", () => {
@@ -219,7 +219,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "unknown"]);
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (client)");
+      expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
   });
 
@@ -301,7 +301,7 @@ describe("validate-skill-location.sh", () => {
       const { result } = runValidator(skillDir); // No --mode flag
 
       expect(result.status).toBe(0);
-      expect(result.stdout).toContain("✅ skill location looks OK (repo)");
+      expect(result.stdout).toContain("OK: skill location looks OK (repo)");
     });
   });
 });
