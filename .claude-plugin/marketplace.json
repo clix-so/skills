@@ -53,6 +53,15 @@
       "skills": [
         "./skills/api-triggered-campaigns"
       ]
+    },
+    {
+      "name": "clix-skill-creator",
+      "description": "Creates new Clix agent skills by researching Clix SDK + docs via Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with this repo's conventions. Only use when the user asks to create a new Clix skill, or when the user types \"clix-skill-creator\".",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/skill-creator"
+      ]
     }
   ]
 }

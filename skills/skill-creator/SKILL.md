@@ -168,12 +168,16 @@ In this repository, a “complete” skill folder should include:
 After generating a new skill folder, validate it:
 
 ```bash
+bash <skill-dir>/scripts/validate-same-scope.sh path/to/installed/skill-creator path/to/new-skill-folder
 bash <skill-dir>/scripts/validate-skill-location.sh path/to/new-skill-folder --mode repo
 bash <skill-dir>/scripts/validate-skill-scaffold.sh path/to/new-skill-folder
 ```
 
 This should check:
 
+- the new skill is installed at the **same scope** as `skill-creator` (project-level
+  vs user-level), i.e. the new skill folder lives next to the installed
+  `skill-creator` under the same `.../skills/` directory
 - the skill folder is in the correct `skills/<name>/` location (for this repo)
 - required files exist
 - `references/` and `scripts/` are present and non-empty
