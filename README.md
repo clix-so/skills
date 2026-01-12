@@ -3,23 +3,24 @@
 [![npm version](https://img.shields.io/npm/v/%40clix-so%2Fclix-agent-skills.svg?logo=npm&label=npm)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 [![npm downloads](https://img.shields.io/npm/d18m/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 
-This repository contains a collection of **Agent Skills for Clix**. Each skill
-is a self-contained package that can be loaded and executed by AI clients.
+This repository contains a collection of Agent Skills for Clix. Each skill is a
+separate module within this package that can be installed and used independently
+by AI clients.
 
 ## Available Skills
 
 - **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
-  application with Clix MCP Server
+application with Clix MCP Server
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
-  practices and campaign-ready validation
+practices and campaign-ready validation
 - **clix-user-management**: Implement `Clix.setUserId` + user properties with
-  logout best practices, personalization (`user.*`), and audience targeting
+logout best practices, personalization (`user.*`), and audience targeting
 - **clix-personalization**: Author and debug personalization templates for
-  message content, deep links/URLs, and audience targeting rules (`user.*`,
-  `event.*`, `trigger.*`, `device.*`)
+message content, deep links/URLs, and audience targeting rules (`user.*`,
+`event.*`, `trigger.*`, `device.*`)
 - **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
-  console and trigger them from your backend with safe auth, dynamic filters
-  (`trigger.*`), and personalization patterns
+console and trigger them from your backend with safe auth, dynamic filters
+(`trigger.*`), and personalization patterns
 
 ## Installing Skills
 
@@ -40,7 +41,7 @@ configure the Clix MCP Server.
 The CLI supports two installation modes for skills:
 
 1. **Repo Root (Project-specific)** - Installs skills to the current project
-   directory (default)
+  directory (default)
 
 - Skills are available only for the current project
 - Best for project-specific configurations
@@ -75,6 +76,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 
 **Supported Clients:**
 
+
 | Client         | Flag                                 | Default Path       |
 | -------------- | ------------------------------------ | ------------------ |
 | Amp            | `--client amp`                       | `.amp/skills/`     |
@@ -88,7 +90,8 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | OpenCode       | `--client opencode`                  | `.opencode/skill/` |
 | VS Code        | `--client vscode`                    | `.vscode/skills/`  |
 
-### Claude Code
+
+### Claude Code (Alternative setup via plugin marketplace)
 
 To register this repository as a plugin marketplace in Claude Code, run the
 following command:
@@ -117,7 +120,7 @@ created or modified in `~/.claude/skills` or `.claude/skills` are immediately
 available without restarting the session. Skills also show real-time progress
 while executing, displaying tool uses as they happen.
 
-### Codex
+### Codex (Alternative setup via skill-installer)
 
 To manually install skills, save them from this repository into your Codex
 configuration directory:
