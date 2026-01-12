@@ -2,8 +2,7 @@
 name: clix-user-management
 display-name: User Management
 short-description: User management setup
-description:
-  Implements Clix user identification and user properties (setUserId,
+description: Implements Clix user identification and user properties (setUserId,
   removeUserId, setUserProperty/setUserProperties,
   removeUserProperty/removeUserProperties) with safe schemas, logout best
   practices, and campaign-ready personalization/audience usage. Use when the

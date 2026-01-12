@@ -119,3 +119,23 @@ Implements Clix user identification and user properties (setUserId, removeUserId
 
 ---
 
+## clix-skill-creator
+
+Helps authors create new Clix agent skills by first researching the latest Clix SDK + docs via the Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with the conventions in this repository. Use when the user asks to create/author a new Clix skill, extend the skills library, or when the user types `clix-skill-creator`.
+
+- [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Helps authors create new Clix agent skills by first researching the latest Clix SDK + docs via the Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with the conventions in this repository. Use when the user asks to create/author a new Clix skill, extend the skills library, or when the user types `clix-skill-creator`.
+
+### References
+
+- [Mcp Research Playbook (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/references/mcp-research-playbook.md): Reference documentation for skill-creator skill
+- [Skill Template (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/references/skill-template.md): Reference documentation for skill-creator skill
+
+### Examples
+
+- [Skill Brief Example (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/examples/skill-brief-example.yaml): Code example for skill-creator skill
+
+### Scripts
+
+- [Validate Skill Scaffold (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/scripts/validate-skill-scaffold.sh): Utility script for skill-creator skill
+
+---

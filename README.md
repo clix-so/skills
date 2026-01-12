@@ -10,17 +10,20 @@ by AI clients.
 ## Available Skills
 
 - **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
-application with Clix MCP Server
+  application with Clix MCP Server
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
-practices and campaign-ready validation
+  practices and campaign-ready validation
 - **clix-user-management**: Implement `Clix.setUserId` + user properties with
-logout best practices, personalization (`user.*`), and audience targeting
+  logout best practices, personalization (`user.*`), and audience targeting
 - **clix-personalization**: Author and debug personalization templates for
-message content, deep links/URLs, and audience targeting rules (`user.*`,
-`event.*`, `trigger.*`, `device.*`)
+  message content, deep links/URLs, and audience targeting rules (`user.*`,
+  `event.*`, `trigger.*`, `device.*`)
 - **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
-console and trigger them from your backend with safe auth, dynamic filters
-(`trigger.*`), and personalization patterns
+  console and trigger them from your backend with safe auth, dynamic filters
+  (`trigger.*`), and personalization patterns
+- **clix-skill-creator**: Create new Clix agent skills by researching Clix SDK +
+  docs via Clix MCP Server, then generating a complete skill folder (SKILL.md,
+  references, scripts, examples) aligned with this repo’s conventions
 
 ## Installing Skills
 
@@ -41,7 +44,7 @@ configure the Clix MCP Server.
 The CLI supports two installation modes for skills:
 
 1. **Repo Root (Project-specific)** - Installs skills to the current project
-  directory (default)
+   directory (default)
 
 - Skills are available only for the current project
 - Best for project-specific configurations
@@ -68,14 +71,13 @@ npx @clix-so/clix-agent-skills@latest install integration --client cursor --glob
 
 # Install all available skills at once (repo root)
 npx @clix-so/clix-agent-skills@latest install --all --client cursor
-# This will install: integration, event-tracking, user-management, personalization, api-triggered-campaigns
+# This will install: integration, event-tracking, user-management, personalization, api-triggered-campaigns, skill-creator
 
 # Install all available skills globally (system root)
 npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 ```
 
 **Supported Clients:**
-
 
 | Client         | Flag                                 | Default Path       |
 | -------------- | ------------------------------------ | ------------------ |
@@ -89,7 +91,6 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | Letta          | `--client letta`                     | `.skills/`         |
 | OpenCode       | `--client opencode`                  | `.opencode/skill/` |
 | VS Code        | `--client vscode`                    | `.vscode/skills/`  |
-
 
 ### Claude Code (Alternative setup via plugin marketplace)
 
