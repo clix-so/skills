@@ -9,9 +9,7 @@ Each entry includes the file path, type, and description for semantic search.
 
 ## clix-api-triggered-campaigns
 
-Helps developers configure API-triggered campaigns in the Clix console and trigger them from backend services with safe auth, payload schemas, dynamic audience filters (trigger.*), and personalization best practices. Use when the user mentions transactional notifications, backend-triggered sends, campaign_id trigger APIs, or "API-triggered campaigns".
-
-- [clix-api-triggered-campaigns](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/api-triggered-campaigns/SKILL.md): Helps developers configure API-triggered campaigns in the Clix console and trigger them from backend services with safe auth, payload schemas, dynamic audience filters (trigger.*), and personalization best practices. Use when the user mentions transactional notifications, backend-triggered sends, campaign_id trigger APIs, or "API-triggered campaigns".
+- [clix-api-triggered-campaigns](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/api-triggered-campaigns/SKILL.md): Main skill documentation
 
 ### References
 
@@ -35,9 +33,7 @@ Helps developers configure API-triggered campaigns in the Clix console and trigg
 
 ## clix-event-tracking
 
-Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe property schemas, and campaign-ready validation. Use when adding, reviewing, or debugging event tracking; when configuring event-triggered campaigns; or when the user mentions events, tracking, funnels, or properties — or when the user types `clix-event-tracking`.
-
-- [clix-event-tracking](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/SKILL.md): Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe property schemas, and campaign-ready validation. Use when adding, reviewing, or debugging event tracking; when configuring event-triggered campaigns; or when the user mentions events, tracking, funnels, or properties — or when the user types `clix-event-tracking`.
+- [clix-event-tracking](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/SKILL.md): Main skill documentation
 
 ### References
 
@@ -55,9 +51,7 @@ Implements Clix event tracking (Clix.trackEvent) with consistent naming, safe pr
 
 ## clix-integration
 
-Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects. Provides step-by-step guidance for installation, initialization, and verification. Use when the user asks to install, setup, integrate Clix or when the user types `clix-integration` / "clix integration".
-
-- [clix-integration](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/SKILL.md): Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects. Provides step-by-step guidance for installation, initialization, and verification. Use when the user asks to install, setup, integrate Clix or when the user types `clix-integration` / "clix integration".
+- [clix-integration](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/integration/SKILL.md): Main skill documentation
 
 ### References
 
@@ -82,9 +76,7 @@ Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects
 
 ## clix-personalization
 
-Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types `clix-personalization`.
-
-- [clix-personalization](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/SKILL.md): Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types `clix-personalization`.
+- [clix-personalization](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/personalization/SKILL.md): Main skill documentation
 
 ### References
 
@@ -98,11 +90,30 @@ Helps developers author and debug Clix personalization templates (Liquid-style) 
 
 ---
 
+## clix-skill-creator
+
+- [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Main skill documentation
+
+### References
+
+- [Mcp Research Playbook (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/references/mcp-research-playbook.md): Reference documentation for skill-creator skill
+- [Skill Template (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/references/skill-template.md): Reference documentation for skill-creator skill
+
+### Examples
+
+- [Skill Brief Example (Example)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/examples/skill-brief-example.yaml): Code example for skill-creator skill
+
+### Scripts
+
+- [Validate Same Scope (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/scripts/validate-same-scope.sh): Utility script for skill-creator skill
+- [Validate Skill Location (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/scripts/validate-skill-location.sh): Utility script for skill-creator skill
+- [Validate Skill Scaffold (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/scripts/validate-skill-scaffold.sh): Utility script for skill-creator skill
+
+---
+
 ## clix-user-management
 
-Implements Clix user identification and user properties (setUserId, removeUserId, setUserProperty/setUserProperties, removeUserProperty/removeUserProperties) with safe schemas, logout best practices, and campaign-ready personalization/audience usage. Use when the user mentions login/logout, userId, user properties, personalization, audience targeting or when the user types `clix-user-management`.
-
-- [clix-user-management](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/SKILL.md): Implements Clix user identification and user properties (setUserId, removeUserId, setUserProperty/setUserProperties, removeUserProperty/removeUserProperties) with safe schemas, logout best practices, and campaign-ready personalization/audience usage. Use when the user mentions login/logout, userId, user properties, personalization, audience targeting or when the user types `clix-user-management`.
+- [clix-user-management](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/user-management/SKILL.md): Main skill documentation
 
 ### References
 

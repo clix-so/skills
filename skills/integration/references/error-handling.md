@@ -241,8 +241,7 @@ try {
 ### Provide Fallbacks
 
 ```typescript
-const projectId =
-  process.env.CLIX_PROJECT_ID || process.env.REACT_APP_CLIX_PROJECT_ID || "";
+const projectId = process.env.CLIX_PROJECT_ID || process.env.REACT_APP_CLIX_PROJECT_ID || "";
 
 if (!projectId) {
   console.warn("Clix: No project ID found, analytics disabled");

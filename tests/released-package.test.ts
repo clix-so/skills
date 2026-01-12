@@ -117,6 +117,7 @@ describe("released package smoke test", () => {
     "integration",
     "personalization",
     "user-management",
+    "skill-creator",
   ];
 
   // Test all supported clients from README

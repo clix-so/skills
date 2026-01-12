@@ -1,0 +1,41 @@
+skill:
+  folder_name: 'push-troubleshooting'
+  name: 'clix-push-troubleshooting'
+  display_name: 'Push Troubleshooting'
+  short_description: 'Debug push delivery and rendering issues'
+  description: >
+    Helps developers diagnose push notification delivery, permissions, token
+    registration, and template rendering issues. Uses Clix MCP Server as the
+    source of truth for SDK signatures and docs behavior.
+  user_invocable: true
+
+triggers:
+  - 'push notifications not arriving'
+  - 'APNs token not registered'
+  - 'FCM token changed'
+  - 'message logs show template error'
+
+inputs:
+  - 'platform (iOS/Android/Flutter/React Native)'
+  - 'app state (fresh install vs update)'
+  - 'what you see in Clix Message Logs (if available)'
+
+outputs:
+  - 'a step-by-step debug plan'
+  - 'a minimal repro checklist'
+  - 'code changes (if needed) to fix initialization/token registration'
+
+guardrails:
+  - 'MCP-first: do not claim SDK signatures without clix-mcp-server:search_sdk'
+  - 'no secrets; redact tokens and IDs'
+  - 'avoid duplicated scope with clix-integration unless troubleshooting-specific'
+
+files_to_generate:
+  skill_md: true
+  references:
+    - 'debugging-checklist.md'
+    - 'common-failure-modes.md'
+  scripts:
+    - 'validate-debug-plan.sh'
+  examples:
+    - 'sample-log-snippets.md'
