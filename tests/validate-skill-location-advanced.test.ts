@@ -22,11 +22,7 @@ const tempDirs = new TempDirManager();
 function createSkillFolder(tmpDir: string, pathSegments: string[]): string {
   const fullPath = path.join(tmpDir, ...pathSegments);
   fs.mkdirSync(fullPath, { recursive: true });
-  fs.writeFileSync(
-    path.join(fullPath, "SKILL.md"),
-    "---\nname: test\n---\n# Test\n",
-    "utf8"
-  );
+  fs.writeFileSync(path.join(fullPath, "SKILL.md"), "---\nname: test\n---\n# Test\n", "utf8");
   return fullPath;
 }
 
@@ -78,52 +74,39 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
         const tmpDir = tempDirs.create(`loc-client-${name}-`);
 
         const pathSegments =
-          dir === ""
-            ? [skillsOrSkill, "test-skill"]
-            : [dir, skillsOrSkill, "test-skill"];
+          dir === "" ? [skillsOrSkill, "test-skill"] : [dir, skillsOrSkill, "test-skill"];
 
         const skillDir = createSkillFolder(tmpDir, pathSegments);
-        const { result } = runValidator(skillDir, [
-          "--mode",
-          "client",
-          "--client",
-          name,
-        ]);
+        const { result } = runValidator(skillDir, ["--mode", "client", "--client", name]);
 
         expect(result.status).toBe(0);
         expect(result.stdout).toContain("OK: skill location looks OK (client)");
       }
     );
 
-    test.each(clients)(
-      "fails when $name skill is in wrong directory",
-      ({ name, dir }) => {
-        // Skip for clients with empty dir (like letta) or unknown path structure
-        if (name === "letta" || dir === "" || name === "gemini" || name === "goose" || name === "github") {
-          return;
-        }
-
-        const tmpDir = tempDirs.create(`loc-wrong-${name}-`);
-
-        // Put skill in wrong directory
-        const wrongDir = dir === ".cursor" ? ".vscode" : ".cursor";
-        const skillDir = createSkillFolder(tmpDir, [
-          wrongDir,
-          "skills",
-          "test-skill",
-        ]);
-
-        const { result } = runValidator(skillDir, [
-          "--mode",
-          "client",
-          "--client",
-          name,
-        ]);
-
-        expect(result.status).toBe(1);
-        expect(result.stdout || result.stderr).toMatch(/ERROR|Expected/);
+    test.each(clients)("fails when $name skill is in wrong directory", ({ name, dir }) => {
+      // Skip for clients with empty dir (like letta) or unknown path structure
+      if (
+        name === "letta" ||
+        dir === "" ||
+        name === "gemini" ||
+        name === "goose" ||
+        name === "github"
+      ) {
+        return;
       }
-    );
+
+      const tmpDir = tempDirs.create(`loc-wrong-${name}-`);
+
+      // Put skill in wrong directory
+      const wrongDir = dir === ".cursor" ? ".vscode" : ".cursor";
+      const skillDir = createSkillFolder(tmpDir, [wrongDir, "skills", "test-skill"]);
+
+      const { result } = runValidator(skillDir, ["--mode", "client", "--client", name]);
+
+      expect(result.status).toBe(1);
+      expect(result.stdout || result.stderr).toMatch(/ERROR|Expected/);
+    });
   });
 
   describe("Edge Cases - Path Handling", () => {
@@ -167,10 +150,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
     it("handles paths with spaces correctly", () => {
       const tmpDir = tempDirs.create("loc-spaces-");
 
-      const skillDir = createSkillFolder(tmpDir, [
-        "skills",
-        "test skill with spaces",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, ["skills", "test skill with spaces"]);
 
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
 
@@ -181,10 +161,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-special-");
 
       // Create skill with special chars in name (but valid)
-      const skillDir = createSkillFolder(tmpDir, [
-        "skills",
-        "test-skill-v2.1",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, ["skills", "test-skill-v2.1"]);
 
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
 
@@ -195,14 +172,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-deep-");
 
       // Create skill at a deep nesting level
-      const deepPath = [
-        "project",
-        "src",
-        "main",
-        "resources",
-        "skills",
-        "test-skill",
-      ];
+      const deepPath = ["project", "src", "main", "resources", "skills", "test-skill"];
       const skillDir = createSkillFolder(tmpDir, deepPath);
 
       const { result } = runValidator(skillDir, ["--mode", "repo"]);
@@ -215,18 +185,9 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-home-");
 
       // Test with path that includes home directory
-      const skillDir = createSkillFolder(tmpDir, [
-        ".claude",
-        "skills",
-        "test-skill",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, [".claude", "skills", "test-skill"]);
 
-      const { result } = runValidator(skillDir, [
-        "--mode",
-        "client",
-        "--client",
-        "claude",
-      ]);
+      const { result } = runValidator(skillDir, ["--mode", "client", "--client", "claude"]);
 
       expect(result.status).toBe(0);
     });
@@ -237,15 +198,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-security-");
 
       // Try to traverse up with ../
-      const maliciousPath = path.join(
-        tmpDir,
-        "skills",
-        "test-skill",
-        "..",
-        "..",
-        "etc",
-        "passwd"
-      );
+      const maliciousPath = path.join(tmpDir, "skills", "test-skill", "..", "..", "etc", "passwd");
 
       const { result } = runValidator(maliciousPath, ["--mode", "repo"]);
 
@@ -297,9 +250,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
 
       // Run validations concurrently
       const results = await Promise.all(
-        skills.map((skillDir) =>
-          Promise.resolve(runValidator(skillDir, ["--mode", "repo"]))
-        )
+        skills.map((skillDir) => Promise.resolve(runValidator(skillDir, ["--mode", "repo"])))
       );
 
       // All should pass
@@ -336,22 +287,13 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
     it("handles client names case-insensitively", () => {
       const tmpDir = tempDirs.create("loc-case-");
 
-      const skillDir = createSkillFolder(tmpDir, [
-        ".cursor",
-        "skills",
-        "test-skill",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, [".cursor", "skills", "test-skill"]);
 
       // Try with different cases
       const cases = ["cursor", "CURSOR", "Cursor", "CuRsOr"];
 
       for (const clientName of cases) {
-        const { result } = runValidator(skillDir, [
-          "--mode",
-          "client",
-          "--client",
-          clientName,
-        ]);
+        const { result } = runValidator(skillDir, ["--mode", "client", "--client", clientName]);
 
         expect(result.status).toBe(0);
       }
@@ -392,18 +334,12 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
         "validate-skill-location.sh"
       );
 
-      const skillDir = createSkillFolder(tmpDir, [
-        ".cursor",
-        "skills",
-        "test-skill",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, [".cursor", "skills", "test-skill"]);
 
       // Use --client flag without value (should error)
-      const result = spawnSync(
-        "bash",
-        [scriptPath, skillDir, "--mode", "client", "--client"],
-        { encoding: "utf8" }
-      );
+      const result = spawnSync("bash", [scriptPath, skillDir, "--mode", "client", "--client"], {
+        encoding: "utf8",
+      });
 
       expect(result.status).not.toBe(0);
     });
@@ -414,18 +350,9 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-opencode-");
 
       // OpenCode uses .opencode/skill/ not .opencode/skills/
-      const skillDir = createSkillFolder(tmpDir, [
-        ".opencode",
-        "skill",
-        "test-skill",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, [".opencode", "skill", "test-skill"]);
 
-      const { result } = runValidator(skillDir, [
-        "--mode",
-        "client",
-        "--client",
-        "opencode",
-      ]);
+      const { result } = runValidator(skillDir, ["--mode", "client", "--client", "opencode"]);
 
       expect(result.status).toBe(0);
     });
@@ -434,18 +361,9 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       const tmpDir = tempDirs.create("loc-opencode-wrong-");
 
       // Create in wrong directory (skills instead of skill)
-      const skillDir = createSkillFolder(tmpDir, [
-        ".opencode",
-        "skills",
-        "test-skill",
-      ]);
+      const skillDir = createSkillFolder(tmpDir, [".opencode", "skills", "test-skill"]);
 
-      const { result } = runValidator(skillDir, [
-        "--mode",
-        "client",
-        "--client",
-        "opencode",
-      ]);
+      const { result } = runValidator(skillDir, ["--mode", "client", "--client", "opencode"]);
 
       expect(result.status).toBe(1);
       expect(result.stdout || result.stderr).toContain(".opencode/skill/");
@@ -457,12 +375,7 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
       // Letta uses .skills at root level (not .letta/skills)
       const skillDir = createSkillFolder(tmpDir, [".skills", "test-skill"]);
 
-      const { result } = runValidator(skillDir, [
-        "--mode",
-        "client",
-        "--client",
-        "letta",
-      ]);
+      const { result } = runValidator(skillDir, ["--mode", "client", "--client", "letta"]);
 
       expect(result.status).toBe(0);
     });

@@ -2,8 +2,7 @@
 name: clix-skill-creator
 display-name: Skill Creator
 short-description: Generate new Clix agent skills
-description:
-  Helps authors create new Clix agent skills by first researching the latest Clix
+description: Helps authors create new Clix agent skills by first researching the latest Clix
   SDK + docs via the Clix MCP Server, then generating a complete skill folder
   (SKILL.md, references, scripts, examples) aligned with the conventions in this
   repository. Use when the user asks to create/author a new Clix skill, extend
@@ -100,7 +99,6 @@ need.
 - `clix-personalization`
 - `clix-api-triggered-campaigns`
 
-
 ## 3) MCP research: build an “Evidence Pack”
 
 Create a short evidence pack that you will cite while writing the new skill:
@@ -119,12 +117,12 @@ skill), with the search queries you used so future maintainers can refresh it.
 
 ## 4) Draft a Skill Brief (output format)
 
-Produce this brief for approval *before* generating files:
+Produce this brief for approval _before_ generating files:
 
 ```yaml
 skill:
-  folder_name: "<kebab-case>"           # e.g. "push-troubleshooting"
-  name: "clix-<kebab-case>"             # e.g. "clix-push-troubleshooting"
+  folder_name: "<kebab-case>" # e.g. "push-troubleshooting"
+  name: "clix-<kebab-case>" # e.g. "clix-push-troubleshooting"
   display_name: "<Title Case>"
   short_description: "<short>"
   description: "<2-3 lines>"
@@ -195,4 +193,3 @@ This should check:
 
 - `references/skill-template.md`
 - `references/mcp-research-playbook.md`
-

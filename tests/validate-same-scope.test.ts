@@ -78,7 +78,9 @@ describe("validate-same-scope.sh", () => {
 
     const { result } = runValidator(creator, newSkill);
     expect(result.status).toBe(1);
-    expect(result.stdout || result.stderr).toContain("ERROR: new skill must live under a skills directory");
+    expect(result.stdout || result.stderr).toContain(
+      "ERROR: new skill must live under a skills directory"
+    );
   });
 
   it("fails when skill-creator is not under a skills directory", () => {
@@ -141,4 +143,3 @@ describe("validate-same-scope.sh", () => {
     expect(result.status).toBe(0);
   });
 });
-

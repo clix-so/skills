@@ -106,7 +106,7 @@ To install specific skills:
 1. Visit the Marketplace section in `/plugin`
 2. Select `Browse plugins`
 3. Choose the skills you wish to install
-4. Install skill
+4. Install your preferred skill
 
 Alternatively, you can install a single skill directly by running:
 
