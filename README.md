@@ -46,7 +46,7 @@ The CLI supports two installation modes for skills:
 - Skills are available only for the current project
 - Best for project-specific configurations
 
-1. **System Root (Global)** - Installs skills to your home directory
+2. **System Root (Global)** - Installs skills to your home directory
 
 - Skills are available across all projects
 - Best for personal development setup
