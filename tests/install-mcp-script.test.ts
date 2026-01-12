@@ -464,11 +464,7 @@ exit 0
       // Create project-level VS Code settings without clix-mcp-server
       const projectSettingsPath = path.join(tmp, ".vscode", "settings.json");
       fs.mkdirSync(path.dirname(projectSettingsPath), { recursive: true });
-      fs.writeFileSync(
-        projectSettingsPath,
-        JSON.stringify({ "amp.mcpServers": {} }),
-        "utf8"
-      );
+      fs.writeFileSync(projectSettingsPath, JSON.stringify({ "amp.mcpServers": {} }), "utf8");
 
       const res = runScriptWithArgs(scriptPath, tmp, ["--client", "amp"], {
         HOME: homeDir,
