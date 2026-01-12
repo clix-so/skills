@@ -1,10 +1,26 @@
 # Agent Skills for Clix
 
+
 [![npm version](https://img.shields.io/npm/v/%40clix-so%2Fclix-agent-skills.svg?logo=npm&label=npm)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 [![npm downloads](https://img.shields.io/npm/d18m/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
 
 This repository contains a collection of **Agent Skills for Clix**. Each skill
 is a self-contained package that can be loaded and executed by AI clients.
+
+## Available Skills
+
+- **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
+application with Clix MCP Server
+- **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
+practices and campaign-ready validation
+- **clix-user-management**: Implement `Clix.setUserId` + user properties with
+logout best practices, personalization (`user.*`), and audience targeting
+- **clix-personalization**: Author and debug personalization templates for
+message content, deep links/URLs, and audience targeting rules (`user.*`,
+`event.*`, `trigger.*`, `device.*`)
+- **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
+console and trigger them from your backend with safe auth, dynamic filters
+(`trigger.*`), and personalization patterns
 
 ## Installing Skills
 
@@ -25,19 +41,19 @@ configure the Clix MCP Server.
 The CLI supports two installation modes for skills:
 
 1. **Repo Root (Project-specific)** - Installs skills to the current project
-   directory (default)
+  directory (default)
 
 - Skills are available only for the current project
 - Best for project-specific configurations
 
-2. **System Root (Global)** - Installs skills to your home directory
+1. **System Root (Global)** - Installs skills to your home directory
 
 - Skills are available across all projects
 - Best for personal development setup
 
-**Note:** MCP (Model Context Protocol) server configuration is always set up
-globally (system root), regardless of the skill installation mode. This ensures
-the MCP server is available across all your projects.
+**Note:** MCP (Model Context Protocol) server configuration location depends on
+the AI client. Some clients support both project-level and user-level (global)
+configurations. See the "Configuration Locations" section below for details.
 
 ```bash
 # Install a specific skill (repo root - default)
@@ -58,22 +74,8 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor
 npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 ```
 
-### Available Skills
-
-- **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
-  application with Clix MCP Server
-- **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
-  practices and campaign-ready validation
-- **clix-user-management**: Implement `Clix.setUserId` + user properties with
-  logout best practices, personalization (`user.*`), and audience targeting
-- **clix-personalization**: Author and debug personalization templates for
-  message content, deep links/URLs, and audience targeting rules (`user.*`,
-  `event.*`, `trigger.*`, `device.*`)
-- **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
-  console and trigger them from your backend with safe auth, dynamic filters
-  (`trigger.*`), and personalization patterns
-
 **Supported Clients:**
+
 
 | Client         | Flag                                 | Default Path       |
 | -------------- | ------------------------------------ | ------------------ |
@@ -88,6 +90,7 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | OpenCode       | `--client opencode`                  | `.opencode/skill/` |
 | VS Code        | `--client vscode`                    | `.vscode/skills/`  |
 
+
 ### Claude Code
 
 To register this repository as a plugin marketplace in Claude Code, run the
@@ -95,7 +98,6 @@ following command:
 
 ```bash
 /plugin marketplace add clix-so/skills
-/plugin install all@clix-agent-skills
 ```
 
 To install specific skills:
@@ -111,10 +113,6 @@ Alternatively, you can install a single skill directly by running:
 /plugin install <plugin-name>@<marketplace-name>
 # For example
 /plugin install clix-integration@clix-agent-skills
-/plugin install clix-event-tracking@clix-agent-skills
-/plugin install clix-user-management@clix-agent-skills
-/plugin install clix-personalization@clix-agent-skills
-/plugin install clix-api-triggered-campaigns@clix-agent-skills
 ```
 
 **Note for Claude Code users**: Skills now support automatic hot-reload! Skills

@@ -355,4 +355,207 @@ exit 0
     expect((res.stdout || "") + (res.stderr || "")).toMatch(/Multiple MCP clients detected/);
     expect((res.stdout || "") + (res.stderr || "")).toMatch(/--client/);
   });
+
+  describe("Duplicate configuration detection", () => {
+    it("warns when clix-mcp-server is already configured in another Gemini location", () => {
+      const tmp = makeTempDir();
+      const binDir = path.join(tmp, "bin");
+      const homeDir = path.join(tmp, "home");
+
+      writeFakeNpm(binDir);
+      writeNodeShim(binDir);
+
+      // Create user-level Gemini config with clix-mcp-server
+      const userGeminiPath = path.join(homeDir, ".gemini", "settings.json");
+      fs.mkdirSync(path.dirname(userGeminiPath), { recursive: true });
+      fs.writeFileSync(
+        userGeminiPath,
+        JSON.stringify({
+          mcpServers: {
+            "clix-mcp-server": {
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            },
+          },
+        }),
+        "utf8"
+      );
+
+      // Create project-level Gemini config without clix-mcp-server
+      const projectGeminiPath = path.join(tmp, ".gemini", "settings.json");
+      fs.mkdirSync(path.dirname(projectGeminiPath), { recursive: true });
+      fs.writeFileSync(projectGeminiPath, JSON.stringify({ mcpServers: {} }), "utf8");
+
+      const res = runScriptWithArgs(scriptPath, tmp, ["--client", "gemini"], {
+        HOME: homeDir,
+        PATH: `${binDir}:/usr/bin:/bin`,
+      });
+
+      expect(res.status).toBe(0);
+      const output = (res.stdout || "") + (res.stderr || "");
+      expect(output).toMatch(/Found clix-mcp-server in other.*config location/);
+      expect(output).toMatch(/\.gemini\/settings\.json/);
+    });
+
+    it("warns when clix-mcp-server is already configured in another Cursor location", () => {
+      const tmp = makeTempDir();
+      const binDir = path.join(tmp, "bin");
+      const homeDir = path.join(tmp, "home");
+
+      writeFakeNpm(binDir);
+      writeNodeShim(binDir);
+
+      // Create user-level Cursor config with clix-mcp-server
+      const userCursorPath = path.join(homeDir, ".cursor", "mcp.json");
+      fs.mkdirSync(path.dirname(userCursorPath), { recursive: true });
+      fs.writeFileSync(
+        userCursorPath,
+        JSON.stringify({
+          mcpServers: {
+            "clix-mcp-server": {
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            },
+          },
+        }),
+        "utf8"
+      );
+
+      // Create project-level Cursor config without clix-mcp-server
+      const projectCursorPath = path.join(tmp, ".cursor", "mcp.json");
+      fs.mkdirSync(path.dirname(projectCursorPath), { recursive: true });
+      fs.writeFileSync(projectCursorPath, JSON.stringify({ mcpServers: {} }), "utf8");
+
+      const res = runScriptWithArgs(scriptPath, tmp, ["--client", "cursor"], {
+        HOME: homeDir,
+        PATH: `${binDir}:/usr/bin:/bin`,
+      });
+
+      expect(res.status).toBe(0);
+      const output = (res.stdout || "") + (res.stderr || "");
+      expect(output).toMatch(/Found clix-mcp-server in other.*config location/);
+      expect(output).toMatch(/\.cursor\/mcp\.json/);
+    });
+
+    it("warns when clix-mcp-server is configured in multiple Amp/VS Code locations", () => {
+      const tmp = makeTempDir();
+      const binDir = path.join(tmp, "bin");
+      const homeDir = path.join(tmp, "home");
+
+      writeFakeNpm(binDir);
+      writeNodeShim(binDir);
+
+      // Create user-level VS Code settings with clix-mcp-server
+      const userSettingsPath = path.join(homeDir, ".vscode", "settings.json");
+      fs.mkdirSync(path.dirname(userSettingsPath), { recursive: true });
+      fs.writeFileSync(
+        userSettingsPath,
+        JSON.stringify({
+          "amp.mcpServers": {
+            "clix-mcp-server": {
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            },
+          },
+        }),
+        "utf8"
+      );
+
+      // Create project-level VS Code settings without clix-mcp-server
+      const projectSettingsPath = path.join(tmp, ".vscode", "settings.json");
+      fs.mkdirSync(path.dirname(projectSettingsPath), { recursive: true });
+      fs.writeFileSync(
+        projectSettingsPath,
+        JSON.stringify({ "amp.mcpServers": {} }),
+        "utf8"
+      );
+
+      const res = runScriptWithArgs(scriptPath, tmp, ["--client", "amp"], {
+        HOME: homeDir,
+        PATH: `${binDir}:/usr/bin:/bin`,
+      });
+
+      expect(res.status).toBe(0);
+      const output = (res.stdout || "") + (res.stderr || "");
+      expect(output).toMatch(/Found clix-mcp-server in other.*config location/);
+      expect(output).toMatch(/\.vscode\/settings\.json/);
+    });
+
+    it("does not warn when clix-mcp-server is only in the target config", () => {
+      const tmp = makeTempDir();
+      const binDir = path.join(tmp, "bin");
+      const homeDir = path.join(tmp, "home");
+
+      writeFakeNpm(binDir);
+      writeNodeShim(binDir);
+
+      // Create only user-level Gemini config with clix-mcp-server
+      const userGeminiPath = path.join(homeDir, ".gemini", "settings.json");
+      fs.mkdirSync(path.dirname(userGeminiPath), { recursive: true });
+      fs.writeFileSync(
+        userGeminiPath,
+        JSON.stringify({
+          mcpServers: {
+            "clix-mcp-server": {
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            },
+          },
+        }),
+        "utf8"
+      );
+
+      const res = runScriptWithArgs(scriptPath, tmp, ["--client", "gemini"], {
+        HOME: homeDir,
+        PATH: `${binDir}:/usr/bin:/bin`,
+      });
+
+      expect(res.status).toBe(0);
+      const output = (res.stdout || "") + (res.stderr || "");
+      expect(output).toMatch(/already configured/);
+      expect(output).not.toMatch(/Found clix-mcp-server in other.*config location/);
+    });
+
+    it("still configures target location even when found elsewhere", () => {
+      const tmp = makeTempDir();
+      const binDir = path.join(tmp, "bin");
+      const homeDir = path.join(tmp, "home");
+
+      writeFakeNpm(binDir);
+      writeNodeShim(binDir);
+
+      // Create user-level config with clix-mcp-server
+      const userCursorPath = path.join(homeDir, ".cursor", "mcp.json");
+      fs.mkdirSync(path.dirname(userCursorPath), { recursive: true });
+      fs.writeFileSync(
+        userCursorPath,
+        JSON.stringify({
+          mcpServers: {
+            "clix-mcp-server": {
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            },
+          },
+        }),
+        "utf8"
+      );
+
+      // Create project-level config without it
+      const projectCursorPath = path.join(tmp, ".cursor", "mcp.json");
+      fs.mkdirSync(path.dirname(projectCursorPath), { recursive: true });
+      fs.writeFileSync(projectCursorPath, JSON.stringify({ mcpServers: {} }), "utf8");
+
+      const res = runScriptWithArgs(scriptPath, tmp, ["--client", "cursor"], {
+        HOME: homeDir,
+        PATH: `${binDir}:/usr/bin:/bin`,
+      });
+
+      expect(res.status).toBe(0);
+
+      // Verify project-level config now has clix-mcp-server
+      const updated = fs.readFileSync(projectCursorPath, "utf8");
+      expect(updated).toMatch(/"clix-mcp-server"/);
+      expect(updated).toMatch(/"@clix-so\/clix-mcp-server@latest"/);
+    });
+  });
 });

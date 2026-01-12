@@ -10,19 +10,6 @@
   },
   "plugins": [
     {
-      "name": "all",
-      "description": "All available agent skills for Clix.",
-      "source": "./",
-      "strict": false,
-      "skills": [
-        "./skills/integration",
-        "./skills/event-tracking",
-        "./skills/user-management",
-        "./skills/personalization",
-        "./skills/api-triggered-campaigns"
-      ]
-    },
-    {
       "name": "clix-integration",
       "description": "Integrates Clix SDK into mobile projects. Use when the user asks to install/setup/integrate Clix, or when the user types \"clix-integration\".",
       "source": "./",
