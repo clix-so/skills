@@ -23,10 +23,18 @@ shift || true
 while [[ "${1:-}" != "" ]]; do
   case "$1" in
     --mode)
+      if [[ -z "${2:-}" || "${2:-}" == "-"* ]]; then
+        echo "Error: --mode requires a value" >&2
+        exit 2
+      fi
       mode="${2:-}"
       shift 2
       ;;
     --client)
+      if [[ -z "${2:-}" || "${2:-}" == "-"* ]]; then
+        echo "Error: --client requires a value" >&2
+        exit 2
+      fi
       client="${2:-}"
       shift 2
       ;;

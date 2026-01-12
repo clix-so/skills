@@ -239,8 +239,8 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
     });
   });
 
-  describe("Concurrent Execution Safety", () => {
-    it("handles multiple simultaneous validations", async () => {
+  describe("Multiple Validations", () => {
+    it("handles multiple validations (sequential)", () => {
       const tmpDir = tempDirs.create("loc-concurrent-");
 
       // Create multiple skill directories
@@ -248,10 +248,8 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
         createSkillFolder(tmpDir, ["skills", `test-skill-${i}`])
       );
 
-      // Run validations concurrently
-      const results = await Promise.all(
-        skills.map((skillDir) => Promise.resolve(runValidator(skillDir, ["--mode", "repo"])))
-      );
+      // Note: runValidator uses spawnSync, so this is sequential by design.
+      const results = skills.map((skillDir) => runValidator(skillDir, ["--mode", "repo"]));
 
       // All should pass
       results.forEach(({ result }) => {
@@ -341,7 +339,8 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
         encoding: "utf8",
       });
 
-      expect(result.status).not.toBe(0);
+      expect(result.status).toBe(2);
+      expect(result.stderr).toContain("Error: --client requires a value");
     });
   });
 

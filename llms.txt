@@ -92,9 +92,7 @@ Each entry includes the file path, type, and description for semantic search.
 
 ## clix-skill-creator
 
-Helps authors create new Clix agent skills by first researching the latest Clix SDK + docs via the Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with the conventions in this repository. Use when the user asks to create/author a new Clix skill, extend the skills library, or when the user types `clix-skill-creator`.
-
-- [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Helps authors create new Clix agent skills by first researching the latest Clix SDK + docs via the Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with the conventions in this repository. Use when the user asks to create/author a new Clix skill, extend the skills library, or when the user types `clix-skill-creator`.
+- [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Main skill documentation
 
 ### References
 
