@@ -132,15 +132,22 @@ case "$mode" in
           }
           ;;
         amp)
-          [[ "$skill_dir" == *"/.amp/skills/"* || "$skill_dir" == ".amp/skills/"* ]] || {
-            echo "ERROR: Expected Amp skill path to include '.amp/skills/'" >&2
+          # Amp uses `.agents/skills/` in a workspace and `~/.config/agents/skills/` globally.
+          [[ "$skill_dir" == *"/.agents/skills/"* || "$skill_dir" == ".agents/skills/"* ]] || {
+            echo "ERROR: Expected Amp skill path to include '.agents/skills/'" >&2
             echo "   Path: $skill_dir" >&2
             exit 1
           }
           ;;
         goose)
-          [[ "$skill_dir" == *"/.goose/skills/"* || "$skill_dir" == ".goose/skills/"* ]] || {
-            echo "ERROR: Expected Goose skill path to include '.goose/skills/'" >&2
+          # Goose supports both goose-specific and portable skill locations.
+          [[
+            "$skill_dir" == *"/.goose/skills/"* ||
+            "$skill_dir" == ".goose/skills/"* ||
+            "$skill_dir" == *"/.agents/skills/"* ||
+            "$skill_dir" == ".agents/skills/"*
+          ]] || {
+            echo "ERROR: Expected Goose skill path to include '.goose/skills/' or '.agents/skills/'" >&2
             echo "   Path: $skill_dir" >&2
             exit 1
           }

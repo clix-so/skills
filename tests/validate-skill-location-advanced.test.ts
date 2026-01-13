@@ -55,17 +55,17 @@ describe("validate-skill-location.sh - Advanced Tests", () => {
      * Validates that each client's path structure is correctly recognized
      */
     const clients = [
-      { name: "cursor", dir: ".cursor", skillsOrSkill: "skills" },
+      { name: "amp", dir: ".agents", skillsOrSkill: "skills" },
       { name: "claude", dir: ".claude", skillsOrSkill: "skills" },
       { name: "claude-code", dir: ".claude", skillsOrSkill: "skills" },
       { name: "codex", dir: ".codex", skillsOrSkill: "skills" },
-      { name: "amp", dir: ".amp", skillsOrSkill: "skills" },
-      { name: "vscode", dir: ".vscode", skillsOrSkill: "skills" },
-      { name: "goose", dir: ".goose", skillsOrSkill: "skills" },
-      { name: "github", dir: ".github", skillsOrSkill: "skills" },
+      { name: "cursor", dir: ".cursor", skillsOrSkill: "skills" },
       { name: "gemini", dir: ".gemini", skillsOrSkill: "skills" },
+      { name: "github", dir: ".github", skillsOrSkill: "skills" },
+      { name: "goose", dir: ".agents", skillsOrSkill: "skills" },
       { name: "letta", dir: "", skillsOrSkill: ".skills" }, // Letta uses .skills/
       { name: "opencode", dir: ".opencode", skillsOrSkill: "skill" }, // Note: "skill" not "skills"
+      { name: "vscode", dir: ".vscode", skillsOrSkill: "skills" },
     ];
 
     test.each(clients)(

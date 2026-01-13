@@ -77,7 +77,9 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         relativeDest = ".amazonq/skills";
         break;
       case "amp":
-        relativeDest = ".amp/skills";
+        // Amp looks for workspace skills in `.agents/skills/` and user skills in `~/.config/agents/skills/`.
+        // We map `--global` to the user-level location.
+        relativeDest = options.global ? ".config/agents/skills" : ".agents/skills";
         break;
       case "claude":
       case "claude-code":
@@ -102,7 +104,11 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         relativeDest = ".skills";
         break;
       case "goose":
-        relativeDest = ".goose/skills";
+        // Goose supports portable skill locations too:
+        // - project: `./.agents/skills/`
+        // - global : `~/.config/agents/skills/`
+        // We default to the portable locations, but users can still override via --path.
+        relativeDest = options.global ? ".config/agents/skills" : ".agents/skills";
         break;
       case "kiro":
         relativeDest = ".kiro/skills";

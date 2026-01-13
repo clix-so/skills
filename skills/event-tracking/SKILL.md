@@ -100,7 +100,8 @@ The skill directory is typically:
 
 - `.cursor/skills/event-tracking/` (Cursor)
 - `.claude/skills/event-tracking/` (Claude Code)
-- `.vscode/skills/event-tracking/` (VS Code/Amp)
+- `.vscode/skills/event-tracking/` (VS Code)
+- `.agents/skills/event-tracking/` (Amp)
 - Or check where this skill was installed
 
 If validation fails: fix the plan first, then implement.

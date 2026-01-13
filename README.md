@@ -81,13 +81,13 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 
 | Client         | Flag                                 | Default Path       |
 | -------------- | ------------------------------------ | ------------------ |
-| Amp            | `--client amp`                       | `.amp/skills/`     |
+| Amp            | `--client amp`                       | `.agents/skills/`  |
 | Claude Code    | `--client claude` (or `claude-code`) | `.claude/skills/`  |
 | Codex          | `--client codex`                     | `.codex/skills/`   |
 | Cursor         | `--client cursor`                    | `.cursor/skills/`  |
 | Gemini CLI     | `--client gemini`                    | `.gemini/skills/`  |
 | GitHub Copilot | `--client github`                    | `.github/skills/`  |
-| Goose          | `--client goose`                     | `.goose/skills/`   |
+| Goose          | `--client goose`                     | `.agents/skills/`  |
 | Letta          | `--client letta`                     | `.skills/`         |
 | OpenCode       | `--client opencode`                  | `.opencode/skill/` |
 | VS Code        | `--client vscode`                    | `.vscode/skills/`  |

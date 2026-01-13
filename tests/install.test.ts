@@ -131,10 +131,10 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
-  it("should install to .goose/skills when client is goose", async () => {
+  it("should install to .agents/skills when client is goose", async () => {
     await installSkill("integration", { client: "goose" });
 
-    const expectedDest = path.resolve(process.cwd(), ".goose/skills/integration");
+    const expectedDest = path.resolve(process.cwd(), ".agents/skills/integration");
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
@@ -200,10 +200,10 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
-  it("should install to .amp/skills when client is amp", async () => {
+  it("should install to .agents/skills when client is amp", async () => {
     await installSkill("integration", { client: "amp" });
 
-    const expectedDest = path.resolve(process.cwd(), ".amp/skills/integration");
+    const expectedDest = path.resolve(process.cwd(), ".agents/skills/integration");
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
@@ -336,7 +336,10 @@ describe("installSkill", () => {
         jest.clearAllMocks();
         await installSkill("integration", { client, global: true });
 
-        const expectedDest = path.resolve(mockHomeDir, `.${client}/skills/integration`);
+        const expectedDest =
+          client === "amp"
+            ? path.resolve(mockHomeDir, ".config/agents/skills/integration")
+            : path.resolve(mockHomeDir, `.${client}/skills/integration`);
         expect(mockedFs.copy).toHaveBeenCalledWith(
           expect.stringContaining("skills/integration"),
           expectedDest
@@ -352,7 +355,10 @@ describe("installSkill", () => {
         jest.clearAllMocks();
         await installSkill("integration", { client, global: false });
 
-        const expectedDest = path.resolve(process.cwd(), `.${client}/skills/integration`);
+        const expectedDest =
+          client === "amp"
+            ? path.resolve(process.cwd(), ".agents/skills/integration")
+            : path.resolve(process.cwd(), `.${client}/skills/integration`);
         expect(mockedFs.copy).toHaveBeenCalledWith(
           expect.stringContaining("skills/integration"),
           expectedDest
