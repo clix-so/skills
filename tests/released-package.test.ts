@@ -122,17 +122,17 @@ describe("released package smoke test", () => {
 
   // Test all supported clients from README
   const clients = [
-    { name: "amp", path: ".amp/skills" },
-    { name: "claude", path: ".claude/skills" },
-    { name: "claude-code", path: ".claude/skills" },
-    { name: "codex", path: ".codex/skills" },
-    { name: "cursor", path: ".cursor/skills" },
-    { name: "gemini", path: ".gemini/skills" },
-    { name: "github", path: ".github/skills" },
-    { name: "goose", path: ".goose/skills" },
-    { name: "letta", path: ".skills" },
-    { name: "opencode", path: ".opencode/skill" },
-    { name: "vscode", path: ".vscode/skills" },
+    { name: "amp", repoPath: ".agents/skills", globalPath: ".config/agents/skills" },
+    { name: "claude", repoPath: ".claude/skills", globalPath: ".claude/skills" },
+    { name: "claude-code", repoPath: ".claude/skills", globalPath: ".claude/skills" },
+    { name: "codex", repoPath: ".codex/skills", globalPath: ".codex/skills" },
+    { name: "cursor", repoPath: ".cursor/skills", globalPath: ".cursor/skills" },
+    { name: "gemini", repoPath: ".gemini/skills", globalPath: ".gemini/skills" },
+    { name: "github", repoPath: ".github/skills", globalPath: ".github/skills" },
+    { name: "goose", repoPath: ".agents/skills", globalPath: ".config/agents/skills" },
+    { name: "letta", repoPath: ".skills", globalPath: ".skills" },
+    { name: "opencode", repoPath: ".opencode/skill", globalPath: ".opencode/skill" },
+    { name: "vscode", repoPath: ".vscode/skills", globalPath: ".vscode/skills" },
   ];
 
   // First, verify CLI works
@@ -182,7 +182,7 @@ describe("released package smoke test", () => {
   });
 
   // Test each client installation at repo root
-  clients.forEach(({ name, path: expectedPath }) => {
+  clients.forEach(({ name, repoPath: expectedPath }) => {
     (runReleased ? it : it.skip)(`installs all skills at repo root for client: ${name}`, () => {
       console.log(`\n[TEST] Starting installation test for client: ${name}`);
       const repoRoot = path.resolve(__dirname, "..");
@@ -332,7 +332,7 @@ describe("released package smoke test", () => {
   });
 
   // Test each client installation at repo root WITH MCP configuration
-  clients.forEach(({ name, path: expectedPath }) => {
+  clients.forEach(({ name, repoPath: expectedPath }) => {
     (runReleased ? it : it.skip)(
       `installs all skills at repo root with MCP config for client: ${name}`,
       () => {
@@ -465,7 +465,7 @@ describe("released package smoke test", () => {
   });
 
   // Test each client installation at global level (system root) WITH MCP configuration
-  clients.forEach(({ name, path: expectedPath }) => {
+  clients.forEach(({ name, globalPath: expectedPath }) => {
     (runReleased ? it : it.skip)(
       `installs all skills globally with MCP config for client: ${name}`,
       () => {

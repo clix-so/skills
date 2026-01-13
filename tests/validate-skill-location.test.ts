@@ -200,11 +200,11 @@ describe("validate-skill-location.sh", () => {
       expect(result.stdout).toContain("OK: skill location looks OK (client)");
     });
 
-    it("passes for Amp skill in .amp/skills/", () => {
+    it("passes for Amp skill in .agents/skills/", () => {
       const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "skill-loc-"));
       tempDirs.push(tmpDir);
 
-      const skillDir = createSkillFolder(tmpDir, [".amp", "skills", "test-skill"]);
+      const skillDir = createSkillFolder(tmpDir, [".agents", "skills", "test-skill"]);
       const { result } = runValidator(skillDir, ["--mode", "client", "--client", "amp"]);
 
       expect(result.status).toBe(0);
