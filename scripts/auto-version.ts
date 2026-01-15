@@ -402,8 +402,14 @@ async function main(): Promise<void> {
     if (!tag) {
       console.log("\nNext steps:");
       console.log("  1. Review the changes: git diff");
-      console.log("  2. Commit the version bump: git add -A && git commit -m 'chore: bump version to " + newVersion + "'");
-      console.log("  3. Create a tag: git tag -a v" + newVersion + " -m 'Release v" + newVersion + "'");
+      console.log(
+        "  2. Commit the version bump: git add -A && git commit -m 'chore: bump version to " +
+          newVersion +
+          "'"
+      );
+      console.log(
+        "  3. Create a tag: git tag -a v" + newVersion + " -m 'Release v" + newVersion + "'"
+      );
       console.log("  4. Push: git push && git push --tags");
     }
   } catch (error) {

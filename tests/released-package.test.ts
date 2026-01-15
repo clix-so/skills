@@ -51,7 +51,9 @@ function runWithRetry(
 
     // Transient error detected, wait and retry
     attempt++;
-    console.log(`[RETRY] Transient npm error detected, retrying (attempt ${attempt}/${maxRetries})...`);
+    console.log(
+      `[RETRY] Transient npm error detected, retrying (attempt ${attempt}/${maxRetries})...`
+    );
 
     // Wait a bit before retrying (exponential backoff)
     const waitMs = 1000 * Math.pow(2, attempt - 1);
