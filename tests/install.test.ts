@@ -117,6 +117,34 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
+  it("should install to .agent/skills when client is google-antigravity (alias)", async () => {
+    await installSkill("integration", { client: "google-antigravity" });
+
+    const expectedDest = path.resolve(process.cwd(), ".agent/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to ~/.gemini/antigravity/skills when client is google-antigravity with --global", async () => {
+    await installSkill("integration", { client: "google-antigravity", global: true });
+
+    const expectedDest = path.resolve(mockHomeDir, ".gemini/antigravity/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to .agent/skills when client is google_antigravity (underscore alias)", async () => {
+    await installSkill("integration", { client: "google_antigravity" });
+
+    const expectedDest = path.resolve(process.cwd(), ".agent/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to ~/.gemini/antigravity/skills when client is google_antigravity with --global", async () => {
+    await installSkill("integration", { client: "google_antigravity", global: true });
+
+    const expectedDest = path.resolve(mockHomeDir, ".gemini/antigravity/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
   it("should install to .opencode/skill when client is opencode", async () => {
     await installSkill("integration", { client: "opencode" });
 

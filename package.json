@@ -1,6 +1,6 @@
 {
   "name": "@clix-so/clix-agent-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An open collection of agent skills for Clix.",
   "main": "dist/index.js",
   "bin": {
@@ -20,6 +20,7 @@
     "lint": "prettier --check .",
     "lint:fix": "prettier --write .",
     "sync-version": "ts-node scripts/sync-version.ts",
+    "auto-version": "ts-node scripts/auto-version.ts",
     "generate-llms": "ts-node scripts/generate-llms.ts",
     "preversion": "npm run sync-version",
     "postversion": "npm run sync-version",

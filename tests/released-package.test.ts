@@ -17,6 +17,57 @@ function run(
   });
 }
 
+/**
+ * Run a command with retry logic for transient npm errors
+ * Retries on known transient errors like ECOMPROMISED, ECONNRESET, etc.
+ */
+function runWithRetry(
+  command: string,
+  args: string[],
+  cwd: string,
+  env: Record<string, string | undefined>,
+  maxRetries: number = 3
+) {
+  const transientErrors = [
+    "ECOMPROMISED",
+    "ECONNRESET",
+    "ETIMEDOUT",
+    "ENOTFOUND",
+    "EAI_AGAIN",
+    "Lock compromised",
+  ];
+
+  let lastResult = run(command, args, cwd, env);
+  let attempt = 1;
+
+  while (attempt < maxRetries) {
+    const stderr = (lastResult.stderr || "").toString();
+    const isTransientError = transientErrors.some((err) => stderr.includes(err));
+
+    if (lastResult.status === 0 || !isTransientError) {
+      // Success or non-transient error, return immediately
+      return lastResult;
+    }
+
+    // Transient error detected, wait and retry
+    attempt++;
+    console.log(
+      `[RETRY] Transient npm error detected, retrying (attempt ${attempt}/${maxRetries})...`
+    );
+
+    // Wait a bit before retrying (exponential backoff)
+    const waitMs = 1000 * Math.pow(2, attempt - 1);
+    const start = Date.now();
+    while (Date.now() - start < waitMs) {
+      // Busy wait (spawnSync doesn't allow async)
+    }
+
+    lastResult = run(command, args, cwd, env);
+  }
+
+  return lastResult;
+}
+
 function mkRepoTempDir(repoRoot: string, prefix: string) {
   const base = path.join(repoRoot, ".tmp-tests");
   fs.mkdirSync(base, { recursive: true });
@@ -123,6 +174,7 @@ describe("released package smoke test", () => {
   // Test all supported clients from README
   const clients = [
     { name: "amp", repoPath: ".agents/skills", globalPath: ".config/agents/skills" },
+    { name: "antigravity", repoPath: ".agent/skills", globalPath: ".gemini/antigravity/skills" },
     { name: "claude", repoPath: ".claude/skills", globalPath: ".claude/skills" },
     { name: "claude-code", repoPath: ".claude/skills", globalPath: ".claude/skills" },
     { name: "codex", repoPath: ".codex/skills", globalPath: ".codex/skills" },
@@ -158,7 +210,7 @@ describe("released package smoke test", () => {
       };
 
       console.log(`[STEP] Running: npx -y @clix-so/clix-agent-skills@latest --version`);
-      const versionRes = run(
+      const versionRes = runWithRetry(
         "npx",
         ["-y", "@clix-so/clix-agent-skills@latest", "--version"],
         projectDir,
@@ -221,7 +273,7 @@ describe("released package smoke test", () => {
         console.log(`[STEP] Working directory: ${projectDir}`);
         console.log(`[STEP] Expected install path: ${expectedPath}`);
 
-        const cliRes = run("npx", installCmd, projectDir, env);
+        const cliRes = runWithRetry("npx", installCmd, projectDir, env);
 
         console.log(`[RESULT] Exit status: ${cliRes.status}`);
         if (cliRes.error) {
@@ -373,7 +425,7 @@ describe("released package smoke test", () => {
           console.log(`[STEP] Expected install path: ${expectedPath}`);
           console.log(`[STEP] MCP config will be attempted (may prompt or fail in CI, that's OK)`);
 
-          const cliRes = run("npx", installCmd, projectDir, env);
+          const cliRes = runWithRetry("npx", installCmd, projectDir, env);
 
           console.log(`[RESULT] Exit status: ${cliRes.status}`);
           if (cliRes.error) {
@@ -509,7 +561,7 @@ describe("released package smoke test", () => {
           console.log(`[STEP] Expected install path: ${homeDir}/${expectedPath}`);
           console.log(`[STEP] MCP config will be attempted (may prompt or fail in CI, that's OK)`);
 
-          const cliRes = run("npx", installCmd, projectDir, env);
+          const cliRes = runWithRetry("npx", installCmd, projectDir, env);
 
           console.log(`[RESULT] Exit status: ${cliRes.status}`);
           if (cliRes.error) {

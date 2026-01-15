@@ -92,6 +92,8 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         relativeDest = ".gemini/skills";
         break;
       case "antigravity":
+      case "google-antigravity":
+      case "google_antigravity":
         // Google Antigravity uses `.agent/skills` for workspace installs and
         // `~/.gemini/antigravity/skills` for global installs.
         relativeDest = options.global ? ".gemini/antigravity/skills" : ".agent/skills";
