@@ -60,6 +60,7 @@ configurations. See the "Configuration Locations" section below for details.
 
 ```bash
 # Install a specific skill (repo root - default)
+# Default install path (when --client is omitted): .agent/skills/<skill>
 npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
 # For example, to install a skill on Cursor:
 npx @clix-so/clix-agent-skills@latest install integration --client cursor
@@ -79,18 +80,20 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 
 **Supported Clients:**
 
-| Client         | Flag                                 | Default Path       |
-| -------------- | ------------------------------------ | ------------------ |
-| Amp            | `--client amp`                       | `.agents/skills/`  |
-| Claude Code    | `--client claude` (or `claude-code`) | `.claude/skills/`  |
-| Codex          | `--client codex`                     | `.codex/skills/`   |
-| Cursor         | `--client cursor`                    | `.cursor/skills/`  |
-| Gemini CLI     | `--client gemini`                    | `.gemini/skills/`  |
-| GitHub Copilot | `--client github`                    | `.github/skills/`  |
-| Goose          | `--client goose`                     | `.agents/skills/`  |
-| Letta          | `--client letta`                     | `.skills/`         |
-| OpenCode       | `--client opencode`                  | `.opencode/skill/` |
-| VS Code        | `--client vscode`                    | `.vscode/skills/`  |
+| Client                  | Flag                                 | Default Path       |
+| ----------------------- | ------------------------------------ | ------------------ |
+| Default (no `--client`) | _n/a_                                | `.agent/skills/`   |
+| Amp                     | `--client amp`                       | `.agents/skills/`  |
+| Claude Code             | `--client claude` (or `claude-code`) | `.claude/skills/`  |
+| Codex                   | `--client codex`                     | `.codex/skills/`   |
+| Cursor                  | `--client cursor`                    | `.cursor/skills/`  |
+| Gemini CLI              | `--client gemini`                    | `.gemini/skills/`  |
+| Google Antigravity      | `--client antigravity`               | `.agent/skills/`   |
+| GitHub Copilot          | `--client github`                    | `.github/skills/`  |
+| Goose                   | `--client goose`                     | `.agents/skills/`  |
+| Letta                   | `--client letta`                     | `.skills/`         |
+| OpenCode                | `--client opencode`                  | `.opencode/skill/` |
+| VS Code                 | `--client vscode`                    | `.vscode/skills/`  |
 
 ### Claude Code (Alternative setup via plugin marketplace)
 
