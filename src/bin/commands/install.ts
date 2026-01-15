@@ -67,7 +67,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   }
 
   // 2. Determine Destination
-  let relativeDest = ".clix/skills";
+  let relativeDest = ".agent/skills";
 
   if (options.path) {
     relativeDest = options.path;
@@ -100,6 +100,11 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         // Gemini CLI discovers project skills in `.gemini/skills/` and user skills in `~/.gemini/skills/`
         relativeDest = ".gemini/skills";
         break;
+      case "antigravity":
+        // Google Antigravity uses `.agent/skills` for workspace installs and
+        // `~/.gemini/antigravity/skills` for global installs.
+        relativeDest = options.global ? ".gemini/antigravity/skills" : ".agent/skills";
+        break;
       case "letta":
         relativeDest = ".skills";
         break;
@@ -120,7 +125,9 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         relativeDest = ".vscode/skills";
         break;
       default:
-        relativeDest = options.client.startsWith(".") ? `${options.client}/skills` : `.clix/skills`;
+        relativeDest = options.client.startsWith(".")
+          ? `${options.client}/skills`
+          : `.agent/skills`;
     }
   }
 

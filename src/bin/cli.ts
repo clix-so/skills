@@ -26,9 +26,9 @@ program
   .description("Install agent skill(s)")
   .option(
     "-c, --client <client>",
-    "Target AI client (amazonq, amp, claude|claude-code, codex, copilot|github, cursor, gemini, goose, kiro, letta, opencode, vscode, manual)"
+    "Target AI client (amazonq, amp, antigravity, claude|claude-code, codex, copilot|github, cursor, gemini, goose, kiro, letta, opencode, vscode, manual)"
   )
-  .option("-p, --path <path>", "Custom installation path (default: .clix/skills)")
+  .option("-p, --path <path>", "Custom installation path (default: .agent/skills)")
   .option("-a, --all", "Install all available skills")
   .option("-g, --global", "Install globally to system root (default: installs to repo root)")
   .action(async (skill, options) => {

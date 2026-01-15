@@ -194,6 +194,17 @@ function getClientConfig(client: string): ClientConfig | null {
         format: "json",
       };
 
+    case "antigravity":
+    case "google-antigravity":
+    case "google_antigravity":
+      // Google Antigravity stores global skills under ~/.gemini/antigravity/skills/
+      // and follows the Gemini-style JSON config for MCP servers.
+      return {
+        path: path.join(home, ".gemini", "antigravity", "settings.json"),
+        configKey: "mcpServers",
+        format: "json",
+      };
+
     case "cursor": {
       // MCP is always configured globally
       return {
@@ -439,6 +450,7 @@ export async function configureMCP(client?: string): Promise<void> {
         choices: [
           { name: "Amazon Q", value: "amazonq" },
           { name: "Amp", value: "amp" },
+          { name: "Google Antigravity", value: "antigravity" },
           { name: "Claude Code", value: "claude" },
           { name: "Codex", value: "codex" },
           { name: "Cursor", value: "cursor" },
