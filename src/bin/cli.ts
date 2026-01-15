@@ -2,17 +2,8 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import { installSkill, installAllSkills } from "./commands/install";
+import { getErrorMessage } from "./utils/errors";
 import { version } from "../../package.json";
-
-/**
- * Extracts error message from unknown error type
- */
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return String(error);
-}
 
 const program = new Command();
 

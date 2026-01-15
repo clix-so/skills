@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import chalk from "chalk";
 import ora from "ora";
 import { configureMCP } from "../utils/mcp";
+import { getErrorMessage } from "../utils/errors";
 
 interface InstallOptions {
   client?: string;
@@ -14,16 +15,6 @@ interface InstallOptions {
    * `install --all` uses this to avoid prompting/writing config once per skill.
    */
   skipMCPConfig?: boolean;
-}
-
-/**
- * Extracts error message from unknown error type
- */
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return String(error);
 }
 
 export async function installSkill(skillName: string, options: InstallOptions) {

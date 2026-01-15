@@ -5,6 +5,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import * as TOML from "@iarna/toml";
 import { spawnSync } from "child_process";
+import { getErrorMessage } from "./errors";
 
 // ============================================================================
 // Type Definitions
@@ -61,20 +62,6 @@ const CLAUDE_CODE_MCP_ADD_ARGS = [
   "-y",
   "@clix-so/clix-mcp-server@latest",
 ];
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Extracts error message from unknown error type
- */
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return String(error);
-}
 
 function hasClixServerInClaudeMcpListOutput(output: string): boolean {
   return output.toLowerCase().includes("clix-mcp-server");
