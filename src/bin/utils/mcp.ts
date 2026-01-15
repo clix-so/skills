@@ -422,6 +422,98 @@ async function configureOpenCode(): Promise<void> {
 }
 
 // ============================================================================
+// Factory Configuration (supports user + project scopes)
+// ============================================================================
+
+interface FactoryConfigTarget {
+  scope: "user" | "project";
+  path: string;
+}
+
+async function configureFactoryConfig(configTarget: FactoryConfigTarget): Promise<void> {
+  const { scope, path: configPath } = configTarget;
+  const nicePath =
+    scope === "project"
+      ? path.relative(process.cwd(), configPath) || configPath
+      : configPath.replace(os.homedir(), "~");
+
+  console.log(chalk.blue(`Checking MCP config at ${nicePath} (${scope} scope)...`));
+
+  if (!fs.existsSync(configPath)) {
+    const { create } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "create",
+        message: `Config file not found at ${nicePath}. Create it?`,
+        default: true,
+      },
+    ]);
+
+    if (!create) {
+      console.log(chalk.yellow(`Skipping MCP configuration for ${scope} scope.`));
+      return;
+    }
+
+    try {
+      await fs.ensureDir(path.dirname(configPath));
+      await fs.writeJSON(configPath, createEmptyConfig("mcpServers"), { spaces: 2 });
+      console.log(chalk.green(`✔ Created config file at ${nicePath}`));
+    } catch (error: unknown) {
+      console.log(
+        chalk.red(`Failed to create config file (${scope} scope): ${getErrorMessage(error)}`)
+      );
+      return;
+    }
+  }
+
+  let config: MCPConfig;
+  try {
+    config = await fs.readJSON(configPath);
+  } catch (error: unknown) {
+    console.log(chalk.red(`Failed to parse existing config JSON: ${getErrorMessage(error)}`));
+    return;
+  }
+
+  let mcpServers = getMcpServersFromConfig(config, "mcpServers");
+  if (!mcpServers) {
+    mcpServers = {};
+    setMcpServersInConfig(config, "mcpServers", mcpServers);
+  }
+
+  if (mcpServers["clix-mcp-server"]) {
+    console.log(chalk.green(`✔ Clix MCP Server is already configured for ${scope} scope.`));
+    return;
+  }
+
+  const { inject } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "inject",
+      message: `Add Clix MCP Server to ${nicePath}?`,
+      default: true,
+    },
+  ]);
+
+  if (inject) {
+    mcpServers["clix-mcp-server"] = CLIX_MCP_SERVER_ENTRY;
+    setMcpServersInConfig(config, "mcpServers", mcpServers);
+    await fs.writeJSON(configPath, config, { spaces: 2 });
+    console.log(chalk.green(`✔ Added Clix MCP Server to configuration (${scope} scope).`));
+  }
+}
+
+async function configureFactory(): Promise<void> {
+  const targets: FactoryConfigTarget[] = [
+    { scope: "user", path: path.join(os.homedir(), ".factory", "mcp.json") },
+    { scope: "project", path: path.join(process.cwd(), ".factory", "mcp.json") },
+  ];
+
+  for (const target of targets) {
+    await configureFactoryConfig(target);
+  }
+}
+
+// ============================================================================
 // Main Function
 // ============================================================================
 
@@ -441,6 +533,7 @@ export async function configureMCP(client?: string): Promise<void> {
           { name: "Claude Code", value: "claude" },
           { name: "Codex", value: "codex" },
           { name: "Cursor", value: "cursor" },
+          { name: "Factory", value: "factory" },
           { name: "Gemini CLI", value: "gemini" },
           { name: "GitHub", value: "github" },
           { name: "Goose", value: "goose" },
@@ -462,6 +555,12 @@ export async function configureMCP(client?: string): Promise<void> {
 
   if (targetClient === "manual") {
     console.log(chalk.blue("Skipping automatic MCP configuration."));
+    return;
+  }
+
+  // Factory supports user + project scoped config files; configure both.
+  if (targetClient === "factory") {
+    await configureFactory();
     return;
   }
 

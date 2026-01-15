@@ -1,6 +1,6 @@
 {
   "name": "@clix-so/clix-agent-skills",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An open collection of agent skills for Clix.",
   "main": "dist/index.js",
   "bin": {
@@ -24,7 +24,7 @@
     "generate-llms": "ts-node scripts/generate-llms.ts",
     "preversion": "npm run sync-version",
     "postversion": "npm run sync-version",
-    "prepublishOnly": "npm run sync-version && npm run build && npm test && npm run generate-llms && npm run lint:fix"
+    "prepublishOnly": "npm install && npm run sync-version && npm run build && npm test && npm run generate-llms && npm run lint:fix"
   },
   "keywords": [
     "clix",

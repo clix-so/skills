@@ -64,10 +64,10 @@ describe("installSkill", () => {
     consoleWarnSpy.mockRestore();
   });
 
-  it("should install to default .agent/skills when no client is specified", async () => {
+  it("should install to default .agents/skills when no client is specified", async () => {
     await installSkill("integration", {});
 
-    const expectedDest = path.resolve(process.cwd(), ".agent/skills/integration");
+    const expectedDest = path.resolve(process.cwd(), ".agents/skills/integration");
     expect(mockedFs.copy).toHaveBeenCalledWith(
       expect.stringContaining("skills/integration"),
       expectedDest
@@ -101,6 +101,39 @@ describe("installSkill", () => {
 
     const expectedDest = path.resolve(process.cwd(), ".gemini/skills/integration");
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to .factory/skills when client is factory", async () => {
+    await installSkill("integration", { client: "factory" });
+
+    const expectedDest = path.resolve(process.cwd(), ".factory/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should install to ~/.factory/skills when client is factory with --global", async () => {
+    await installSkill("integration", { client: "factory", global: true });
+
+    const expectedDest = path.resolve(mockHomeDir, ".factory/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should handle Factory client case-insensitively (FACTORY)", async () => {
+    await installSkill("integration", { client: "FACTORY" });
+
+    const expectedDest = path.resolve(process.cwd(), ".factory/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should handle Factory client case-insensitively (Factory)", async () => {
+    await installSkill("integration", { client: "Factory" });
+
+    const expectedDest = path.resolve(process.cwd(), ".factory/skills/integration");
+    expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
+  });
+
+  it("should attempt to configure MCP for Factory client", async () => {
+    await installSkill("integration", { client: "factory" });
+    expect(mockedConfigureMCP).toHaveBeenCalledWith("factory");
   });
 
   it("should install to .agent/skills when client is antigravity (project scope)", async () => {
@@ -270,10 +303,10 @@ describe("installSkill", () => {
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
-  it("should fallback to .agent/skills for unknown client", async () => {
+  it("should fallback to .agents/skills for unknown client", async () => {
     await installSkill("integration", { client: "unknown-client" });
 
-    const expectedDest = path.resolve(process.cwd(), ".agent/skills/integration");
+    const expectedDest = path.resolve(process.cwd(), ".agents/skills/integration");
     expect(mockedFs.copy).toHaveBeenCalledWith(expect.any(String), expectedDest);
   });
 
@@ -363,7 +396,7 @@ describe("installSkill", () => {
     it("should install to project root for default client when global is false", async () => {
       await installSkill("integration", { global: false });
 
-      const expectedDest = path.resolve(process.cwd(), ".agent/skills/integration");
+      const expectedDest = path.resolve(process.cwd(), ".agents/skills/integration");
       expect(mockedFs.copy).toHaveBeenCalledWith(
         expect.stringContaining("skills/integration"),
         expectedDest
@@ -372,7 +405,7 @@ describe("installSkill", () => {
     });
 
     it("should install to system root for multiple clients when global is true", async () => {
-      const clients = ["cursor", "claude", "vscode", "amp", "kiro"];
+      const clients = ["cursor", "claude", "vscode", "amp", "kiro", "factory"];
 
       for (const client of clients) {
         jest.clearAllMocks();
@@ -391,7 +424,7 @@ describe("installSkill", () => {
     });
 
     it("should install to project root for multiple clients when global is false", async () => {
-      const clients = ["cursor", "claude", "vscode", "amp", "kiro"];
+      const clients = ["cursor", "claude", "vscode", "amp", "kiro", "factory"];
 
       for (const client of clients) {
         jest.clearAllMocks();
@@ -652,6 +685,62 @@ describe("installAllSkills", () => {
       expect.stringContaining("user-management"),
       expect.stringContaining(".claude/skills/user-management")
     );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should install all skills to .factory/skills when client is factory", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "factory" });
+
+    // All skills should be installed to .factory/skills
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("integration"),
+      expect.stringContaining(".factory/skills/integration")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("event-tracking"),
+      expect.stringContaining(".factory/skills/event-tracking")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("user-management"),
+      expect.stringContaining(".factory/skills/user-management")
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should install all skills to ~/.factory/skills when client is factory with global", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "factory", global: true });
+
+    // All skills should be installed to home directory
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/integration"),
+      path.resolve(mockHomeDir, ".factory/skills/integration")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/event-tracking"),
+      path.resolve(mockHomeDir, ".factory/skills/event-tracking")
+    );
+    expect(mockedFs.copy).toHaveBeenCalledWith(
+      expect.stringContaining("skills/user-management"),
+      path.resolve(mockHomeDir, ".factory/skills/user-management")
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should configure MCP once for factory client in installAllSkills", async () => {
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+    await installAllSkills({ client: "factory" });
+
+    // MCP should be configured once per `--all` run (not once per skill)
+    expect(mockedConfigureMCP).toHaveBeenCalledTimes(1);
+    expect(mockedConfigureMCP).toHaveBeenCalledWith("factory");
 
     consoleSpy.mockRestore();
   });

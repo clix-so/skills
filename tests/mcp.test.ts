@@ -208,6 +208,532 @@ describe("configureMCP", () => {
     );
   });
 
+  // ============================================================================
+  // Factory Configuration (comprehensive tests)
+  // ============================================================================
+
+  describe("Factory configuration", () => {
+    const userPath = path.join(mockHome, ".factory", "mcp.json");
+    const projectPath = path.join(process.cwd(), ".factory", "mcp.json");
+
+    beforeEach(() => {
+      // Reset mocks for each Factory test
+      mockedFs.readJSON.mockReset();
+      mockedFs.readJSON.mockResolvedValue({ mcpServers: {} });
+    });
+
+    it("should configure Factory at user and project scopes", async () => {
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(userPath);
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(projectPath);
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    it("should create project-level Factory config when missing and inject server", async () => {
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === projectPath) return false;
+        return true;
+      });
+
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ create: true }) // project create
+        .mockResolvedValueOnce({ inject: true }); // project inject
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.ensureDir).toHaveBeenCalledWith(path.dirname(projectPath));
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.objectContaining({ mcpServers: expect.anything() }),
+        expect.anything()
+      );
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(userPath);
+    });
+
+    it("should create user-level Factory config when missing and user confirms", async () => {
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === userPath) return false;
+        return true;
+      });
+
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ create: true }) // user create
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ inject: true }); // project inject
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.ensureDir).toHaveBeenCalledWith(path.dirname(userPath));
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({ mcpServers: expect.anything() }),
+        expect.anything()
+      );
+    });
+
+    it("should skip user-level Factory config creation when user declines", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === userPath) return false;
+        return true;
+      });
+
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ create: false }) // user declines create
+        .mockResolvedValueOnce({ inject: true }); // project inject
+      mockedFs.readJSON.mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Skipping MCP configuration for user scope/)
+      );
+      // Should still configure project scope
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(projectPath);
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should skip project-level Factory config creation when user declines", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === projectPath) return false;
+        return true;
+      });
+
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ create: false }); // project declines create
+      mockedFs.readJSON.mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Skipping MCP configuration for project scope/)
+      );
+      // Should still have configured user scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.anything(),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should skip user scope when clix-mcp-server is already configured", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON
+        .mockResolvedValueOnce({
+          mcpServers: { "clix-mcp-server": { command: "npx", args: ["-y", "existing"] } },
+        })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: true }); // project inject
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/already configured for user scope/)
+      );
+      // Should still configure project scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should skip project scope when clix-mcp-server is already configured", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON.mockResolvedValueOnce({ mcpServers: {} }).mockResolvedValueOnce({
+        mcpServers: { "clix-mcp-server": { command: "npx", args: ["-y", "existing"] } },
+      });
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: true }); // user inject
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/already configured for project scope/)
+      );
+      // Should still configure user scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should skip both scopes when clix-mcp-server is already configured in both", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON.mockResolvedValue({
+        mcpServers: { "clix-mcp-server": { command: "npx", args: ["-y", "existing"] } },
+      });
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/already configured for user scope/)
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/already configured for project scope/)
+      );
+      expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should not inject when user declines for user scope", async () => {
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: false }) // user declines inject
+        .mockResolvedValueOnce({ inject: true }); // project inject
+
+      await configureMCP("factory");
+
+      // Should only write to project scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledTimes(1);
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.anything(),
+        expect.anything()
+      );
+    });
+
+    it("should not inject when user declines for project scope", async () => {
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ inject: false }); // project declines inject
+
+      await configureMCP("factory");
+
+      // Should only write to user scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledTimes(1);
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.anything(),
+        expect.anything()
+      );
+    });
+
+    it("should handle error when reading user config fails", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON
+        .mockRejectedValueOnce(new Error("Permission denied"))
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: true }); // project inject
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Failed to parse existing config JSON/)
+      );
+      // Should still configure project scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.anything(),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should handle error when reading project config fails", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockRejectedValueOnce(new Error("Invalid JSON"));
+      mockedInquirer.prompt.mockResolvedValueOnce({ inject: true }); // user inject
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Failed to parse existing config JSON/)
+      );
+      // Should still have configured user scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.anything(),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should handle error when creating user config directory fails", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === userPath) return false;
+        return true;
+      });
+      (mockedFs.ensureDir as unknown as jest.Mock).mockRejectedValueOnce(
+        new Error("Permission denied")
+      );
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ create: true }) // user create (fails)
+        .mockResolvedValueOnce({ inject: true }); // project inject
+      mockedFs.readJSON.mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Failed to create config file.*user scope/)
+      );
+      // Should still configure project scope
+      expect(mockedFs.readJSON).toHaveBeenCalledWith(projectPath);
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should handle error when creating project config directory fails", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.existsSync.mockImplementation((p) => {
+        const asString = String(p);
+        if (asString === projectPath) return false;
+        return true;
+      });
+      (mockedFs.ensureDir as unknown as jest.Mock).mockRejectedValueOnce(
+        new Error("Permission denied")
+      );
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ create: true }); // project create (fails)
+      mockedFs.readJSON.mockResolvedValueOnce({ mcpServers: {} });
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Failed to create config file.*project scope/)
+      );
+      // Should still have configured user scope
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.anything(),
+        expect.anything()
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should preserve unrelated config keys when injecting for Factory user scope", async () => {
+      mockedFs.readJSON
+        .mockResolvedValueOnce({
+          mcpServers: {},
+          customSetting: "value",
+          nested: { keep: true },
+        })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          customSetting: "value",
+          nested: { keep: true },
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    it("should preserve existing MCP servers when injecting for Factory", async () => {
+      mockedFs.readJSON.mockResolvedValue({
+        mcpServers: {
+          "other-server": { command: "node", args: ["server.js"] },
+        },
+      });
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "other-server": expect.objectContaining({ command: "node" }),
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    it("should display relative path for project scope in prompts", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+
+      await configureMCP("factory");
+
+      // User scope should show ~ path
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/~\/.factory\/mcp\.json.*user scope/)
+      );
+      // Project scope should show relative path
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/\.factory\/mcp\.json.*project scope/)
+      );
+
+      consoleSpy.mockRestore();
+    });
+
+    it("should initialize mcpServers when not present in Factory config", async () => {
+      mockedFs.readJSON.mockResolvedValue({}); // Config without mcpServers
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.anything(),
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    it("should write correct MCP server entry format for Factory", async () => {
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt.mockResolvedValue({ inject: true });
+
+      await configureMCP("factory");
+
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({
+          mcpServers: expect.objectContaining({
+            "clix-mcp-server": expect.objectContaining({
+              command: "npx",
+              args: ["-y", "@clix-so/clix-mcp-server@latest"],
+            }),
+          }),
+        }),
+        expect.anything()
+      );
+    });
+
+    it("should configure both scopes even when both config files are missing", async () => {
+      mockedFs.existsSync.mockReturnValue(false);
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ create: true }) // user create
+        .mockResolvedValueOnce({ inject: true }) // user inject
+        .mockResolvedValueOnce({ create: true }) // project create
+        .mockResolvedValueOnce({ inject: true }); // project inject
+
+      await configureMCP("factory");
+
+      expect(mockedFs.ensureDir).toHaveBeenCalledWith(path.dirname(userPath));
+      expect(mockedFs.ensureDir).toHaveBeenCalledWith(path.dirname(projectPath));
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        userPath,
+        expect.objectContaining({ mcpServers: expect.anything() }),
+        expect.anything()
+      );
+      expect(mockedFs.writeJSON).toHaveBeenCalledWith(
+        projectPath,
+        expect.objectContaining({ mcpServers: expect.anything() }),
+        expect.anything()
+      );
+    });
+
+    it("should not inject when user declines for both scopes", async () => {
+      mockedFs.readJSON
+        .mockResolvedValueOnce({ mcpServers: {} })
+        .mockResolvedValueOnce({ mcpServers: {} });
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ inject: false }) // user declines inject
+        .mockResolvedValueOnce({ inject: false }); // project declines inject
+
+      await configureMCP("factory");
+
+      expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+    });
+
+    it("should handle both configs missing and user declines both creates", async () => {
+      const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+      mockedFs.existsSync.mockReturnValue(false);
+      mockedInquirer.prompt
+        .mockResolvedValueOnce({ create: false }) // user declines create
+        .mockResolvedValueOnce({ create: false }); // project declines create
+
+      await configureMCP("factory");
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Skipping MCP configuration for user scope/)
+      );
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Skipping MCP configuration for project scope/)
+      );
+      expect(mockedFs.writeJSON).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
+    });
+  });
+
   it("should configure Claude via `claude mcp add` (no config file edits)", async () => {
     mockedSpawnSync
       .mockReturnValueOnce({ status: 0, stdout: "help", stderr: "", error: undefined }) // mcp --help

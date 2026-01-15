@@ -58,7 +58,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
   }
 
   // 2. Determine Destination
-  let relativeDest = ".agent/skills";
+  let relativeDest = ".agents/skills";
 
   if (options.path) {
     relativeDest = options.path;
@@ -86,6 +86,9 @@ export async function installSkill(skillName: string, options: InstallOptions) {
         break;
       case "cursor":
         relativeDest = ".cursor/skills";
+        break;
+      case "factory":
+        relativeDest = ".factory/skills";
         break;
       case "gemini":
         // Gemini CLI discovers project skills in `.gemini/skills/` and user skills in `~/.gemini/skills/`
@@ -120,7 +123,7 @@ export async function installSkill(skillName: string, options: InstallOptions) {
       default:
         relativeDest = options.client.startsWith(".")
           ? `${options.client}/skills`
-          : `.agent/skills`;
+          : `.agents/skills`;
     }
   }
 
