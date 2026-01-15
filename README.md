@@ -96,14 +96,6 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | OpenCode                | `--client opencode`    | `.opencode/skill/` | `~/.opencode/skill/`            |
 | VS Code                 | `--client vscode`      | `.vscode/skills/`  | `~/.vscode/skills/`             |
 
-#### Factory MCP configuration
-
-Factory supports both user-level and project-level MCP configuration:
-
-- User scope: `~/.factory/mcp.json` (personal servers available everywhere)
-- Project scope: `.factory/mcp.json` (team-shared servers committed to the repo)
-
-When you install with `--client factory`, the CLI will configure both scopes.
 
 ### Claude Code (Alternative setup via plugin marketplace)
 
