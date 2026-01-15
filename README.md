@@ -96,7 +96,6 @@ npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 | OpenCode                | `--client opencode`    | `.opencode/skill/` | `~/.opencode/skill/`            |
 | VS Code                 | `--client vscode`      | `.vscode/skills/`  | `~/.vscode/skills/`             |
 
-
 ### Claude Code (Alternative setup via plugin marketplace)
 
 To register this repository as a plugin marketplace in Claude Code, run the
