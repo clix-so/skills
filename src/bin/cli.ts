@@ -17,7 +17,7 @@ program
   .description("Install agent skill(s)")
   .option(
     "-c, --client <client>",
-    "Target AI client (amazonq, amp, antigravity, claude|claude-code, codex, copilot|github, cursor, gemini, goose, kiro, letta, opencode, vscode, manual)"
+    "Target AI client (amazonq, amp, antigravity, claude|claude-code, codex, copilot|github, cursor, factory, gemini, goose, kiro, letta, opencode, vscode, manual)"
   )
   .option("-p, --path <path>", "Custom installation path (default: .agent/skills)")
   .option("-a, --all", "Install all available skills")
