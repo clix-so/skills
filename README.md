@@ -9,6 +9,8 @@ by AI clients.
 
 ## Available Skills
 
+### Clix Skills
+
 - **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
   application with Clix MCP Server
 - **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
@@ -24,6 +26,13 @@ by AI clients.
 - **clix-skill-creator**: Create new Clix agent skills by researching Clix SDK +
   docs via Clix MCP Server, then generating a complete skill folder (SKILL.md,
   references, scripts, examples) aligned with this repo’s conventions
+
+### Skills for Mobile Developers
+
+- **auditing-permission-ux**: Audit notification permission request UX and
+  settings recovery flows for iOS and Android
+- **auditing-deep-link-contracts**: Audit deep link contracts with cold/warm
+  start test vectors and routing checks
 
 ## Installing Skills
 
@@ -72,7 +81,7 @@ npx @clix-so/clix-agent-skills@latest install integration --client cursor --glob
 
 # Install all available skills at once (repo root)
 npx @clix-so/clix-agent-skills@latest install --all --client cursor
-# This will install: integration, event-tracking, user-management, personalization, api-triggered-campaigns, skill-creator
+# This will install: integration, event-tracking, user-management, personalization, api-triggered-campaigns, skill-creator, auditing-permission-ux, auditing-deep-link-contracts
 
 # Install all available skills globally (system root)
 npx @clix-so/clix-agent-skills@latest install --all --client cursor --global

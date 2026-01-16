@@ -57,6 +57,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/auditing-permission-ux"]
+    },
+    {
+      "name": "auditing-deep-link-contracts",
+      "description": "Audits deep link contracts and routing behavior. Use when validating supported routes, required parameters, and cold or warm start handling.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/auditing-deep-link-contracts"]
     }
   ]
 }
