@@ -28,9 +28,15 @@
   },
   "keywords": [
     "clix",
+    "agent-skills",
+    "ai",
+    "llm",
     "mcp",
-    "agent",
-    "skills",
+    "mobile",
+    "push-notifications",
+    "deep-links",
+    "skill-creator",
+    "skill-installer",
     "cli"
   ],
   "author": "Clix",
