@@ -492,7 +492,7 @@ Uses clix-mcp-server.
   });
 
   describe("Error Message Quality", () => {
-    it("provides clear error for multiple missing components", () => {
+    it("provides clear error for multiple missing components (clix skill)", () => {
       const tmpDir = tempDirs.create("scaffold-multi-error-");
 
       const skillDir = new SkillScaffoldBuilder()
@@ -513,8 +513,6 @@ Uses clix-mcp-server.
       expect(output).toContain("LICENSE.txt");
       expect(output).toContain("references/");
       expect(output).toContain("scripts/");
-      expect(output).toContain("clix-mcp-server");
-      expect(output).toContain("clix-");
 
       // Should have clear structure
       expect(output).toContain("ERROR: skill scaffold validation failed:");

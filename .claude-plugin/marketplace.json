@@ -50,6 +50,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/skill-creator"]
+    },
+    {
+      "name": "auditing-permission-ux",
+      "description": "Audits notification permission request flows. Use when reviewing or improving permission prompts, settings paths, or denial handling.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/auditing-permission-ux"]
     }
   ]
 }

@@ -277,21 +277,21 @@ description: Missing display-name and short-description
     expect(result.stdout).toContain("frontmatter missing key:");
   });
 
-  it("fails if skill name does not start with 'clix-'", () => {
+  it("passes for non-clix skills without MCP reference", () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "skill-scaffold-"));
     tempDirs.push(tmpDir);
 
     const skillMd = `---
-name: test-skill
-display-name: Test Skill
-short-description: A test
-description: Test skill
+name: permission-ux-auditor
+display-name: Permission UX Auditor
+short-description: Audit permission UX
+description: Audits notification permission request UX
 user-invocable: true
 ---
 
-# Test Skill
+# Permission UX Auditor
 
-Uses clix-mcp-server.
+This skill does not reference MCP tools.
 `;
 
     const skillDir = createSkillScaffold(tmpDir, {
@@ -303,8 +303,8 @@ Uses clix-mcp-server.
 
     const { result } = runValidator(skillDir);
 
-    expect(result.status).toBe(1);
-    expect(result.stdout).toContain("frontmatter name should start with 'clix-'");
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain("OK: skill scaffold validation passed");
   });
 
   it("fails if user-invocable is not a boolean", () => {
@@ -337,7 +337,7 @@ Uses clix-mcp-server.
     expect(result.stdout).toContain("frontmatter user-invocable must be true or false");
   });
 
-  it("fails if SKILL.md does not reference 'clix-mcp-server'", () => {
+  it("fails if SKILL.md does not reference 'clix-mcp-server' for clix skills", () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "skill-scaffold-"));
     tempDirs.push(tmpDir);
 
@@ -406,6 +406,6 @@ short-description: A test
     expect(result.stdout).toContain("ERROR: skill scaffold validation failed:");
     // Should contain multiple errors
     const errorCount = (result.stdout.match(/- /g) || []).length;
-    expect(errorCount).toBeGreaterThan(3);
+    expect(errorCount).toBeGreaterThanOrEqual(3);
   });
 });

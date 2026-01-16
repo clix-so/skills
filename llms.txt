@@ -31,6 +31,20 @@ Each entry includes the file path, type, and description for semantic search.
 
 ---
 
+## auditing-permission-ux
+
+- [auditing-permission-ux](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-permission-ux/SKILL.md): Main skill documentation
+
+### References
+
+- [Permission Ux Best Practices (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-permission-ux/references/permission-ux-best-practices.md): Reference documentation for auditing-permission-ux skill
+
+### Scripts
+
+- [Generate Permission Ux Audit Report (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-permission-ux/scripts/generate-permission-ux-audit-report.sh): Utility script for auditing-permission-ux skill
+
+---
+
 ## clix-event-tracking
 
 - [clix-event-tracking](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/event-tracking/SKILL.md): Main skill documentation
