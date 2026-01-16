@@ -20,6 +20,7 @@ screen with correct parameters across cold and warm starts.
 - Produces a concise audit report with fixes
 
 ## Workflow
+
 ```
 Deep link contract audit progress:
 

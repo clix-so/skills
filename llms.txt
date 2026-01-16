@@ -31,6 +31,21 @@ Each entry includes the file path, type, and description for semantic search.
 
 ---
 
+## auditing-deep-link-contracts
+
+- [auditing-deep-link-contracts](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-deep-link-contracts/SKILL.md): Main skill documentation
+
+### References
+
+- [Deep Link Contract (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-deep-link-contracts/references/deep-link-contract.md): Reference documentation for auditing-deep-link-contracts skill
+
+### Scripts
+
+- [Generate Deep Link Test Vectors (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-deep-link-contracts/scripts/generate-deep-link-test-vectors.sh): Utility script for auditing-deep-link-contracts skill
+- [Validate Deep Link Contract (Script)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-deep-link-contracts/scripts/validate-deep-link-contract.sh): Utility script for auditing-deep-link-contracts skill
+
+---
+
 ## auditing-permission-ux
 
 - [auditing-permission-ux](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/auditing-permission-ux/SKILL.md): Main skill documentation
