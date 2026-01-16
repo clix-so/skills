@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Collection of Agent Skills for Clix.",
-    "version": "1.1.1"
+    "version": "1.1.2"
   },
   "plugins": [
     {
@@ -14,56 +14,72 @@
       "description": "Integrates Clix SDK into mobile projects. Use when the user asks to install/setup/integrate Clix, or when the user types \"clix-integration\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/integration"]
+      "skills": [
+        "./skills/integration"
+      ]
     },
     {
       "name": "clix-event-tracking",
       "description": "Implements Clix event tracking (Clix.trackEvent) with naming and schema best practices. Use when the user talks about events/properties/funnels, or when the user types \"clix-event-tracking\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/event-tracking"]
+      "skills": [
+        "./skills/event-tracking"
+      ]
     },
     {
       "name": "clix-user-management",
       "description": "Implements Clix user identification and user properties (setUserId, setUserProperty) with logout best practices and campaign-ready usage. Use when the user talks about login/logout/userId/user properties, or when the user types \"clix-user-management\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/user-management"]
+      "skills": [
+        "./skills/user-management"
+      ]
     },
     {
       "name": "clix-personalization",
       "description": "Helps developers author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting. Use when the user mentions personalization variables, Liquid, templates, conditional logic, loops, filters, deep links, message logs, or when the user types \"clix-personalization\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/personalization"]
+      "skills": [
+        "./skills/personalization"
+      ]
     },
     {
       "name": "clix-api-triggered-campaigns",
       "description": "Configures API-triggered campaigns in the console and triggers them from your backend with safe auth, dynamic filters (trigger.*), and personalization patterns. Use when the user talks about API-triggered campaigns, API-triggered campaigns setup, API-triggered campaigns triggers, API-triggered campaigns filters, API-triggered campaigns personalization, or when the user types \"clix-api-triggered-campaigns\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/api-triggered-campaigns"]
+      "skills": [
+        "./skills/api-triggered-campaigns"
+      ]
     },
     {
       "name": "clix-skill-creator",
       "description": "Creates new Clix agent skills by researching Clix SDK + docs via Clix MCP Server, then generating a complete skill folder (SKILL.md, references, scripts, examples) aligned with this repo's conventions. Only use when the user asks to create a new Clix skill, or when the user types \"clix-skill-creator\".",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/skill-creator"]
+      "skills": [
+        "./skills/skill-creator"
+      ]
     },
     {
       "name": "auditing-permission-ux",
       "description": "Audits notification permission request flows. Use when reviewing or improving permission prompts, settings paths, or denial handling.",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/auditing-permission-ux"]
+      "skills": [
+        "./skills/auditing-permission-ux"
+      ]
     },
     {
       "name": "auditing-deep-link-contracts",
       "description": "Audits deep link contracts and routing behavior. Use when validating supported routes, required parameters, and cold or warm start handling.",
       "source": "./",
       "strict": false,
-      "skills": ["./skills/auditing-deep-link-contracts"]
+      "skills": [
+        "./skills/auditing-deep-link-contracts"
+      ]
     }
   ]
 }
