@@ -267,6 +267,11 @@ async function configureCodexTOML(configPath: string): Promise<void> {
   let config: CodexTOMLConfig = {};
 
   if (!fs.existsSync(configPath)) {
+    if (process.env.CI === "true") {
+      console.log(chalk.yellow("Skipping config creation in CI environment."));
+      return;
+    }
+
     const { create } = await inquirer.prompt([
       {
         type: "confirm",
@@ -313,6 +318,11 @@ async function configureCodexTOML(configPath: string): Promise<void> {
   }
 
   // Ask to inject
+  if (process.env.CI === "true") {
+    console.log(chalk.yellow("Skipping MCP server injection in CI environment."));
+    return;
+  }
+
   const { inject } = await inquirer.prompt([
     {
       type: "confirm",
@@ -355,6 +365,11 @@ async function configureOpenCode(): Promise<void> {
   let config: OpenCodeConfig = {};
 
   if (!fs.existsSync(configPath)) {
+    if (process.env.CI === "true") {
+      console.log(chalk.yellow("Skipping config creation in CI environment."));
+      return;
+    }
+
     const { create } = await inquirer.prompt([
       {
         type: "confirm",
@@ -401,6 +416,11 @@ async function configureOpenCode(): Promise<void> {
   }
 
   // Ask to inject
+  if (process.env.CI === "true") {
+    console.log(chalk.yellow("Skipping MCP server injection in CI environment."));
+    return;
+  }
+
   const { inject } = await inquirer.prompt([
     {
       type: "confirm",
@@ -440,6 +460,11 @@ async function configureFactoryConfig(configTarget: FactoryConfigTarget): Promis
   console.log(chalk.blue(`Checking MCP config at ${nicePath} (${scope} scope)...`));
 
   if (!fs.existsSync(configPath)) {
+    if (process.env.CI === "true") {
+      console.log(chalk.yellow(`Skipping config creation for ${scope} scope in CI environment.`));
+      return;
+    }
+
     const { create } = await inquirer.prompt([
       {
         type: "confirm",
@@ -485,6 +510,13 @@ async function configureFactoryConfig(configTarget: FactoryConfigTarget): Promis
     return;
   }
 
+  if (process.env.CI === "true") {
+    console.log(
+      chalk.yellow(`Skipping MCP server injection for ${scope} scope in CI environment.`)
+    );
+    return;
+  }
+
   const { inject } = await inquirer.prompt([
     {
       type: "confirm",
@@ -521,6 +553,11 @@ export async function configureMCP(client?: string): Promise<void> {
   let targetClient = client;
 
   if (!targetClient) {
+    if (process.env.CI === "true") {
+      console.log(chalk.yellow("No client specified in CI environment."));
+      return;
+    }
+
     const answers = await inquirer.prompt([
       {
         type: "list",
@@ -596,6 +633,11 @@ export async function configureMCP(client?: string): Promise<void> {
   console.log(chalk.blue(`Checking MCP config at ${nicePath}...`));
 
   if (!fs.existsSync(configPath)) {
+    if (process.env.CI === "true") {
+      console.log(chalk.yellow("Skipping config creation in CI environment."));
+      return;
+    }
+
     const { create } = await inquirer.prompt([
       {
         type: "confirm",
@@ -646,6 +688,11 @@ export async function configureMCP(client?: string): Promise<void> {
   }
 
   // Ask to inject
+  if (process.env.CI === "true") {
+    console.log(chalk.yellow("Skipping MCP server injection in CI environment."));
+    return;
+  }
+
   const { inject } = await inquirer.prompt([
     {
       type: "confirm",

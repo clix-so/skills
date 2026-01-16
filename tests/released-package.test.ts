@@ -363,12 +363,20 @@ describe("released package smoke test", () => {
 
         // If we got here, skills were installed successfully with all required files
         // Status check is secondary (MCP config might have failed, but that's OK for smoke test)
+        // Skills are installed - MCP config status is secondary
         if (cliRes.status !== null && cliRes.status !== 0) {
-          // Log warning but don't fail - skills are installed which is what matters
           const stderr = (cliRes.stderr || "").toString();
-          console.warn(
-            `[WARNING] CLI exited with status ${cliRes.status} but skills were installed.\nSTDERR:\n${stderr}`
-          );
+
+          // Suppress warning for known MCP config interactive prompt in CI (fixed in next version)
+          if (stderr.includes("Config file not found") || stderr.includes("prompt")) {
+            console.log(
+              `[INFO] CLI exited with status ${cliRes.status} due to MCP config prompt (expected for current release in CI). Skills were installed successfully.`
+            );
+          } else {
+            console.warn(
+              `[WARNING] CLI exited with status ${cliRes.status} but skills were installed.\nSTDERR:\n${stderr}`
+            );
+          }
         }
 
         console.log(
