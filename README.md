@@ -52,20 +52,9 @@ configure the Clix MCP Server.
 
 The CLI supports two installation modes for skills:
 
-1. **Repo Root (Project-specific)** - Installs skills to the current project
-   directory (default)
+**Repo Root (Project-specific)** - Installs skills to the current project directory (default). Skills are available only for the current project. Best for project-specific configurations.
 
-- Skills are available only for the current project
-- Best for project-specific configurations
-
-2. **System Root (Global)** - Installs skills to your home directory
-
-- Skills are available across all projects
-- Best for personal development setup
-
-**Note:** MCP (Model Context Protocol) server configuration location depends on
-the AI client. Some clients support both project-level and user-level (global)
-configurations. See the "Configuration Locations" section below for details.
+**System Root (Global)** - Installs skills to your home directory. Skills are available across all projects. Best for personal development setup.
 
 ```bash
 # Install a specific skill (repo root - default)
