@@ -18,8 +18,12 @@ const mockedSpawnSync = spawnSync as unknown as jest.Mock;
 describe("configureMCP", () => {
   const mockHome = "/mock/home";
 
+  const originalEnv = process.env;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    // Default to interactive mode for tests unless specified otherwise
+    process.env.CI = "false";
     mockedOs.homedir.mockReturnValue(mockHome);
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readJSON.mockResolvedValue({ mcpServers: {} });
