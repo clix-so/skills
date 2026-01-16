@@ -31,6 +31,7 @@ import re
 import sys
 
 skill_dir = sys.argv[1]
+skill_name = None
 
 errors = []
 
@@ -87,9 +88,7 @@ else:
 
   name_match = re.search(r"^name:\s*(.+)$", frontmatter, re.M)
   if name_match:
-    name = name_match.group(1).strip()
-    if not name.startswith("clix-"):
-      errors.append("frontmatter name should start with 'clix-'")
+    skill_name = name_match.group(1).strip()
 
   inv_match = re.search(r"^user-invocable:\s*(.+)$", frontmatter, re.M)
   if inv_match:
@@ -97,8 +96,9 @@ else:
     if val not in ("true", "false"):
       errors.append("frontmatter user-invocable must be true or false")
 
-if "clix-mcp-server" not in content:
-  errors.append("SKILL.md must reference 'clix-mcp-server' (MCP-first requirement)")
+if skill_name and skill_name.startswith("clix-"):
+  if "clix-mcp-server" not in content:
+    errors.append("SKILL.md must reference 'clix-mcp-server' (MCP-first requirement)")
 
 if errors:
   print("ERROR: skill scaffold validation failed:")
@@ -160,6 +160,8 @@ try {
   errors.push(`failed to read SKILL.md: ${String(e)}`);
 }
 
+let skillName = null;
+
 // Frontmatter validation (best-effort; mirrors Python validator behavior).
 if (!content.startsWith("---\n")) {
   errors.push("SKILL.md must start with YAML frontmatter (---)");
@@ -178,8 +180,7 @@ if (!content.startsWith("---\n")) {
 
     const nameMatch = frontmatter.match(/^name:\s*(.+)$/m);
     if (nameMatch) {
-      const name = (nameMatch[1] || "").trim();
-      if (!name.startsWith("clix-")) errors.push("frontmatter name should start with 'clix-'");
+      skillName = (nameMatch[1] || "").trim();
     }
 
     const invMatch = frontmatter.match(/^user-invocable:\s*(.+)$/m);
@@ -189,11 +190,15 @@ if (!content.startsWith("---\n")) {
     }
   }
 }
-if (!content.includes("clix-mcp-server")) errors.push("SKILL.md must reference 'clix-mcp-server'");
+if (skillName && skillName.startsWith("clix-")) {
+  if (!content.includes("clix-mcp-server")) {
+    errors.push("SKILL.md must reference 'clix-mcp-server'");
+  }
+}
 
 if (errors.length) {
-  console.error("ERROR: skill scaffold validation failed:");
-  for (const e of errors) console.error(`- ${e}`);
+  console.log("ERROR: skill scaffold validation failed:");
+  for (const e of errors) console.log(`- ${e}`);
   process.exit(1);
 }
 

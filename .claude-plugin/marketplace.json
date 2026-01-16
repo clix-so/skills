@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Collection of Agent Skills for Clix.",
-    "version": "1.0.1"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -50,6 +50,13 @@
       "source": "./",
       "strict": false,
       "skills": ["./skills/skill-creator"]
+    },
+    {
+      "name": "auditing-permission-ux",
+      "description": "Audits notification permission request flows. Use when reviewing or improving permission prompts, settings paths, or denial handling.",
+      "source": "./",
+      "strict": false,
+      "skills": ["./skills/auditing-permission-ux"]
     }
   ]
 }

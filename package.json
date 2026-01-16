@@ -1,6 +1,6 @@
 {
   "name": "@clix-so/clix-agent-skills",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "An open collection of agent skills for Clix.",
   "main": "dist/index.js",
   "bin": {
@@ -28,9 +28,15 @@
   },
   "keywords": [
     "clix",
+    "agent-skills",
+    "ai",
+    "llm",
     "mcp",
-    "agent",
-    "skills",
+    "mobile",
+    "push-notifications",
+    "deep-links",
+    "skill-creator",
+    "skill-installer",
     "cli"
   ],
   "author": "Clix",
