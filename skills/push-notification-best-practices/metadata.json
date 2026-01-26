@@ -1,0 +1,12 @@
+{
+  "version": "1.0.0",
+  "organization": "Clix",
+  "date": "January 2026",
+  "abstract": "Comprehensive push notification setup and troubleshooting guide for mobile applications (iOS/Android). Contains 26 rules across 7 categories, prioritized by impact from critical (iOS/Android setup) to incremental (infrastructure patterns). Includes decision trees for permission timing and payload selection, anti-patterns reference, and platform support matrix. Each rule includes detailed explanations, real-world examples comparing incorrect vs. correct implementations, platform-specific code snippets, and common pitfalls to guide push notification integration and debugging.",
+  "references": [
+    "https://firebase.google.com/docs/cloud-messaging",
+    "https://developer.apple.com/documentation/usernotifications",
+    "https://docs.expo.dev/push-notifications/overview",
+    "https://firebase.google.com/docs/cloud-messaging/troubleshooting"
+  ]
+}
