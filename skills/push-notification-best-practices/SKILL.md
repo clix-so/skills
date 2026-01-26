@@ -1,6 +1,10 @@
 ---
 name: push-notification-best-practices
-description: Comprehensive mobile push notification guide for iOS (APNS) and Android (FCM). Use when: (1) Setting up push notifications, (2) Debugging delivery issues (notifications not appearing, silent failures), (3) Implementing background/foreground handlers, (4) Managing push tokens and device registration, (5) Integrating deep linking with notifications, (6) Troubleshooting platform-specific issues (permission requests, notification channels, delegate setup, method swizzling).
+description: >
+  Comprehensive mobile push notification guide for iOS (APNS) and Android (FCM).
+  Use when setting up push notifications, debugging delivery issues, implementing
+  background/foreground handlers, managing push tokens, integrating deep linking,
+  or troubleshooting platform-specific issues.
 ---
 
 # Push Notification Best Practices
