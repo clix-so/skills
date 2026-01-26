@@ -17,7 +17,7 @@ const outputPath = path.join(repoRoot, "llms.txt");
 
 interface SkillFile {
   skillName: string;
-  type: "skill" | "reference" | "example" | "script" | "license";
+  type: "skill" | "reference" | "example" | "script" | "rule" | "license";
   path: string;
   relativePath: string;
   title: string;
@@ -109,6 +109,9 @@ function getTitleFromPath(filePath: string, type: string): string {
   if (type === "script") {
     return `${title} (Script)`;
   }
+  if (type === "rule") {
+    return `${title} (Rule)`;
+  }
 
   return title;
 }
@@ -191,6 +194,25 @@ function scanSkill(skillName: string, skillDir: string): SkillFile[] {
     }
   }
 
+  // Rules
+  const rulesDir = path.join(skillDir, "rules");
+  if (fs.existsSync(rulesDir) && fs.statSync(rulesDir).isDirectory()) {
+    const ruleFiles = fs.readdirSync(rulesDir);
+    for (const file of ruleFiles) {
+      const rulePath = path.join(rulesDir, file);
+      if (fs.statSync(rulePath).isFile() && file.endsWith(".md")) {
+        files.push({
+          skillName,
+          type: "rule",
+          path: rulePath,
+          relativePath: `skills/${skillName}/rules/${file}`,
+          title: getTitleFromPath(file, "rule"),
+          description: `Rule for ${skillName} skill`,
+        });
+      }
+    }
+  }
+
   return files;
 }
 
@@ -255,6 +277,17 @@ function generateLlmsTxt(allFiles: SkillFile[]): string {
       for (const script of scripts) {
         const url = `https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/${script.relativePath}`;
         content += `- [${script.title}](${url}): ${script.description || "Utility script"}\n`;
+      }
+      content += `\n`;
+    }
+
+    // Rules
+    const rules = files.filter((f) => f.type === "rule");
+    if (rules.length > 0) {
+      content += `### Rules\n\n`;
+      for (const rule of rules) {
+        const url = `https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/${rule.relativePath}`;
+        content += `- [${rule.title}](${url}): ${rule.description || "Rule"}\n`;
       }
       content += `\n`;
     }

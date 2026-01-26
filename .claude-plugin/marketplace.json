@@ -80,6 +80,15 @@
       "skills": [
         "./skills/auditing-deep-link-contracts"
       ]
+    },
+    {
+      "name": "push-notification-best-practices",
+      "description": "Comprehensive push notification guide for iOS (APNS) and Android (FCM). Use for setup, debugging delivery issues, implementing handlers, token management, deep linking, and troubleshooting platform-specific issues.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/push-notification-best-practices"
+      ]
     }
   ]
 }
