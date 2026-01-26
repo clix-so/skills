@@ -119,6 +119,12 @@ Each entry includes the file path, type, and description for semantic search.
 
 ---
 
+## push-notification-best-practices
+
+- [push-notification-best-practices](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/SKILL.md): Main skill documentation
+
+---
+
 ## clix-skill-creator
 
 - [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Main skill documentation
