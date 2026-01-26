@@ -119,6 +119,42 @@ Each entry includes the file path, type, and description for semantic search.
 
 ---
 
+## push-notification-best-practices
+
+- [push-notification-best-practices](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/SKILL.md): Main skill documentation
+
+### Rules
+
+- [_sections (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/_sections.md): Rule for push-notification-best-practices skill
+- [Android Google Services (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-google-services.md): Rule for push-notification-best-practices skill
+- [Android Messaging Service (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-messaging-service.md): Rule for push-notification-best-practices skill
+- [Android Notification Channel (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-notification-channel.md): Rule for push-notification-best-practices skill
+- [Android Notification Icon (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-notification-icon.md): Rule for push-notification-best-practices skill
+- [Android Permission (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-permission.md): Rule for push-notification-best-practices skill
+- [Android Priority High (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/android-priority-high.md): Rule for push-notification-best-practices skill
+- [Deeplink Navigation Conflict (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/deeplink-navigation-conflict.md): Rule for push-notification-best-practices skill
+- [Deeplink Terminated State (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/deeplink-terminated-state.md): Rule for push-notification-best-practices skill
+- [Infra Backup Fid (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/infra-backup-fid.md): Rule for push-notification-best-practices skill
+- [Infra Firewall Ports (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/infra-firewall-ports.md): Rule for push-notification-best-practices skill
+- [Infra Rate Limiting (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/infra-rate-limiting.md): Rule for push-notification-best-practices skill
+- [Ios Apns Auth Key (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-apns-auth-key.md): Rule for push-notification-best-practices skill
+- [Ios Delegate Setup (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-delegate-setup.md): Rule for push-notification-best-practices skill
+- [Ios Extension Build (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-extension-build.md): Rule for push-notification-best-practices skill
+- [Ios Foreground Display (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-foreground-display.md): Rule for push-notification-best-practices skill
+- [Ios Method Swizzling (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-method-swizzling.md): Rule for push-notification-best-practices skill
+- [Ios Permission Request (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-permission-request.md): Rule for push-notification-best-practices skill
+- [Ios Token Registration (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/ios-token-registration.md): Rule for push-notification-best-practices skill
+- [Message Background Handler (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/message-background-handler.md): Rule for push-notification-best-practices skill
+- [Message Data Vs Notification (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/message-data-vs-notification.md): Rule for push-notification-best-practices skill
+- [Message Foreground Handler (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/message-foreground-handler.md): Rule for push-notification-best-practices skill
+- [Permission Timing (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/permission-timing.md): Rule for push-notification-best-practices skill
+- [Testing Debugging (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/testing-debugging.md): Rule for push-notification-best-practices skill
+- [Token Invalidation (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/token-invalidation.md): Rule for push-notification-best-practices skill
+- [Token Refresh (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/token-refresh.md): Rule for push-notification-best-practices skill
+- [Token Registration (Rule)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-best-practices/rules/token-registration.md): Rule for push-notification-best-practices skill
+
+---
+
 ## clix-skill-creator
 
 - [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Main skill documentation
