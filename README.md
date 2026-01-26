@@ -29,6 +29,10 @@ by AI clients.
 
 ### Skills for Mobile Developers
 
+- **push-notification-best-practices**: Comprehensive mobile push notification
+  guide for iOS (APNS) and Android (FCM). Use for setup, debugging delivery
+  issues, implementing handlers, token management, deep linking, and
+  troubleshooting platform-specific issues
 - **auditing-permission-ux**: Audit notification permission request UX and
   settings recovery flows for iOS and Android
 - **auditing-deep-link-contracts**: Audit deep link contracts with cold/warm
@@ -39,105 +43,114 @@ by AI clients.
 Agent skills in this repository are built on the
 [open agent skills standard](https://agentskills.io/home). Please refer to the
 [official documentation](https://agentskills.io/home#adoption) for up-to-date
-information on supported AI clients. Depending on the AI client you are using,
-you can install skills in different ways.
+information on supported AI clients.
 
-### Universal CLI (Recommended)
+### Quick Start (Recommended)
 
-For Amp, Claude Code, Codex, Copilot, Cursor, Goose, Letta, OpenCode, and VS
-Code, we recommend using our installer to set up the skills and automatically
-configure the Clix MCP Server.
-
-#### Installation Modes
-
-The CLI supports two installation modes for skills:
-
-**Repo Root (Project-specific)** - Installs skills to the current project directory (default). Skills are available only for the current project. Best for project-specific configurations.
-
-**System Root (Global)** - Installs skills to your home directory. Skills are available across all projects. Best for personal development setup.
+Install skills using the universal
+[add-skill](https://github.com/vercel-labs/add-skill) CLI:
 
 ```bash
-# Install a specific skill (repo root - default)
-# Default install path (when --client is omitted): .agents/skills/<skill>
+npx add-skill clix-so/skills
+```
+
+### Usage
+
+```bash
+# List available skills
+npx add-skill clix-so/skills --list
+
+# Install specific skills
+npx add-skill clix-so/skills --skill integration --skill event-tracking
+
+# Install globally (available across all projects)
+npx add-skill clix-so/skills -g
+
+# Install to specific agents
+npx add-skill clix-so/skills -a claude-code -a cursor
+
+# Non-interactive installation (CI/CD friendly)
+npx add-skill clix-so/skills --skill integration -g -a claude-code -y
+```
+
+### Supported Agents
+
+Skills can be installed to any of these supported agents. Use `-g, --global` to
+install to the global path instead of project-level.
+
+| Agent            | `--agent`       | Project Path            | Global Path                        |
+| ---------------- | --------------- | ----------------------- | ---------------------------------- |
+| Amp              | `amp`           | `.agents/skills/`       | `~/.config/agents/skills/`         |
+| Antigravity      | `antigravity`   | `.agent/skills/`        | `~/.gemini/antigravity/global_skills/` |
+| Claude Code      | `claude-code`   | `.claude/skills/`       | `~/.claude/skills/`                |
+| Clawdbot         | `clawdbot`      | `skills/`               | `~/.clawdbot/skills/`              |
+| Cline            | `cline`         | `.cline/skills/`        | `~/.cline/skills/`                 |
+| Codex            | `codex`         | `.codex/skills/`        | `~/.codex/skills/`                 |
+| Command Code     | `command-code`  | `.commandcode/skills/`  | `~/.commandcode/skills/`           |
+| Continue         | `continue`      | `.continue/skills/`     | `~/.continue/skills/`              |
+| Crush            | `crush`         | `.crush/skills/`        | `~/.config/crush/skills/`          |
+| Cursor           | `cursor`        | `.cursor/skills/`       | `~/.cursor/skills/`                |
+| Droid            | `droid`         | `.factory/skills/`      | `~/.factory/skills/`               |
+| Gemini CLI       | `gemini-cli`    | `.gemini/skills/`       | `~/.gemini/skills/`                |
+| GitHub Copilot   | `github-copilot`| `.github/skills/`       | `~/.copilot/skills/`               |
+| Goose            | `goose`         | `.goose/skills/`        | `~/.config/goose/skills/`          |
+| Kilo Code        | `kilo`          | `.kilocode/skills/`     | `~/.kilocode/skills/`              |
+| Kiro CLI         | `kiro-cli`      | `.kiro/skills/`         | `~/.kiro/skills/`                  |
+| MCPJam           | `mcpjam`        | `.mcpjam/skills/`       | `~/.mcpjam/skills/`                |
+| OpenCode         | `opencode`      | `.opencode/skills/`     | `~/.config/opencode/skills/`       |
+| OpenHands        | `openhands`     | `.openhands/skills/`    | `~/.openhands/skills/`             |
+| Pi               | `pi`            | `.pi/skills/`           | `~/.pi/agent/skills/`              |
+| Qoder            | `qoder`         | `.qoder/skills/`        | `~/.qoder/skills/`                 |
+| Qwen Code        | `qwen-code`     | `.qwen/skills/`         | `~/.qwen/skills/`                  |
+| Roo Code         | `roo`           | `.roo/skills/`          | `~/.roo/skills/`                   |
+| Trae             | `trae`          | `.trae/skills/`         | `~/.trae/skills/`                  |
+| Windsurf         | `windsurf`      | `.windsurf/skills/`     | `~/.codeium/windsurf/skills/`      |
+| Zencoder         | `zencoder`      | `.zencoder/skills/`     | `~/.zencoder/skills/`              |
+| Neovate          | `neovate`       | `.neovate/skills/`      | `~/.neovate/skills/`               |
+
+### Alternative Installation Methods
+
+#### Clix CLI
+
+You can also use the Clix-specific CLI to install skills with automatic Clix MCP
+Server configuration:
+
+```bash
+# Install a specific skill
 npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
-# For example, to install a skill on Cursor:
-npx @clix-so/clix-agent-skills@latest install integration --client cursor
 
-# Install a specific skill globally (system root)
-npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client> --global
-# For example:
-npx @clix-so/clix-agent-skills@latest install integration --client cursor --global
-
-# Install all available skills at once (repo root)
-npx @clix-so/clix-agent-skills@latest install --all --client cursor
-# This will install: integration, event-tracking, user-management, personalization, api-triggered-campaigns, skill-creator, auditing-permission-ux, auditing-deep-link-contracts
-
-# Install all available skills globally (system root)
+# Install all skills globally
 npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
 ```
 
-**Supported Clients:**
+#### Claude Code (Plugin Marketplace)
 
-| Client                  | Flag                   | Project Path       | System Path                     |
-| ----------------------- | ---------------------- | ------------------ | ------------------------------- |
-| Default (no `--client`) | _n/a_                  | `.agents/skills/`  | `~/.agents/skills/`             |
-| Amp                     | `--client amp`         | `.agents/skills/`  | `~/.config/agents/skills/`      |
-| Claude Code             | `--client claude`      | `.claude/skills/`  | `~/.claude/skills/`             |
-| Codex                   | `--client codex`       | `.codex/skills/`   | `~/.codex/skills/`              |
-| Cursor                  | `--client cursor`      | `.cursor/skills/`  | `~/.cursor/skills/`             |
-| Factory                 | `--client factory`     | `.factory/skills/` | `~/.factory/skills/`            |
-| Gemini CLI              | `--client gemini`      | `.gemini/skills/`  | `~/.gemini/skills/`             |
-| Google Antigravity      | `--client antigravity` | `.agent/skills/`   | `~/.gemini/antigravity/skills/` |
-| GitHub Copilot          | `--client github`      | `.github/skills/`  | `~/.github/skills/`             |
-| Goose                   | `--client goose`       | `.agents/skills/`  | `~/.config/agents/skills/`      |
-| Letta                   | `--client letta`       | `.skills/`         | `~/.skills/`                    |
-| OpenCode                | `--client opencode`    | `.opencode/skill/` | `~/.opencode/skill/`            |
-| VS Code                 | `--client vscode`      | `.vscode/skills/`  | `~/.vscode/skills/`             |
-
-### Claude Code (Alternative setup via plugin marketplace)
-
-To register this repository as a plugin marketplace in Claude Code, run the
-following command:
+Register this repository as a plugin marketplace in Claude Code:
 
 ```bash
 /plugin marketplace add clix-so/skills
 ```
 
-To install specific skills:
-
-1. Visit the Marketplace section in `/plugin`
-2. Select `Browse plugins`
-3. Choose the skills you wish to install
-4. Install your preferred skill
-
-Alternatively, you can install a single skill directly by running:
+Then browse and install skills via `/plugin` → `Browse plugins`, or install
+directly:
 
 ```bash
-/plugin install <plugin-name>@<marketplace-name>
-# For example
 /plugin install clix-integration@clix-agent-skills
 ```
 
-**Note for Claude Code users**: Skills now support automatic hot-reload! Skills
-created or modified in `~/.claude/skills` or `.claude/skills` are immediately
-available without restarting the session. Skills also show real-time progress
-while executing, displaying tool uses as they happen.
+**Note**: Skills support automatic hot-reload in Claude Code. Changes to
+`~/.claude/skills` or `.claude/skills` are immediately available.
 
-### Codex (Alternative setup via skill-installer)
+#### Codex (skill-installer)
 
-To manually install skills, save them from this repository into your Codex
-configuration directory:
-[https://developers.openai.com/codex/skills/#where-to-save-skills](https://developers.openai.com/codex/skills/#where-to-save-skills)
-
-Or install a specific skill using the command line:
+Install skills using the Codex skill-installer:
 
 ```bash
-$skill-installer install <link-to-skill-folder>
-# For example
 $skill-installer install https://github.com/clix-so/skills/tree/main/skills/integration
 ```
 
-Ensure you restart Codex after installation to detect the new skills.
+For manual installation, see the
+[Codex documentation](https://developers.openai.com/codex/skills/#where-to-save-skills).
 
 ## Disclaimer
 
