@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/push-notification-designer/schemas/app-profile.schema.json",
+  "title": "App Profile",
+  "description": "Captures app details, user journeys, personalization variables, existing notifications, and designed campaigns. Saved to .clix-campaigns/app-profile.json.",
+  "type": "object",
+  "required": [
+    "appName",
+    "platform",
+    "category",
+    "description",
+    "coreUserActivity",
+    "userJourneys",
+    "personalizationVariables",
+    "existingNotifications",
+    "campaigns"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "appName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The app's display name."
+    },
+    "platform": {
+      "type": "string",
+      "enum": ["ios", "android", "flutter", "react-native"],
+      "description": "Target platform for implementation."
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1,
+      "description": "App category (e.g., fitness, finance, education, social, productivity, health, travel, food, entertainment)."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "1–2 sentence description of what the app does and who it's for."
+    },
+    "coreUserActivity": {
+      "$ref": "#/$defs/coreUserActivity"
+    },
+    "userJourneys": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/userJourney" },
+      "minItems": 1,
+      "maxItems": 4,
+      "description": "1–4 critical user journeys that represent the most important paths through the app."
+    },
+    "personalizationVariables": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/personalizationVariable" },
+      "minItems": 1,
+      "description": "Variables available for personalizing notification messages. At least one is required."
+    },
+    "existingNotifications": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/existingNotification" },
+      "description": "Local push notifications the app already sends. Empty array if none."
+    },
+    "campaigns": {
+      "type": "array",
+      "items": { "$ref": "campaign.schema.json" },
+      "description": "Designed campaigns. Empty array in Phase 2, populated in Phase 3."
+    }
+  },
+  "$defs": {
+    "coreUserActivity": {
+      "type": "object",
+      "required": ["action", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The single most important user action (e.g., 'complete a workout', 'log a meal')."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why this action is the primary success metric for the app."
+        }
+      }
+    },
+    "userJourney": {
+      "type": "object",
+      "required": ["id", "name", "steps", "significance"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Kebab-case unique identifier (e.g., 'first-workout', 'daily-routine')."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable journey name."
+        },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 2,
+          "description": "Ordered list of steps the user takes in this journey."
+        },
+        "significance": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why this journey matters for user engagement and retention."
+        }
+      }
+    },
+    "personalizationVariable": {
+      "type": "object",
+      "required": ["key", "description", "dataType", "example"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9]*$",
+          "description": "Variable name used in message templates with {curly braces} (e.g., 'userName', 'streakCount')."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What this variable represents."
+        },
+        "dataType": {
+          "type": "string",
+          "enum": ["string", "number", "boolean", "date"],
+          "description": "The variable's data type."
+        },
+        "example": {
+          "description": "An example value for this variable."
+        }
+      }
+    },
+    "existingNotification": {
+      "type": "object",
+      "required": ["id", "title", "body", "trigger", "timing"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Kebab-case identifier for the existing notification."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Current notification title text."
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Current notification body text."
+        },
+        "trigger": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What triggers this notification (e.g., 'Daily at user's preferred time')."
+        },
+        "timing": {
+          "type": "string",
+          "minLength": 1,
+          "description": "When and how often it fires (e.g., 'Recurring, every day at user-selected time')."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional additional context about this notification."
+        }
+      }
+    }
+  }
+}
