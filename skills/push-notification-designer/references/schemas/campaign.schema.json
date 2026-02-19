@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/push-notification-designer/schemas/campaign.schema.json",
+  "title": "Campaign",
+  "description": "A notification campaign consisting of a sequence of related messages with a shared engagement purpose.",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "purpose",
+    "targetAudience",
+    "cancelConditions",
+    "messages",
+    "designNotes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Kebab-case unique campaign identifier (e.g., 'first-workout-onboarding')."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable campaign name."
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Detailed explanation of the campaign's goal, target outcome, and why it matters for retention. Should be at least a sentence or two."
+    },
+    "targetAudience": {
+      "$ref": "#/$defs/targetAudience"
+    },
+    "cancelConditions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/cancelCondition" },
+      "minItems": 1,
+      "description": "Events that stop the campaign. Every campaign must have at least one cancel condition."
+    },
+    "messages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/message" },
+      "minItems": 2,
+      "maxItems": 5,
+      "description": "Ordered sequence of 2–5 notification messages."
+    },
+    "existingNotificationReferences": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of existing notifications incorporated into this campaign. Omit or empty array if none."
+    },
+    "designNotes": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Overall strategy notes explaining why this campaign is designed this way."
+    }
+  },
+  "$defs": {
+    "targetAudience": {
+      "type": "object",
+      "required": ["description", "triggerEvent", "entryCondition"],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Who receives this campaign (e.g., 'New users who signed up but haven't completed their first workout')."
+        },
+        "triggerEvent": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Snake_case event name that starts this campaign (e.g., 'user_signup_completed')."
+        },
+        "entryCondition": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Boolean condition that must be true to enter the campaign (e.g., 'totalWorkouts == 0')."
+        }
+      }
+    },
+    "cancelCondition": {
+      "type": "object",
+      "required": ["event", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "event": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Snake_case event name that cancels the campaign."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Why this event should cancel the campaign."
+        }
+      }
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "id",
+        "sequence",
+        "title",
+        "body",
+        "trigger",
+        "deliveryWindow",
+        "personalizationVariables",
+        "rationale"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Kebab-case unique message identifier (e.g., 'first-workout-1')."
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Position in the campaign sequence (1-based)."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 35,
+          "description": "Notification title. Must be glanceable — under 35 characters, no truncation. May include {variables}."
+        },
+        "body": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 90,
+          "description": "Notification body. Compact and punchy — under 90 characters. May include {variables}."
+        },
+        "trigger": {
+          "$ref": "#/$defs/trigger"
+        },
+        "deliveryWindow": {
+          "$ref": "#/$defs/deliveryWindow"
+        },
+        "personalizationVariables": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of variable keys used in this message's title or body. Empty array if none (but try to personalize)."
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Why this message exists, why this timing, why this wording. Must provide meaningful reasoning."
+        }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "required": ["type", "delay", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["delay_from_event", "delay_from_previous"],
+          "description": "'delay_from_event' for the first message (delay after a specific event), 'delay_from_previous' for subsequent messages (delay after the prior message)."
+        },
+        "event": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "The triggering event name. Required when type is 'delay_from_event', must be omitted when type is 'delay_from_previous'."
+        },
+        "delay": {
+          "type": "string",
+          "pattern": "^[0-9]+(m|h|d)$",
+          "description": "Duration shorthand: '30m' (minutes), '2h' (hours), '1d' (days). Must match pattern like '30m', '2h', '48h', '3d'."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable explanation of the timing logic and reasoning."
+        }
+      },
+      "if": {
+        "properties": { "type": { "const": "delay_from_event" } }
+      },
+      "then": {
+        "required": ["type", "event", "delay", "description"]
+      },
+      "else": {
+        "not": { "required": ["event"] }
+      }
+    },
+    "deliveryWindow": {
+      "type": "object",
+      "required": ["startHour", "endHour", "timezone", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "startHour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 23,
+          "description": "Earliest delivery hour in local time (0–23)."
+        },
+        "endHour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 23,
+          "description": "Latest delivery hour in local time (0–23). Must be greater than startHour."
+        },
+        "timezone": {
+          "type": "string",
+          "const": "local",
+          "description": "Always 'local' for local push notifications."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explanation of why this delivery window was chosen."
+        }
+      }
+    }
+  }
+}

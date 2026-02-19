@@ -155,6 +155,17 @@ Each entry includes the file path, type, and description for semantic search.
 
 ---
 
+## push-notification-designer
+
+- [push-notification-designer](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-designer/SKILL.md): Main skill documentation
+
+### References
+
+- [Json Schemas (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-designer/references/json-schemas.md): Reference documentation for push-notification-designer skill
+- [Platform Guides (Reference)](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/push-notification-designer/references/platform-guides.md): Reference documentation for push-notification-designer skill
+
+---
+
 ## clix-skill-creator
 
 - [clix-skill-creator](https://raw.githubusercontent.com/clix-so/skills/refs/heads/main/skills/skill-creator/SKILL.md): Main skill documentation
