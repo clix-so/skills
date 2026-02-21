@@ -61,7 +61,7 @@
     "campaigns": {
       "type": "array",
       "items": { "$ref": "campaign.schema.json" },
-      "description": "Designed campaigns. Empty array in Phase 2, populated in Phase 3."
+      "description": "Designed campaigns. Empty array after Step 1, populated in Step 2."
     }
   },
   "$defs": {
