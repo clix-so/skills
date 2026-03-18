@@ -108,7 +108,7 @@ Audits notification permission request UX and settings recovery flows for iOS an
 
 #### auditing-deep-link-contracts
 
-Audits deep link contracts with cold/warm start test vectors and routing checks. Validates supported routes, required parameters, and entry point handling.
+Audits deep link contracts with cold-start/warm-start test vectors and routing checks. Validates supported routes, required parameters, and entry point handling.
 
 **Use when:**
 - Defining or validating deep link route contracts
@@ -126,16 +126,16 @@ npx skills add clix-so/skills
 Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
 
 **Examples:**
-```
+```text
 Integrate Clix SDK into my React Native app
 ```
-```
+```text
 Set up event tracking for purchase flow
 ```
-```
+```text
 Audit my push notification permission UX
 ```
-```
+```text
 Design a local notification campaign for user retention
 ```
 
