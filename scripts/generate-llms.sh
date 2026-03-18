@@ -65,9 +65,10 @@ extract_skill_name() {
         echo "### References"
         echo ""
         for f in "${refs[@]}"; do
+          rel_path="${f#"$skill_dir/"}"
           fname="$(basename "$f")"
           title="$(title_case "$fname") (Reference)"
-          echo "- [$title]($BASE_URL/$skill_name/references/$fname): Reference documentation for $skill_name skill"
+          echo "- [$title]($BASE_URL/$skill_name/$rel_path): Reference documentation for $skill_name skill"
         done
         echo ""
       fi
@@ -83,9 +84,10 @@ extract_skill_name() {
         echo "### Examples"
         echo ""
         for f in "${examples[@]}"; do
+          rel_path="${f#"$skill_dir/"}"
           fname="$(basename "$f")"
           title="$(title_case "$fname") (Example)"
-          echo "- [$title]($BASE_URL/$skill_name/examples/$fname): Code example for $skill_name skill"
+          echo "- [$title]($BASE_URL/$skill_name/$rel_path): Code example for $skill_name skill"
         done
         echo ""
       fi
@@ -101,9 +103,10 @@ extract_skill_name() {
         echo "### Scripts"
         echo ""
         for f in "${scripts[@]}"; do
+          rel_path="${f#"$skill_dir/"}"
           fname="$(basename "$f")"
           title="$(title_case "$fname") (Script)"
-          echo "- [$title]($BASE_URL/$skill_name/scripts/$fname): Utility script for $skill_name skill"
+          echo "- [$title]($BASE_URL/$skill_name/$rel_path): Utility script for $skill_name skill"
         done
         echo ""
       fi
@@ -119,9 +122,10 @@ extract_skill_name() {
         echo "### Rules"
         echo ""
         for f in "${rules[@]}"; do
+          rel_path="${f#"$skill_dir/"}"
           fname="$(basename "$f")"
           title="$(title_case "$fname") (Rule)"
-          echo "- [$title]($BASE_URL/$skill_name/rules/$fname): Rule for $skill_name skill"
+          echo "- [$title]($BASE_URL/$skill_name/$rel_path): Rule for $skill_name skill"
         done
         echo ""
       fi
