@@ -143,6 +143,7 @@ Design a local notification campaign for user retention
 
 Each skill contains:
 - `SKILL.md` - Instructions for the agent
+- `LICENSE.txt` - License file
 - `scripts/` - Helper scripts for automation
 - `references/` - Supporting documentation
 - `examples/` - Code examples (optional)
