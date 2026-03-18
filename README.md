@@ -1,170 +1,157 @@
 # Agent Skills for Clix
 
-[![npm version](https://img.shields.io/npm/v/%40clix-so%2Fclix-agent-skills.svg?logo=npm&label=npm)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
-[![npm downloads](https://img.shields.io/npm/d18m/%40clix-so%2Fclix-agent-skills.svg)](https://www.npmjs.com/package/@clix-so/clix-agent-skills)
+A collection of skills for AI coding agents. Skills are packaged instructions and scripts that extend agent capabilities for Clix mobile SDK integration and mobile development.
 
-This repository contains a collection of Agent Skills for Clix. Each skill is a
-separate module within this package that can be installed and used independently
-by AI clients.
+Skills follow the [Agent Skills](https://agentskills.io/) format.
 
 ## Available Skills
 
 ### Clix Skills
 
-- **clix-integration**: Seamlessly integrate Clix Mobile SDK to your mobile
-  application with Clix MCP Server
-- **clix-event-tracking**: Implement `Clix.trackEvent` with naming/schema best
-  practices and campaign-ready validation
-- **clix-user-management**: Implement `Clix.setUserId` + user properties with
-  logout best practices, personalization (`user.*`), and audience targeting
-- **clix-personalization**: Author and debug personalization templates for
-  message content, deep links/URLs, and audience targeting rules (`user.*`,
-  `event.*`, `trigger.*`, `device.*`)
-- **clix-api-triggered-campaigns**: Configure API-triggered campaigns in the
-  console and trigger them from your backend with safe auth, dynamic filters
-  (`trigger.*`), and personalization patterns
-- **clix-skill-creator**: Create new Clix agent skills by researching Clix SDK +
-  docs via Clix MCP Server, then generating a complete skill folder (SKILL.md,
-  references, scripts, examples) aligned with this repo’s conventions
+#### clix-integration
+
+Integrates Clix Mobile SDK into iOS, Android, Flutter, and React Native projects. Provides step-by-step guidance for installation, initialization, and verification with MCP-first strategy.
+
+**Use when:**
+- Installing or setting up Clix SDK in a mobile project
+- Integrating Clix analytics into a new or existing app
+- Configuring SDK initialization and verification
+
+#### clix-event-tracking
+
+Implements Clix event tracking (`Clix.trackEvent`) with consistent naming, safe property schemas, and campaign-ready validation.
+
+**Use when:**
+- Adding or reviewing event tracking code
+- Debugging event tracking issues
+- Configuring event-triggered campaigns
+- Working with funnels, properties, or tracking patterns
+
+#### clix-user-management
+
+Implements Clix user identification and user properties (`setUserId`, `setUserProperty`) with safe schemas, logout best practices, and campaign-ready personalization.
+
+**Use when:**
+- Implementing login/logout user identification
+- Setting up user properties for personalization
+- Configuring audience targeting with user data
+
+#### clix-personalization
+
+Helps author and debug Clix personalization templates (Liquid-style) for message content, deep links/URLs, and audience targeting rules.
+
+**Use when:**
+- Writing personalization templates with variables
+- Debugging Liquid-style conditional logic or filters
+- Configuring deep link personalization in campaigns
+
+#### clix-api-triggered-campaigns
+
+Configures API-triggered campaigns in the Clix console and triggers them from backend services with safe auth, payload schemas, and dynamic audience filters.
+
+**Use when:**
+- Setting up transactional or backend-triggered notifications
+- Configuring campaign trigger APIs with `campaign_id`
+- Implementing server-to-Clix campaign delivery
+
+#### clix-skill-creator
+
+Creates new Clix agent skills by researching the latest Clix SDK + docs via MCP Server, then generating a complete skill folder aligned with repository conventions.
+
+**Use when:**
+- Creating or authoring a new Clix skill
+- Extending the skills library with new capabilities
 
 ### Skills for Mobile Developers
 
-- **push-notification-best-practices**: Comprehensive mobile push notification
-  guide for iOS (APNS) and Android (FCM). Use for setup, debugging delivery
-  issues, implementing handlers, token management, deep linking, and
-  troubleshooting platform-specific issues
-- **push-notification-designer**: Design and implement local push notification
-  campaigns to boost user engagement. Covers iOS, Android, Flutter, and React
-  Native with a 5-phase workflow from app analysis to code implementation
-- **auditing-permission-ux**: Audit notification permission request UX and
-  settings recovery flows for iOS and Android
-- **auditing-deep-link-contracts**: Audit deep link contracts with cold/warm
-  start test vectors and routing checks
+#### push-notification-best-practices
 
-## Installing Skills
+Comprehensive mobile push notification guide for iOS (APNS) and Android (FCM). Contains platform-specific configurations, token management, message handling, and deep linking patterns.
 
-Agent skills in this repository are built on the
-[open agent skills standard](https://agentskills.io/home). Please refer to the
-[official documentation](https://agentskills.io/home#adoption) for up-to-date
-information on supported AI clients.
+**Use when:**
+- Setting up push notifications for iOS or Android
+- Debugging delivery issues or token management
+- Implementing background/foreground notification handlers
+- Troubleshooting platform-specific push notification issues
 
-### Quick Start (Recommended)
+**Platforms covered:**
+- iOS (APNS)
+- Android (FCM)
+- React Native
+- Expo
+- Flutter
 
-Install skills using the universal
-[add-skill](https://github.com/vercel-labs/add-skill) CLI:
+#### push-notification-designer
 
-```bash
-npx add-skill clix-so/skills
-```
+Design and implement local push notification campaigns to boost user engagement. Follows a 5-phase workflow from app analysis to code implementation.
 
-### Usage
+**Use when:**
+- Designing local push notification strategies
+- Implementing scheduled on-device notifications
+- Creating user engagement or retention campaigns
+- Building onboarding notification flows
 
-```bash
-# List available skills
-npx add-skill clix-so/skills --list
+**Platforms covered:**
+- iOS (Swift/UNUserNotificationCenter)
+- Android (Kotlin/WorkManager+NotificationManager)
+- Flutter (flutter_local_notifications)
+- React Native (notifee/expo-notifications)
 
-# Install specific skills
-npx add-skill clix-so/skills --skill integration --skill event-tracking
+#### auditing-permission-ux
 
-# Install globally (available across all projects)
-npx add-skill clix-so/skills -g
+Audits notification permission request UX and settings recovery flows for iOS and Android. Produces structured audit reports with actionable fixes.
 
-# Install to specific agents
-npx add-skill clix-so/skills -a claude-code -a cursor
+**Use when:**
+- Reviewing permission request timing and context
+- Improving denial handling and settings recovery paths
+- Checking platform-specific permission UX compliance
 
-# Non-interactive installation (CI/CD friendly)
-npx add-skill clix-so/skills --skill integration -g -a claude-code -y
-```
+#### auditing-deep-link-contracts
 
-### Supported Agents
+Audits deep link contracts with cold-start/warm-start test vectors and routing checks. Validates supported routes, required parameters, and entry point handling.
 
-Skills can be installed to any of these supported agents. Use `-g, --global` to
-install to the global path instead of project-level.
+**Use when:**
+- Defining or validating deep link route contracts
+- Testing cold and warm start deep link behavior
+- Auditing deep link parameter requirements
 
-| Agent          | `--agent`        | Project Path           | Global Path                            |
-| -------------- | ---------------- | ---------------------- | -------------------------------------- |
-| Amp            | `amp`            | `.agents/skills/`      | `~/.config/agents/skills/`             |
-| Antigravity    | `antigravity`    | `.agent/skills/`       | `~/.gemini/antigravity/global_skills/` |
-| Claude Code    | `claude-code`    | `.claude/skills/`      | `~/.claude/skills/`                    |
-| Clawdbot       | `clawdbot`       | `skills/`              | `~/.clawdbot/skills/`                  |
-| Cline          | `cline`          | `.cline/skills/`       | `~/.cline/skills/`                     |
-| Codex          | `codex`          | `.codex/skills/`       | `~/.codex/skills/`                     |
-| Command Code   | `command-code`   | `.commandcode/skills/` | `~/.commandcode/skills/`               |
-| Continue       | `continue`       | `.continue/skills/`    | `~/.continue/skills/`                  |
-| Crush          | `crush`          | `.crush/skills/`       | `~/.config/crush/skills/`              |
-| Cursor         | `cursor`         | `.cursor/skills/`      | `~/.cursor/skills/`                    |
-| Droid          | `droid`          | `.factory/skills/`     | `~/.factory/skills/`                   |
-| Gemini CLI     | `gemini-cli`     | `.gemini/skills/`      | `~/.gemini/skills/`                    |
-| GitHub Copilot | `github-copilot` | `.github/skills/`      | `~/.copilot/skills/`                   |
-| Goose          | `goose`          | `.goose/skills/`       | `~/.config/goose/skills/`              |
-| Kilo Code      | `kilo`           | `.kilocode/skills/`    | `~/.kilocode/skills/`                  |
-| Kiro CLI       | `kiro-cli`       | `.kiro/skills/`        | `~/.kiro/skills/`                      |
-| MCPJam         | `mcpjam`         | `.mcpjam/skills/`      | `~/.mcpjam/skills/`                    |
-| OpenCode       | `opencode`       | `.opencode/skills/`    | `~/.config/opencode/skills/`           |
-| OpenHands      | `openhands`      | `.openhands/skills/`   | `~/.openhands/skills/`                 |
-| Pi             | `pi`             | `.pi/skills/`          | `~/.pi/agent/skills/`                  |
-| Qoder          | `qoder`          | `.qoder/skills/`       | `~/.qoder/skills/`                     |
-| Qwen Code      | `qwen-code`      | `.qwen/skills/`        | `~/.qwen/skills/`                      |
-| Roo Code       | `roo`            | `.roo/skills/`         | `~/.roo/skills/`                       |
-| Trae           | `trae`           | `.trae/skills/`        | `~/.trae/skills/`                      |
-| Windsurf       | `windsurf`       | `.windsurf/skills/`    | `~/.codeium/windsurf/skills/`          |
-| Zencoder       | `zencoder`       | `.zencoder/skills/`    | `~/.zencoder/skills/`                  |
-| Neovate        | `neovate`        | `.neovate/skills/`     | `~/.neovate/skills/`                   |
-
-### Alternative Installation Methods
-
-#### Clix CLI
-
-You can also use the Clix-specific CLI to install skills with automatic Clix MCP
-Server configuration:
+## Installation
 
 ```bash
-# Install a specific skill
-npx @clix-so/clix-agent-skills@latest install <skill-name> --client <your-client>
-
-# Install all skills globally
-npx @clix-so/clix-agent-skills@latest install --all --client cursor --global
+npx skills add clix-so/skills
 ```
 
-#### Claude Code (Plugin Marketplace)
+## Usage
 
-Register this repository as a plugin marketplace in Claude Code:
+Skills are automatically available once installed. The agent will use them when relevant tasks are detected.
 
-```bash
-/plugin marketplace add clix-so/skills
+**Examples:**
+```text
+Integrate Clix SDK into my React Native app
+```
+```text
+Set up event tracking for purchase flow
+```
+```text
+Audit my push notification permission UX
+```
+```text
+Design a local notification campaign for user retention
 ```
 
-Then browse and install skills via `/plugin` → `Browse plugins`, or install
-directly:
+## Skill Structure
 
-```bash
-/plugin install clix-integration@clix-agent-skills
-```
-
-**Note**: Skills support automatic hot-reload in Claude Code. Changes to
-`~/.claude/skills` or `.claude/skills` are immediately available.
-
-#### Codex (skill-installer)
-
-Install skills using the Codex skill-installer:
-
-```bash
-$skill-installer install https://github.com/clix-so/skills/tree/main/skills/integration
-```
-
-For manual installation, see the
-[Codex documentation](https://developers.openai.com/codex/skills/#where-to-save-skills).
+Each skill contains:
+- `SKILL.md` - Instructions for the agent
+- `LICENSE.txt` - License file
+- `scripts/` - Helper scripts for automation
+- `references/` - Supporting documentation
+- `examples/` - Code examples (optional)
 
 ## Disclaimer
 
-Please be aware that these skills may occasionally fail or execute incorrectly
-due to the non-deterministic nature of AI. It is critical that you carefully
-review and verify all actions performed by these skills. While they are designed
-to be helpful, you remain responsible for checking their output before use.
-Please use them with caution and supervision.
+Please be aware that these skills may occasionally fail or execute incorrectly due to the non-deterministic nature of AI. It is critical that you carefully review and verify all actions performed by these skills. While they are designed to be helpful, you remain responsible for checking their output before use. Please use them with caution and supervision.
 
 ## License
 
-Each skill in this repository is governed by its own license. For specific terms
-and conditions, please consult the `LICENSE.txt` file located within each
-skill's individual directory.
+Each skill in this repository is governed by its own license. For specific terms and conditions, please consult the `LICENSE.txt` file located within each skill's individual directory.
