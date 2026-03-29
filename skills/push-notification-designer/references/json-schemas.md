@@ -11,13 +11,13 @@ Formal JSON Schema (draft 2020-12) files live in `references/schemas/`:
 
 These schemas enforce strict rules: required fields, value types, string patterns (kebab-case IDs, snake_case events), length limits (title ≤ 35 chars, body ≤ 90 chars), array bounds (2–5 messages per campaign, 1–4 user journeys), and no extra properties.
 
-After generating the app profile JSON in Phase 2 and adding campaigns in Phase 3, validate the output against these schemas before presenting to the user. If validation fails, fix the issues and re-validate.
+After generating the app profile JSON in Step 1 and adding campaigns in Step 2, validate the output against these schemas before presenting to the user. If validation fails, fix the issues and re-validate.
 
 ---
 
 ## App Profile Schema
 
-The app profile captures everything learned in Phase 1. It starts without campaigns, then campaigns are added in Phase 3.
+The app profile captures everything learned during codebase analysis in Step 1. It starts without campaigns, then campaigns are added in Step 2.
 
 ```json
 {
@@ -126,7 +126,7 @@ The app profile captures everything learned in Phase 1. It starts without campai
 | `existingNotifications[].trigger`        | string   | yes      | What triggers this notification                                        |
 | `existingNotifications[].timing`         | string   | yes      | When/how often it fires                                                |
 | `existingNotifications[].notes`          | string   | no       | Any additional context                                                 |
-| `campaigns[]`                            | array    | yes      | Campaigns added in Phase 3 (empty initially)                           |
+| `campaigns[]`                            | array    | yes      | Campaigns added in Step 2 (empty initially)                            |
 
 ---
 

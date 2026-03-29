@@ -1,6 +1,6 @@
 # Platform Implementation Guides
 
-Read this before Phase 5 (Implementation). Each section covers the notification APIs, scheduling patterns, and gotchas for a specific platform.
+Read this before Step 4 (Implementation). Each section covers the notification APIs, scheduling patterns, and gotchas for a specific platform.
 
 ---
 

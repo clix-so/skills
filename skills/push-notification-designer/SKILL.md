@@ -18,59 +18,58 @@ Local push notifications are powerful because they don't require a server, work 
 
 ## How This Skill Works
 
-This skill follows a 5-phase flow. Move through each phase sequentially, never skipping ahead. Each phase builds on the previous one.
+This skill follows a 4-step flow. Move through each step sequentially, never skipping ahead. Each step builds on the previous one.
 
-**Phase 1** → Understand the app deeply through conversation
-**Phase 2** → Structure that understanding into a standardized app profile JSON, saved to `.clix-campaigns/`
-**Phase 3** → Design 3–4 notification campaigns and add them to the app profile
-**Phase 4** → Present campaigns and let the user choose which to implement
-**Phase 5** → Implement selected campaigns directly in the user's codebase
+**Step 1** → Analyze the user's codebase to build a standardized app profile JSON, saved to `.clix-campaigns/`
+**Step 2** → Design 3–4 notification campaigns and add them to the app profile
+**Step 3** → Present campaigns and let the user choose which to implement
+**Step 4** → Implement selected campaigns directly in the user's codebase
 
-Read `references/json-schemas.md` before starting Phase 2. It contains the JSON structures and examples you'll produce.
+Read `references/json-schemas.md` before starting Step 1. It contains the JSON structures and examples you'll produce.
 Read `references/schemas/app-profile.schema.json` and `references/schemas/campaign.schema.json` — these are the strict JSON Schema files that enforce every required field, type, pattern, and length constraint. Your output must conform to these schemas exactly.
-Read `references/platform-guides.md` before starting Phase 5. It contains platform-specific implementation patterns.
+Read `references/platform-guides.md` before starting Step 4. It contains platform-specific implementation patterns.
 
 ---
 
-## Phase 1: Understand the App
+## Step 1: Analyze the Codebase and Build the App Profile
 
-Have a focused conversation to learn about the app. You need to understand the app well enough to design notification campaigns that feel native to the experience — not bolted on.
+Read the user's codebase at the current working directory to build a complete app profile. Do NOT ask the user any questions — extract everything from the code. Do NOT ask for confirmation — proceed directly to Step 2 once the profile is saved.
 
-Gather these details through natural conversation (don't present this as a checklist):
+### What to extract and where to find it
 
-**App basics**: App name, platform (iOS / Android / Flutter / React Native), app category (fitness, finance, education, social, productivity, etc.), and a brief description of what the app does.
+| App Profile Field | Where to Look |
+| --- | --- |
+| `appName` | `Info.plist` (CFBundleDisplayName/CFBundleName), `strings.xml` (app_name), `pubspec.yaml` (name/description), `app.json`/`package.json` (name/displayName) |
+| `platform` | Detect from project files: `.xcodeproj`/`.xcworkspace` → ios, `build.gradle`/`settings.gradle` → android, `pubspec.yaml` → flutter, `react-native` in `package.json` → react-native |
+| `category` | Infer from domain models, README, app store descriptions, feature set |
+| `description` | README, app config descriptions, feature set analysis |
+| `coreUserActivity` | Primary domain model, the most important action the app enables |
+| `userJourneys` | Navigation/router files, screen organization, feature modules |
+| `personalizationVariables` | User model, database schemas, state management, settings/preferences |
+| `existingNotifications` | Platform-specific notification API usage — `UNUserNotificationCenter` (iOS), `NotificationManager`/`WorkManager` (Android), `flutter_local_notifications` (Flutter), `notifee`/`expo-notifications` (React Native) |
 
-**Core user activity**: What is the single most important thing users do in this app? This is the action that, if users do it regularly, means the app is succeeding. Examples: "complete a workout" for a fitness app, "log a meal" for a nutrition app, "review flashcards" for a study app.
+### Scanning strategy
 
-**Critical user journeys** (maximum 4): These are the key paths users take through the app. Each journey should represent a meaningful sequence of actions, not just a single screen. Think of them as "mini stories" — a beginning, middle, and end. Examples: "User opens app → selects workout plan → completes workout → views progress" or "User receives reminder → opens app → logs meal → sees daily summary."
+Follow this order to build understanding efficiently:
 
-**Personalization variables**: What user-specific or app-specific data could make notifications feel personal? Think about names, progress metrics, streaks, goals, preferences, recent activity, achievements, or any other dynamic data the app tracks. Ask the user what properties or data their app already has access to. Examples: `{userName}`, `{streakCount}`, `{lastWorkoutType}`, `{dailyGoalProgress}`, `{nextScheduledEvent}`.
+1. **Platform detection** — Check for `.xcodeproj`, `build.gradle`, `pubspec.yaml`, or `react-native` in `package.json`
+2. **Config files** — Read `Info.plist`, `AndroidManifest.xml`, `pubspec.yaml`, `app.json`, `package.json`, or README for app name, description, and category clues
+3. **Directory structure** — Scan top-level folders and key subdirectories to understand feature organization
+4. **Models and data** — Find user models, database schemas, and state management to identify personalization variables
+5. **Navigation and screens** — Read router/navigation files to map user journeys from screen flow
+6. **Notification code** — Search for existing notification scheduling, permission requests, and message content
 
-**Existing local push notifications**: Does the app already send any local notifications? If so, what are they? Get the exact message text, timing, and trigger conditions. These existing notifications should be incorporated into the campaign design rather than duplicated or conflicting.
+### Output
 
-Tips for this conversation:
+Structure everything into a standardized JSON app profile using the exact schema defined in `references/json-schemas.md` under "App Profile Schema."
 
-- If the user provides all the details upfront in their first message (app name, journeys, variables, etc.), don't re-ask what you already know. Confirm your understanding and fill any gaps with targeted follow-ups.
-- If the user gives vague answers ("it's a fitness app"), probe deeper — what _kind_ of fitness? Gym workouts, running, yoga, general wellness?
-- If they mention user properties, ask about the data type and where it lives in their code
-- Don't ask all questions at once. Start with app basics, then drill into journeys and variables naturally
-- 2–3 rounds of questions is usually enough. Don't over-interview.
+**Save the file to `.clix-campaigns/app-profile.json`** in the user's project root. Create the `.clix-campaigns/` directory if it doesn't exist. Set `campaigns` to an empty array `[]`.
+
+Briefly tell the user what you found, then move on to Step 2 immediately.
 
 ---
 
-## Phase 2: Build the App Profile
-
-Once you have enough information, structure everything into a standardized JSON app profile. This serves as the planning document that Phase 3 builds on.
-
-Use the exact schema defined in `references/json-schemas.md` under "App Profile Schema."
-
-**Save the file to `.clix-campaigns/app-profile.json`** in the user's project root. Create the `.clix-campaigns/` directory if it doesn't exist.
-
-Show the complete JSON to the user and ask them to confirm it's accurate. If anything is wrong or missing, update the file before moving on. This is the foundation for everything that follows — it needs to be right.
-
----
-
-## Phase 3: Design Campaigns
+## Step 2: Design Campaigns
 
 Design 3–4 notification campaigns based on the app profile. Each campaign targets a specific user journey or engagement goal.
 
@@ -89,7 +88,7 @@ Each message in the sequence should have a clear reason for existing. If you can
 
 ### Campaign design rules
 
-- **Respect existing notifications**: If the app already has local push notifications (from Phase 1), weave them into your campaigns. Don't create duplicates. If an existing notification fits naturally into a campaign, include it as-is (or suggest improvements, noting the change).
+- **Respect existing notifications**: If the app already has local push notifications (from Step 1), weave them into your campaigns. Don't create duplicates. If an existing notification fits naturally into a campaign, include it as-is (or suggest improvements, noting the change).
 - **Vary the approaches**: Don't make all campaigns about the same thing. Spread across different parts of the user lifecycle — onboarding, habit formation, re-engagement, milestone celebration, etc.
 - **Be specific about timing**: Don't say "send after some time." Say "send 2 hours after the user completes signup, between 9am–9pm local time." Timing should account for the user's timezone and reasonable hours.
 - **Personalize aggressively**: Use personalization variables in as many messages as possible — the more personal, the better. Prefer `"Hey {userName}, ready for {nextWorkoutName}?"` over generic copy. Weave in user preferences, progress data, streaks, and recent activity wherever it feels natural. A notification that feels written _for_ the user gets tapped; a generic one gets ignored.
@@ -117,7 +116,7 @@ After designing all campaigns, present them to the user in a clear, readable for
 
 ---
 
-## Phase 4: User Selection
+## Step 3: User Selection
 
 After presenting the campaigns, let the user choose which ones to implement. This is important — the user knows their app and their users best.
 
@@ -134,20 +133,19 @@ Present a clear summary with checkmarks and ask which ones to keep:
 
 If the user wants modifications to any campaign (different timing, different wording, etc.), update the campaign JSON in `.clix-campaigns/app-profile.json` before implementing.
 
-Only proceed to Phase 5 with the campaigns the user explicitly approved.
+Only proceed to Step 4 with the campaigns the user explicitly approved.
 
 ---
 
-## Phase 5: Implementation
+## Step 4: Implementation
 
 Implement the selected campaigns directly in the user's codebase. Before writing any code, read `references/platform-guides.md` for platform-specific patterns and best practices.
 
 ### Before coding
 
 1. **Identify the platform** from the app profile (iOS/Android/Flutter/React Native)
-2. **Ask the user to share their project** if they haven't already. You need access to the actual codebase to make direct edits.
-3. **Explore the project structure** — find existing notification code, app delegate / main activity, and where scheduling logic should live
-4. **Check for existing notification setup** — is the notification permission already requested? Is there a notification manager/service class? Build on what exists.
+2. **Leverage what you learned in Step 1** — you already explored the project structure and know where notification code, app delegate / main activity, and scheduling logic live
+3. **Check for existing notification setup** — is the notification permission already requested? Is there a notification manager/service class? Build on what exists.
 
 ### Implementation approach
 
